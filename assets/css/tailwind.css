@@ -8,10 +8,20 @@ html {
 
 body {
   @apply bg-gray-50;
+  min-height: 1000px;
 }
 
 @layer components {
   .btn {
-    @apply bg-[#12b488] text-white px-3 py-2 rounded-md text-sm text-white
+    @apply font-['Inter_Var'] bg-transparent px-3 py-[5px] font-medium rounded-full text-sm border border-gray-700
+          hover:border-transparent hover:text-white hover:bg-primary-600 transition-all duration-100
+  }
+
+  .section-title {
+    @apply text-gray-800 text-2xl font-bold font-['Inter_Var'];
+  }
+
+  .card-wrapper {
+    @apply shadow-sm rounded-md overflow-hidden
   }
 }

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <TopBanner />
+    <LayoutTopBanner/>
+  </div>
+  <div class="mt-6">
+    <LayoutOurCategory />
   </div>
 </template>
 

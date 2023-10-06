@@ -14,7 +14,7 @@
       </div>
     </div>
   </div>
-  <Header />
+  <LayoutHeader />
   <div class="">
     <slot />
   </div>

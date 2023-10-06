@@ -4,8 +4,8 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
   ],
-  alias: {
-    'images': './assests/images',
+  typescript: {
+    strict: true
   },
   app: {
     head: {
