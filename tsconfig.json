@@ -3,6 +3,7 @@
   "extends": "./.nuxt/tsconfig.json",
   "typescript.typeCheck": true,
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    "isolatedModules": true
   }
 }
