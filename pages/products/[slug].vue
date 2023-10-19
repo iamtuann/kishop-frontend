@@ -34,14 +34,14 @@
       </div>
       <div class="col-span-5">
         <div class="pt-1 pr-0 pl-0 lg:mt-12 lg:mr-2 lg:pr-12 lg:pl-6 ">
-          <h1 class="text-2xl font-medium font-['inter_var']">{{ product.name }}</h1>
-          <div class="mb-2 mt-2 font-['Inter_Var']">
+          <h1 class="text-2xl font-medium ">{{ product.name }}</h1>
+          <div class="mb-2 mt-2 ">
             <span class="font-semibold text-lg" v-if="productDetailShowing.offPrice">{{ strOffPrice }}</span>
             <span class="font-semibold" :class="productDetailShowing.offPrice ? 'line-through text-gray-400 ms-2' : ''">{{ strPrice }}</span>
             <span class="ml-2 font-semibold text-green-600">{{ offPercent }}</span>
           </div>
           <div class="mt-3 mb-4">
-            <h4 class="font-medium font-['Inter_Var'] mb-2">Màu sắc</h4>
+            <h4 class="font-medium  mb-2">Màu sắc</h4>
             <div class="flex gap-3">
               <div 
                 class="input-wrap"
@@ -60,7 +60,7 @@
               </div>
             </div>
           </div>
-          <div class="my-3 font-['Inter_Var']">
+          <div class="my-3 ">
             <div class="mb-2 flex justify-between">
               <h4 class="font-medium">Kích cỡ</h4>
               <h4 class="font-medium text-gray-500 cursor-pointer">Hướng dẫn</h4>
@@ -71,17 +71,36 @@
                 class="relative input-wrap"
               >
                 <input 
-                type="radio" :value="productQuantity.id"
+                type="radio" hidden :value="productQuantity.id"
                 v-model="productQuantityId" 
                 name="size" :id="productQuantity.size.name"
+                :disabled="productQuantity.quantity == 0"
                 >
-                <label :for="productQuantity.size.name"
+                <label v-if="productQuantity.quantity > 0 " :for="productQuantity.size.name"
                   class="flex items-center justify-center h-12 cursor-pointer bg-white rounded border border-gray-300 font-medium"
                 >
                 {{ productQuantity.size.name }}
                 </label>
+                <label v-else :for="productQuantity.size.name"
+                  class="flex items-center justify-center h-12 cursor-not-allowed rounded bg-gray-200 text-gray-400 border border-gray-300">
+                {{ productQuantity.size.name }}
+                </label>
               </div>
             </div>
+          </div>
+
+          <div class="mt-2 mb-4">
+            <button class="btn-primary hover:bg-primary-600 transition-all">
+              Thêm vào giỏ
+            </button>
+            <button class="btn-primary mt-3 bg-white border-gray-400 text-gray-800 hover:border-gray-800 transition-all">
+              <span>Yêu thích</span>
+              <span class="material-symbols-outlined arrow-icon ml-2">favorite</span>
+            </button>
+          </div>
+          <div class="pt-6">
+            <h4 class="font-medium mb-1">Mô tả sản phẩm</h4>
+            <p>{{ product.description }}</p>
           </div>
         </div>
       </div>
@@ -162,7 +181,6 @@ import { Product, ProductDetail } from "@/types";
         offPrice: 550000,
         status: 1,
         imageUrls: [
-          "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/455439ad-72b0-4afb-9cfd-5044b63af2e9/air-force-1-07-shoes-VWCc04.png",
           "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/7b54b0d4-79a1-44a2-a2c0-01066bda877c/air-force-1-07-shoes-VWCc04.png",
           "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/3010d407-c09e-4124-81c8-d84a955af273/air-force-1-07-shoes-VWCc04.png",
           "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/a185a94c-818b-46ae-bd0b-d54e5834b907/air-force-1-07-shoes-VWCc04.png",
@@ -170,13 +188,13 @@ import { Product, ProductDetail } from "@/types";
         ],
         productQuantities: [
           {
-            id: 1,
-            size: {name: "Xl"},
+            id: 2,
+            size: {name: "M"},
             quantity: 100
           },
           {
-            id: 2,
-            size: {name: "M"},
+            id: 1,
+            size: {name: "Xl"},
             quantity: 100
           },
           {
@@ -185,7 +203,7 @@ import { Product, ProductDetail } from "@/types";
             quantity: 0
           },
           {
-            id: 3,
+            id: 4,
             size: {name: "2XL"},
             quantity: 10
           },
@@ -220,11 +238,10 @@ import { Product, ProductDetail } from "@/types";
   }
 
   watch(productDetailId, (detailId) => {
-    productDetailShowing = product.productDetails.find(pd => pd.id == detailId)
+    productDetailShowing = product.productDetails.find(pd => pd.id == detailId) || productDetailShowing;
     imageShowIndex.value = 0;
+    imageShowing.value = productDetailShowing.imageUrls[imageShowIndex.value];
     productQuantityId = null;
-    console.log(detailId);
-    console.log(productQuantityId);
   })
 
   watch(imageShowIndex, (newVal) => {

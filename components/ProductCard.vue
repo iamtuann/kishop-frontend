@@ -3,19 +3,19 @@
     <NuxtLink to="#">
       <div class="overflow-hidden relative">
         <img class="pd-img aspect-square object-cover duration-200 bg-gray-400" :src="product.thumbnail" :alt="product.name">
-        <span v-if="product.offPrice" class="absolute z-10 top-2 left-2 px-3 py-[6px] font-bold rounded-full text-sm bg-white text-red-600 font-['Inter_Var']">{{ offPercent }}</span>
+        <span v-if="product.offPrice" class="absolute z-10 top-2 left-2 px-3 py-[6px] font-bold rounded-full text-sm bg-white text-red-600">{{ offPercent }}</span>
       </div>
     </NuxtLink>
     <div class="py-3 card-body">
       <NuxtLink to="#">
         <h4 class="font-semibold mb-1">{{ product.name }}</h4>
-        <p class="description mb-2 font-['Inter_Var'] text-gray-500">{{ product.description }}</p>
+        <p class="description mb-2 text-gray-500">{{ product.description }}</p>
         <div class="mb-2">
-          <span class="font-semibold font-['Inter_Var'] text-red-700" v-if="product.offPrice">{{ strOffPrice }}</span>
-          <span class="font-semibold font-['Inter_Var']" :class="product.offPrice ? 'line-through text-gray-400 text-sm ms-2' : ''">{{ strPrice }}</span>
+          <span class="font-semibold text-red-700" v-if="product.offPrice">{{ strOffPrice }}</span>
+          <span class="font-semibold" :class="product.offPrice ? 'line-through text-gray-400 text-sm ms-2' : ''">{{ strPrice }}</span>
         </div>
       </NuxtLink>
-      <button class="btn">Add to cart</button>
+      <button class="btn-small">Add to cart</button>
     </div>
   </div>
 </template>
