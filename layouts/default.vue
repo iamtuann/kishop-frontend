@@ -1,5 +1,5 @@
 <template>
-  <div class="py-1 bg-primary">
+  <div class="py-1 bg-primary font-sans">
     <div class="flex justify-between items-center container mx-auto text-xs text-white ">
       <div class="flex items-center">
         <span class="material-symbols-outlined default-style-icon text-xl leading-tight">phone</span>
