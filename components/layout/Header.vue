@@ -8,7 +8,7 @@
               <span class="">Thương hiệu </span>
               <span class="material-symbols-outlined default-style-icon">expand_more</span>
             </div>
-            <ul class="nav-child text-gray-600 font-semibold font-['Inter_Var'] flex flex-wrap bg-white shadow-md">
+            <ul class="nav-child text-gray-600 font-semibold flex flex-wrap bg-white shadow-md">
               <div class="w-2/4">
                 <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
                   <NuxtLink class="block" to="/nike">Nike</NuxtLink>
@@ -59,7 +59,6 @@
 
 <style scoped>
 .nav-item {
-  font-family: 'Inter var';
   font-weight: 600;
   padding: 8px 12px;
   position: relative;

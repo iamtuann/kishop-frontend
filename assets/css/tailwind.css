@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html {
-  font-family: Montserrat, system-ui, sans-serif;
+  font-family: Inter var, system-ui, sans-serif;
 }
 
 body {
@@ -12,13 +12,18 @@ body {
 }
 
 @layer components {
-  .btn {
-    @apply font-['Inter_Var'] bg-transparent px-3 py-[5px] font-medium rounded-full text-sm border border-gray-700
+  .btn-small {
+    @apply  bg-transparent px-3 py-[5px] font-medium rounded-full text-sm border border-gray-700
           hover:border-transparent hover:text-white hover:bg-primary-600 transition-all duration-100
   }
 
+  .btn-primary {
+    @apply py-4 px-6 w-full min-h-[58px] rounded-full leading-none border border-transparent flex items-center
+    justify-center text-white font-semibold mx-auto bg-primary 
+  }
+
   .section-title {
-    @apply text-gray-800 text-2xl font-bold font-['Inter_Var'];
+    @apply text-gray-800 text-2xl font-bold ;
   }
 
   .card-wrapper {
