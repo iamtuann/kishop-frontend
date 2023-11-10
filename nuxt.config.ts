@@ -5,6 +5,14 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt'
   ],
+  runtimeConfig: {
+    public: {
+      BASE_URL: process.env.API_URL,
+    }
+  },
+  plugins: [
+    '~/plugins/ofetch'
+  ],
   typescript: {
     strict: true
   },

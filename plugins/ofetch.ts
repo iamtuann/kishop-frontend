@@ -1,8 +1,8 @@
 import { ofetch } from "ofetch";
 
-export default defineNuxtPlugin((_nuxtApp) => {
+export default defineNuxtPlugin((nuxtApp) => {
   globalThis.$fetch = ofetch.create({
-    baseURL: "localhost:8081",
+    baseURL: useRuntimeConfig().public.BASE_URL,
     headers: {
       'Content-Type': 'application/json',
       Accept: "*/*",
