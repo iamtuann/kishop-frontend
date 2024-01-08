@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      BASE_URL: process.env.API_URL,
+      BASE_URL: process.env.API_URL || "http://localhost:8081/api",
     }
   },
   plugins: [
