@@ -3,7 +3,7 @@
     <LayoutTopBanner/>
   </div>
   <div class="mt-6">
-    <LayoutOurCategory />
+    <LayoutTopNewProduct/>
   </div>
 </template>
 

@@ -58,3 +58,10 @@ export interface Size {
   name: string,
   description?: string
 }
+
+export interface IResponse<T> {
+  statusCode: number,
+  message: string,
+  output: T,
+  error: string
+}
