@@ -36,7 +36,8 @@ export interface ProductBasic {
   brand?: string | null,
   price: number,
   offPrice?: number | null,
-  thumbnail: string
+  thumbnail: string,
+  slug: string
 }
 
 export interface Brand {

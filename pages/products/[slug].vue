@@ -10,11 +10,11 @@
               class="relative w-full h-[60px] rounded cursor-pointer"
               @mouseover="imageShowIndex = id"
             >
-              <img class="w-full h-full rounded bg-gray-100" :src="url" :alt="product.name">
+              <img class="w-full h-full rounded bg-gray-100 object-cover object-center" :src="url" :alt="product?.name">
             </div>
           </div>
           <div class="rounded-lg overflow-hidden relative grow w-auto h-auto lg:w-[535px] lg:h-[600px] max-w-[535px]">
-            <img :src="imageShowing" :alt="product.name" class="w-full h-full bg-gray-100 object-cover object-center">
+            <img :src="imageShowing" :alt="product?.name" class="w-full h-full bg-gray-100 object-cover object-center">
             <div class="absolute flex bottom-3 right-4 gap-2">
               <div 
                 class="arrow"
@@ -34,7 +34,7 @@
       </div>
       <div class="col-span-5">
         <div class="pt-1 pr-0 pl-0 lg:mt-12 lg:mr-2 lg:pr-12 lg:pl-6 ">
-          <h1 class="text-2xl font-medium ">{{ product.name }}</h1>
+          <h1 class="text-2xl font-medium ">{{ product?.name }}</h1>
           <div class="mb-2 mt-2 ">
             <span class="font-semibold text-lg" v-if="productDetailShowing.offPrice">{{ strOffPrice }}</span>
             <span class="font-semibold" :class="productDetailShowing.offPrice ? 'line-through text-gray-400 ms-2' : ''">{{ strPrice }}</span>
@@ -45,7 +45,7 @@
             <div class="flex gap-3">
               <div 
                 class="input-wrap"
-                v-for="productDetail in product.productDetails" :key="productDetail.id"
+                v-for="productDetail in product?.productDetails" :key="productDetail.id"
               >
                 <input 
                 type="radio" hidden :value="productDetail.id"
@@ -100,7 +100,7 @@
           </div>
           <div class="pt-6">
             <h4 class="font-medium mb-1">Mô tả sản phẩm</h4>
-            <p>{{ product.description }}</p>
+            <p>{{ product?.description }}</p>
           </div>
         </div>
       </div>
@@ -110,117 +110,40 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { Product, ProductDetail } from "@/types";
-  const { slug }= useRoute().params;
+import { IResponse, Product, ProductDetail } from "@/types";
+
+  const productStore = useProductStore();
+  const { slug } = useRoute().params as { slug: string };
 
   definePageMeta({
     layout: "default"
   })
   
-  let product : Product;
+  const product: Ref<Product | null> = ref(null);
   let productDetailShowing:ProductDetail;
   let productQuantityId:number | null = null;
   let productDetailId:Ref<number> = ref(0);
   let imageShowing: Ref<string> = ref('');
   let imageShowIndex: Ref<number> = ref(0);
-
-  product = {
-    id: 1,
-    name: "Air Force 1",
-    slug: "air-force-1",
-    description: "Lorem insput",
-    status: 1,
-    createdDate: new Date,
-    updatedDate: new Date,
-    brand: {
-      id: 1,
-      name: "Nike",
-      origin: "Mỹ",
-      description: ""
-    },
-    productDetails: [
-      {
-        id: 1,
-        color: {
-          id: 1, name: "Đen", description: "", colorCode: "#333"
-        },
-        price: 600000,
-        offPrice: 550000,
-        status: 1,
-        imageUrls: [
-          "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/455439ad-72b0-4afb-9cfd-5044b63af2e9/air-force-1-07-shoes-VWCc04.png",
-          "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/7b54b0d4-79a1-44a2-a2c0-01066bda877c/air-force-1-07-shoes-VWCc04.png",
-          "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/3010d407-c09e-4124-81c8-d84a955af273/air-force-1-07-shoes-VWCc04.png",
-          "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/a185a94c-818b-46ae-bd0b-d54e5834b907/air-force-1-07-shoes-VWCc04.png",
-          "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/e634b359-8d30-4720-b7fb-2769f9bb53fd/air-force-1-07-shoes-VWCc04.png"
-        ],
-        productQuantities: [
-          {
-            id: 1,
-            size: {name: "Xl"},
-            quantity: 100
-          },
-          {
-            id: 2,
-            size: {name: "M"},
-            quantity: 100
-          },
-          {
-            id: 3,
-            size: {name: "S"},
-            quantity: 100
-          },
-        ],
-      },
-      {
-        id: 2,
-        color: {
-          id: 1, name: "Trắng", description: "", colorCode: "#ddd"
-        },
-        price: 620000,
-        offPrice: 550000,
-        status: 1,
-        imageUrls: [
-          "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/7b54b0d4-79a1-44a2-a2c0-01066bda877c/air-force-1-07-shoes-VWCc04.png",
-          "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/3010d407-c09e-4124-81c8-d84a955af273/air-force-1-07-shoes-VWCc04.png",
-          "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/a185a94c-818b-46ae-bd0b-d54e5834b907/air-force-1-07-shoes-VWCc04.png",
-          "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/e634b359-8d30-4720-b7fb-2769f9bb53fd/air-force-1-07-shoes-VWCc04.png"
-        ],
-        productQuantities: [
-          {
-            id: 2,
-            size: {name: "M"},
-            quantity: 100
-          },
-          {
-            id: 1,
-            size: {name: "Xl"},
-            quantity: 100
-          },
-          {
-            id: 3,
-            size: {name: "S"},
-            quantity: 0
-          },
-          {
-            id: 4,
-            size: {name: "2XL"},
-            quantity: 10
-          },
-        ],
-      },
-    ],
-    productPreviewId: 1
-  }
-  
-  productDetailShowing = product.productDetails.find(pd => pd.id = product.productPreviewId) || product.productDetails[0];
-  imageShowing.value = productDetailShowing.imageUrls[0];
-
+    
   const formatter = new Intl.NumberFormat('en-US');
-  const strPrice = formatter.format(productDetailShowing.price) + '₫';
-  const strOffPrice = productDetailShowing.offPrice ? formatter.format(productDetailShowing.offPrice) + '₫' : '';
-  const offPercent = productDetailShowing.offPrice ? + Math.round((1 - productDetailShowing.offPrice / productDetailShowing.price) * 100)  + "% off" : '';
-  productDetailId.value = productDetailShowing.id;
+  let strPrice: string = "";
+  let strOffPrice: string = "";
+  let offPercent = "";
+  const { data } = await useAsyncData<IResponse<any>>('topProduct', () => productStore.getProductBySlug(slug));
+  console.log(data.value);
+  product.value = data.value?.output
+
+  if (product.value != null) {
+    productDetailShowing = product.value.productDetails.find(pd => pd.id == product.value?.productPreviewId) || product.value.productDetails[0];
+    imageShowing.value = productDetailShowing.imageUrls[0];
+    strPrice = formatter.format(productDetailShowing.price) + '₫';
+    strOffPrice = productDetailShowing.offPrice ? formatter.format(productDetailShowing.offPrice) + '₫' : '';
+    offPercent = productDetailShowing.offPrice ? + Math.round((1 - productDetailShowing.offPrice / productDetailShowing.price) * 100)  + "% off" : '';
+    productDetailId.value = productDetailShowing.id;
+  } else {
+    await navigateTo('/404')
+  }
 
   function prevImage() {
     if (imageShowIndex.value == 0) {
@@ -238,7 +161,7 @@ import { Product, ProductDetail } from "@/types";
   }
 
   watch(productDetailId, (detailId) => {
-    productDetailShowing = product.productDetails.find(pd => pd.id == detailId) || productDetailShowing;
+    productDetailShowing = product.value?.productDetails.find(pd => pd.id == detailId) || productDetailShowing;
     imageShowIndex.value = 0;
     imageShowing.value = productDetailShowing.imageUrls[imageShowIndex.value];
     productQuantityId = null;

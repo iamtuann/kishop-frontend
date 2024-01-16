@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ProductBasic, IResponse } from "~/types/index";
+import { ProductBasic, IResponse, Product } from "~/types/index";
 
 export const useProductStore = defineStore({
   id: "productStore",
@@ -15,6 +15,10 @@ export const useProductStore = defineStore({
           orderBy: "desc"
         }
       });
+      return response;
+    },
+    async getProductBySlug(slug: string) {
+      const response:IResponse<Product> = await $fetch("products/"+slug);
       return response;
     }
   }
