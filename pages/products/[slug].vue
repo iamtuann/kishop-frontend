@@ -1,14 +1,15 @@
 <template>
   <div class="h-14"></div>
   <div class="container mx-auto">
-    <div class="grid grid-cols-12">
-      <div class="col-span-7">
-        <div class="flex gap-4 lg:mt-12 lg:mr-2 ps-12 max-h-[600px] min-h-[455px]">
-          <div class="flex relative flex-col grow gap-2 max-w-[60px] h-full overflow-y-auto">
+    <div class="grid grid-cols-12 gap-5">
+      <div class="col-span-12 md:col-span-7 gap-4">
+        <div class="flex gap-4 lg:mt-12 max-h-[600px] min-h-[455px]">
+          <div class="flex flex-shrink-0 relative flex-col grow gap-2 max-w-[60px] h-full overflow-y-auto">
             <div 
-              v-for="(url, id) in productDetailShowing?.imageUrls" 
+              v-for="(url, idx) in productDetailShowing?.imageUrls" 
+              :key="idx"
               class="relative w-full h-[60px] rounded cursor-pointer"
-              @mouseover="imageShowIndex = id"
+              @mouseover="imageShowIndex = idx"
             >
               <img class="w-full h-full rounded bg-gray-100 object-cover object-center" :src="url" :alt="product?.name">
             </div>
@@ -32,12 +33,12 @@
           </div>
         </div>
       </div>
-      <div class="col-span-5">
-        <div class="pt-1 pr-0 pl-0 lg:mt-12 lg:mr-2 lg:pr-12 lg:pl-6 ">
+      <div class="col-span-12 md:col-span-5">
+        <div class="pt-1 pr-0 pl-0 lg:mt-12 lg:mr-2">
           <h1 class="text-2xl font-medium ">{{ product?.name }}</h1>
           <div class="mb-2 mt-2 ">
-            <span class="font-semibold text-lg" v-if="productDetailShowing.offPrice">{{ strOffPrice }}</span>
-            <span class="font-semibold" :class="productDetailShowing.offPrice ? 'line-through text-gray-400 ms-2' : ''">{{ strPrice }}</span>
+            <span class="font-semibold text-xl" v-if="productDetailShowing.offPrice">{{ strOffPrice }}</span>
+            <span class="font-semibold" :class="productDetailShowing.offPrice ? 'line-through text-gray-400 ms-2' : 'text-xl'">{{ strPrice }}</span>
             <span class="ml-2 font-semibold text-green-600">{{ offPercent }}</span>
           </div>
           <div class="mt-3 mb-4">
@@ -130,17 +131,15 @@ import { IResponse, Product, ProductDetail } from "@/types";
   let strPrice: string = "";
   let strOffPrice: string = "";
   let offPercent = "";
-  const { data } = await useAsyncData<IResponse<any>>('topProduct', () => productStore.getProductBySlug(slug));
-  console.log(data.value);
+
+  const { data } = await useAsyncData<IResponse<any>>('product', () => productStore.getProductBySlug(slug));
   product.value = data.value?.output
 
   if (product.value != null) {
     productDetailShowing = product.value.productDetails.find(pd => pd.id == product.value?.productPreviewId) || product.value.productDetails[0];
     imageShowing.value = productDetailShowing.imageUrls[0];
-    strPrice = formatter.format(productDetailShowing.price) + '₫';
-    strOffPrice = productDetailShowing.offPrice ? formatter.format(productDetailShowing.offPrice) + '₫' : '';
-    offPercent = productDetailShowing.offPrice ? + Math.round((1 - productDetailShowing.offPrice / productDetailShowing.price) * 100)  + "% off" : '';
     productDetailId.value = productDetailShowing.id;
+    calculatePrice();
   } else {
     await navigateTo('/404')
   }
@@ -159,12 +158,18 @@ import { IResponse, Product, ProductDetail } from "@/types";
       imageShowIndex.value++;
     }
   }
+  function calculatePrice() {
+    strPrice = formatter.format(productDetailShowing.price) + '₫';
+    strOffPrice = productDetailShowing.offPrice ? formatter.format(productDetailShowing.offPrice) + '₫' : '';
+    offPercent = productDetailShowing.offPrice ? + Math.round((1 - productDetailShowing.offPrice / productDetailShowing.price) * 100)  + "% off" : '';
+  }
 
   watch(productDetailId, (detailId) => {
     productDetailShowing = product.value?.productDetails.find(pd => pd.id == detailId) || productDetailShowing;
     imageShowIndex.value = 0;
     imageShowing.value = productDetailShowing.imageUrls[imageShowIndex.value];
     productQuantityId = null;
+    calculatePrice();
   })
 
   watch(imageShowIndex, (newVal) => {
