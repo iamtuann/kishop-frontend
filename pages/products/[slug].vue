@@ -42,7 +42,6 @@
             <span class="ml-2 font-semibold text-green-600">{{ offPercent }}</span>
           </div>
           <div class="mt-3 mb-4">
-            <h4 class="font-medium  mb-2">Màu sắc</h4>
             <div class="flex gap-3">
               <div 
                 class="input-wrap"
@@ -51,15 +50,16 @@
                 <input 
                 type="radio" hidden :value="productDetail.id"
                 v-model="productDetailId"
-                name="color" :id="productDetail.color.name"
+                :id="productDetail.id+''"
                 >
-                <label :for="productDetail.color.name"
-                  class="flex items-center justify-center p-[1px] cursor-pointer rounded-full bg-white border border-gray-300"
+                <label :for="productDetail.id+''" :title="productDetail.name || product?.name"
+                  class="flex items-center justify-center p-[1px] cursor-pointer bg-white border border-gray-300"
                 >
-                <div class="w-8 h-8 rounded-full" :style="{backgroundColor: productDetail.color.colorCode}"></div>
+                <img class="w-12 h-12" :src="productDetail.previewImage">
                 </label>
               </div>
             </div>
+            <h4 class="mt-2 text-sm">{{ productDetailShowing.name || "" }}</h4>
           </div>
           <div class="my-3 ">
             <div class="mb-2 flex justify-between">
@@ -185,7 +185,8 @@ import { IResponse, Product, ProductDetail } from "@/types";
 .arrow {
   @apply inline-flex items-center justify-center w-8 h-8 rounded-full cursor-pointer bg-white select-none
 }
-.input-wrap input[type="radio"]:checked + label{
+.input-wrap input[type="radio"]:checked + label,
+.input-wrap input[type="radio"]:hover + label {
   border: 1px solid rgb(17, 17, 17);
 }
 </style>
