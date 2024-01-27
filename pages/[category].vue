@@ -94,6 +94,10 @@
 </template>
 
 <script setup lang="ts">
+import { useCommonStore } from '~/stores';
+import { Brand, Color, IResponse } from '~/types';
+
+const commonStore = useCommonStore();
 const isOpenCate = ref(true);
 const isOpenSale = ref(true);
 const isOpenColor = ref(true);
@@ -121,88 +125,11 @@ const listCate = [
     slug: "sneakers"
   },
 ]
-const listColor = [
-  {
-    id: 1,
-    name: "Đen",
-    engName: "Black",
-    code: "#000000",
-  },
-  {
-    id: 2,
-    name: "Xanh",
-    engName: "Blue",
-    code: "#1790c8",
-  },
-  {
-    id: 3,
-    name: "Nâu",
-    engName: "Brow",
-    code: "#825D41",
-  },
-  {
-    id: 4,
-    name: "Xanh lá",
-    engName: "Green",
-    code: "#7bba3c",
-  },
-  {
-    id: 5,
-    name: "Xám",
-    engName: "Gray",
-    code: "#808080",
-  },
-  {
-    id: 6,
-    name: "Cam",
-    engName: "Orange",
-    code: "#f36b26",
-  },
-  {
-    id: 7,
-    name: "Hồng",
-    engName: "Pink",
-    code: "#f0728f",
-  },
-  {
-    id: 8,
-    name: "Tím",
-    engName: "Purple",
-    code: "#8d924f",
-  },
-  {
-    id: 9,
-    name: "Vàng",
-    engName: "Yellow",
-    code: "#fed533",
-  },
-  {
-    id: 10,
-    name: "Đỏ",
-    engName: "Red",
-    code: "#e7352b",
-  },
-  {
-    id: 11,
-    name: "Trắng",
-    engName: "White",
-    code: "#ffffff",
-  },
-]
-const listBrand = [
-  {
-    id: 1,
-    name: "Adidas",
-  },
-  {
-    id: 2,
-    name: "Nike",
-  },
-  {
-    id: 3,
-    name: "Reebok",
-  },
-]
+
+const { data: listBrand } = useAsyncData<Brand[]>('brands', () => commonStore.getAllBrands());
+const { data: listColor } = useAsyncData<Color[]>('colors', () => commonStore.getAllColors());
+
+
 </script>
 
 <style scoped>
