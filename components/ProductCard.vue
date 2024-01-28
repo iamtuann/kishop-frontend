@@ -1,13 +1,13 @@
 <template>
   <div class="card-wrapper">
-    <NuxtLink to="#">
+    <NuxtLink :to="'/products/'+product.slug">
       <div class="overflow-hidden relative">
         <img class="pd-img aspect-square object-cover duration-200 bg-gray-400" :src="product.thumbnail" :alt="product.name">
         <span v-if="product.offPrice" class="absolute z-10 top-2 left-2 px-3 py-[6px] font-bold rounded-full text-sm bg-white text-red-600">{{ offPercent }}</span>
       </div>
     </NuxtLink>
     <div class="py-3 card-body">
-      <NuxtLink to="#">
+      <NuxtLink :to="'/products/'+product.slug">
         <h4 class="font-semibold mb-1">{{ product.name }}</h4>
         <p class="description mb-2 text-gray-500">{{ product.description }}</p>
         <div class="mb-2">

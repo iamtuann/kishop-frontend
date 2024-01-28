@@ -16,11 +16,10 @@ import { ProductBasic, IResponse } from '~/types';
 
 const listTopProducts: Ref<ProductBasic[]> = ref([])
   
-  const config = useRuntimeConfig();
-  const productStore = useProductStore();
-  const { data } = await useAsyncData<IResponse<any>>('topProduct', () => productStore.getTopNewProduct());
-  listTopProducts.value = data.value?.output.content;
-  console.log(listTopProducts.value);
+const productStore = useProductStore();
+const { data } = await useAsyncData<IResponse<any>>('topProduct', () => productStore.getTopNewProduct());
+listTopProducts.value = data.value?.output.content;
+console.log(listTopProducts.value);
   
 
 </script>

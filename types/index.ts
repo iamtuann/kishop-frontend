@@ -13,10 +13,11 @@ export interface Product {
 
 export interface ProductDetail {
   id: number,
-  color: Color,
+  name: string,
   price: number,
   offPrice: number,
   status: number,
+  previewImage: string,
   imageUrls: string[],
   productQuantities: ProductQuantity[],
 }
@@ -36,7 +37,8 @@ export interface ProductBasic {
   brand?: string | null,
   price: number,
   offPrice?: number | null,
-  thumbnail: string
+  thumbnail: string,
+  slug: string
 }
 
 export interface Brand {
@@ -49,8 +51,9 @@ export interface Brand {
 export interface Color {
   id: number,
   name: string,
+  engName: string,
   description?: string
-  colorCode: string
+  code: string
 }
 
 export interface Size {
