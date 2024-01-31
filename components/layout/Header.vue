@@ -3,7 +3,7 @@
       <nav class="container mx-auto py-2 flex justify-between items-center h-16">
         <NuxtLink to="/" class="font-bold text-xl text-primary-600">KiShop</NuxtLink>
         <ul class="flex gap-2">
-          <li class="relative nav-item-parent">
+          <!-- <li class="relative nav-item-parent">
             <div class="nav-item flex items-center">
               <span class="">Thương hiệu </span>
               <span class="material-symbols-outlined default-style-icon">expand_more</span>
@@ -38,11 +38,12 @@
                 </li>
               </div>
             </ul>
-          </li>
+          </li> -->
+          <li class=""><NuxtLink class="nav-item" to="/">Trang chủ</NuxtLink></li>
           <li class=""><NuxtLink class="nav-item" to="/men">Nam</NuxtLink></li>
           <li class=""><NuxtLink class="nav-item" to="/women">Nữ</NuxtLink></li>
-          <li class=""><NuxtLink class="nav-item" to="/about">Mới</NuxtLink></li>
-          <li class=""><NuxtLink class="nav-item" to="/all">Tất cả sản phẩm</NuxtLink></li>
+          <li class=""><NuxtLink class="nav-item" to="/flash-sale">Giảm giá</NuxtLink></li>
+          <li class=""><NuxtLink class="nav-item" to="/about">Về chúng tôi</NuxtLink></li>
         </ul>
         <ul class="flex items-center gap-3">
           <Search />

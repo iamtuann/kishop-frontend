@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Brand, Color, IResponse } from "@/types";
+import { Brand, Color, IResponse, Category } from "@/types";
 
 export const useCommonStore = defineStore({
   id: "commonStore",
@@ -15,5 +15,9 @@ export const useCommonStore = defineStore({
       const response:IResponse<Color[]> = await $fetch("colors/all");
       return response.output;
     },
+    async getAllCategories(): Promise<Category[]> {
+      const response:IResponse<Category[]> = await $fetch("categories/all");
+      return response.output;
+    }
   }
 })
