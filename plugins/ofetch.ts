@@ -12,7 +12,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       if (token) {
         options.headers = { Authorization: `Bearer ${token}` }
       } else {
-        console.log('Not authenticated')
+        // console.log('Not authenticated')
       }
     },
     onRequestError ({ error }) {

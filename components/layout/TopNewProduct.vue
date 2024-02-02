@@ -18,7 +18,7 @@ const listTopProducts: Ref<ProductBasic[]> = ref([])
   
 const productStore = useProductStore();
 const { data } = await useAsyncData<IResponse<any>>('topProduct', () => productStore.getTopNewProduct());
-listTopProducts.value = data.value?.output.content;
+listTopProducts.value = data.value?.output;
 console.log(listTopProducts.value);
   
 

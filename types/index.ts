@@ -62,6 +62,13 @@ export interface Size {
   description?: string
 }
 
+export interface Category {
+  id?: number,
+  name: string,
+  slug: string,
+  description?: string
+}
+
 export interface IResponse<T> {
   statusCode: number,
   message: string,
