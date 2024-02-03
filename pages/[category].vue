@@ -1,11 +1,19 @@
 <template>
   <div class="container mx-auto mt-6">
-    <!-- <div class="banner h-[320px] rounded-3xl overflow-hidden">
+    <div class="banner h-[320px] rounded-3xl overflow-hidden">
       <img class="object-cover object-center h-full w-full" src="../assets/images/banner_men.png" alt="banner men fashion">
-    </div> -->
+    </div>
     <div class="mt-5">
       <div class="flex justify-between pb-4">
         <h2 class="text-4xl font-semibold italic">Men's shoes</h2>
+        <div class="min-w-[200px]">
+          <CommonCustomSelect
+            v-model="sortingSelected"
+            :items="listSorting"
+            :default="listSorting[0]"
+            itemTitle="name"
+          />
+        </div>
       </div>
       <div class="grid grid-cols-10 gap-4 mt-4">
         <div class="col-span-12 md:col-span-2 pr-4">
@@ -26,7 +34,7 @@
               </label>
             </div>
           </div>
-          <div class="cate-item border-t border-gray-300 pb-2" v-if="isShowGenderCheckbox">
+          <div class="cate-item border-t border-gray-300 pb-2" v-if="!isPageGender">
             <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
               @click="isOpenGender = !isOpenGender"
             >
@@ -43,7 +51,7 @@
               </label>
             </div>
           </div>
-          <div class="cate-item border-t border-gray-300 pb-2">
+          <div class="cate-item border-t border-gray-300 pb-2" v-if="!isPageSale" >
             <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
               @click="isOpenSale = !isOpenSale"
             >
@@ -114,6 +122,7 @@
 import { useCommonStore } from '~/stores';
 import { Brand, Category, Color, ProductBasic } from '~/types';
 
+const router = useRouter()
 const route = useRoute()
 const productStore = useProductStore();
 const commonStore = useCommonStore();
@@ -123,13 +132,42 @@ const isOpenColor = ref(true);
 const isOpenBrand = ref(true);
 const isOpenGender = ref(true);
 const isResetFilter = ref(false);
-const isShowGenderCheckbox = ref(true);
+const isPageGender = ref(false);
+const isPageSale = ref(false);
 
 const currentPage = ref(1);
 const pageSize = ref(20);
 const orderBy = ref("");
 const sortingKey = ref("");
 const isSale = ref(false);
+const sortingSelected: object = ref({})
+const listSorting = [
+  {
+    name: "Mặc định",
+    sortingKey: null,
+    orderBy: "asc"
+  },
+  {
+    name: "Giá tăng dần",
+    sortingKey: "price",
+    orderBy: "asc"
+  },
+  {
+    name: "Giá giảm dần",
+    sortingKey: "price",
+    orderBy: "desc"
+  },
+  {
+    name: "Mới nhất",
+    sortingKey: "createdDate",
+    orderBy: "desc"
+  },
+  {
+    name: "Giảm nhiều nhất",
+    sortingKey: "price",
+    orderBy: "asc"
+  },
+]
 
 const listCateSelected: Ref<string[]> = ref([]);
 const listColorSelected: Ref<string[]> = ref([]);
@@ -151,14 +189,15 @@ const routeParams = ref(route.params.category);
 switch (routeParams.value) {
   case "men":
     listGenderSelected.value.push("Nam");
-    isShowGenderCheckbox.value = false;
+    isPageGender.value = true;
     break;
   case "women":
     listGenderSelected.value.push("Nữ");
-    isShowGenderCheckbox.value = false;
+    isPageGender.value = true;
     break;
   case "flash-sale":
     isSale.value = true;
+    isPageSale.value = true;
   default:
     break;
 }
@@ -180,17 +219,20 @@ const { data: listProduct } = await useAsyncData<ProductBasic[]>(
   }
 );
 
+watch([listCateSelected, listBrandSelected, listColorSelected, listGenderSelected, isSale], () => {
+  setQueryRouter()
+})
+
 function getQueryRouter() {
-  console.log(route.query);
   if (Array.isArray(route.query.categories)) {
     listCateSelected.value = route.query.categories as string[]
   } else if (route.query.categories) {
     listCateSelected.value = [route.query.categories as string]
   }
-  if (Array.isArray(route.query.brandNames)) {
-    listBrandSelected.value = route.query.brandNames as string[]
-  } else if (route.query.brandNames) {
-    listBrandSelected.value = [route.query.brandNames as string]
+  if (Array.isArray(route.query.brands)) {
+    listBrandSelected.value = route.query.brands as string[]
+  } else if (route.query.brands) {
+    listBrandSelected.value = [route.query.brands as string]
   }
   if (Array.isArray(route.query.colors)) {
     listColorSelected.value = route.query.colors as string[]
@@ -207,7 +249,23 @@ function getQueryRouter() {
   }
 }
 function setQueryRouter() {
-  
+  const queryParams:any = {}
+  if (listCateSelected.value.length > 0) {
+    queryParams.categories = listCateSelected.value
+  }
+  if (listColorSelected.value.length > 0) {
+    queryParams.colors = listColorSelected.value
+  }
+  if (listBrandSelected.value.length > 0) {
+    queryParams.brands = listBrandSelected.value
+  }
+  if (listGenderSelected.value.length > 0 && !isPageGender.value) {
+    queryParams.genders = listGenderSelected.value
+  }
+  if (isSale.value && !isPageSale.value) {
+    queryParams.sale = isSale.value;
+  }
+  router.push({ query: queryParams })
 }
 // function setCateParams() {
 //   cateParams.value = [defaultCateParam.value, ...listCateSelected.value];
