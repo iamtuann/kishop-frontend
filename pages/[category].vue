@@ -108,7 +108,7 @@
         <div class="col-span-12 md:col-span-8">
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <ProductCard 
-              v-for="product in listProduct" :key="product.id" 
+              v-for="product in listProduct" :key="product.detailId" 
               :product="product"
             />
           </div>
@@ -163,9 +163,9 @@ const listSorting = [
     orderBy: "desc"
   },
   {
-    name: "Giảm nhiều nhất",
-    sortingKey: "price",
-    orderBy: "asc"
+    name: "Bán chạy nhất",
+    sortingKey: "sold",
+    orderBy: "desc"
   },
 ]
 
@@ -218,9 +218,11 @@ const { data: listProduct } = await useAsyncData<ProductBasic[]>(
     ]
   }
 );
+console.log(listProduct.value);
 
 watch([listCateSelected, listBrandSelected, listColorSelected, listGenderSelected, isSale], () => {
   setQueryRouter()
+console.log(listProduct.value);
 })
 
 function getQueryRouter() {

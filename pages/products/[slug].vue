@@ -37,8 +37,8 @@
         <div class="pt-1 pr-0 pl-0 lg:mt-12 lg:mr-2">
           <h1 class="text-2xl font-medium ">{{ product?.name }}</h1>
           <div class="mb-2 mt-2 ">
-            <span class="font-semibold text-xl" v-if="productDetailShowing.offPrice">{{ strOffPrice }}</span>
-            <span class="font-semibold" :class="productDetailShowing.offPrice ? 'line-through text-gray-400 ms-2' : 'text-xl'">{{ strPrice }}</span>
+            <span class="font-semibold text-xl" v-if="isSale">{{ strPrice }}</span>
+            <span class="font-semibold" :class="isSale ? 'line-through text-gray-400 ms-2' : 'text-xl'">{{ strOldPrice }}</span>
             <span class="ml-2 font-semibold text-green-600">{{ offPercent }}</span>
           </div>
           <div class="mt-3 mb-4">
@@ -113,6 +113,7 @@
 import { ref, watch } from "vue";
 import { IResponse, Product, ProductDetail } from "@/types";
 
+  const route = useRoute();
   const productStore = useProductStore();
   const { slug } = useRoute().params as { slug: string };
 
@@ -122,24 +123,23 @@ import { IResponse, Product, ProductDetail } from "@/types";
   
   const product: Ref<Product | null> = ref(null);
   let productDetailShowing:ProductDetail;
-  let productQuantityId:number | null = null;
+  let productQuantityId: Ref<number | null> = ref(null);
   let productDetailId:Ref<number> = ref(0);
   let imageShowing: Ref<string> = ref('');
   let imageShowIndex: Ref<number> = ref(0);
+  const isSale: Ref<boolean> = ref(false)
     
   const formatter = new Intl.NumberFormat('en-US');
+  let strOldPrice: string = "";
   let strPrice: string = "";
-  let strOffPrice: string = "";
   let offPercent = "";
 
   const { data } = await useAsyncData<IResponse<any>>('product', () => productStore.getProductBySlug(slug));
   product.value = data.value?.output
-
+  
   if (product.value != null) {
-    productDetailShowing = product.value.productDetails.find(pd => pd.id == product.value?.productPreviewId) || product.value.productDetails[0];
-    imageShowing.value = productDetailShowing.imageUrls[0];
-    productDetailId.value = productDetailShowing.id;
-    calculatePrice();
+    productDetailId.value = getDetailIdFromRoute() || product.value.productDetails[0].id;
+    updateProductDetail();
   } else {
     await navigateTo('/404')
   }
@@ -159,17 +159,31 @@ import { IResponse, Product, ProductDetail } from "@/types";
     }
   }
   function calculatePrice() {
-    strPrice = formatter.format(productDetailShowing.price) + '₫';
-    strOffPrice = productDetailShowing.offPrice ? formatter.format(productDetailShowing.offPrice) + '₫' : '';
-    offPercent = productDetailShowing.offPrice ? + Math.round((1 - productDetailShowing.offPrice / productDetailShowing.price) * 100)  + "% off" : '';
+    strOldPrice = formatter.format(productDetailShowing.oldPrice) + '₫';
+    strPrice = isSale.value ? formatter.format(productDetailShowing.price) + '₫' : '';
+    offPercent = isSale.value ? + Math.round((1 - productDetailShowing.price / productDetailShowing.oldPrice) * 100)  + "% off" : '';
   }
-
-  watch(productDetailId, (detailId) => {
-    productDetailShowing = product.value?.productDetails.find(pd => pd.id == detailId) || productDetailShowing;
+  function getDetailIdFromRoute() {
+    const detailId = route.params.detailId;
+    if (Array.isArray(detailId)) {
+      return Number(detailId[0]);
+    } else if (detailId) {
+      return Number(detailId);
+    } else {
+      return null;
+    }
+  }
+  function updateProductDetail() {
+    productDetailShowing = product.value?.productDetails.find(pd => pd.id == productDetailId.value) || productDetailShowing;
+    isSale.value = productDetailShowing.price < productDetailShowing.oldPrice;
     imageShowIndex.value = 0;
     imageShowing.value = productDetailShowing.imageUrls[imageShowIndex.value];
-    productQuantityId = null;
+    productQuantityId.value = null;
     calculatePrice();
+  }
+
+  watch(productDetailId, () => {
+    updateProductDetail();
   })
 
   watch(imageShowIndex, (newVal) => {

@@ -10,6 +10,15 @@ export default defineNuxtConfig({
       BASE_URL: process.env.API_URL || "http://localhost:8081/api",
     }
   },
+  hooks: {
+    'pages:extend'(pages) {
+      pages.push({
+        name: 'DetailProduct',
+        path: '/products/:slug/:detailId',
+        file: '~/pages/products/[slug].vue'
+      })
+    }
+  },
   plugins: [
     '~/plugins/ofetch'
   ],
