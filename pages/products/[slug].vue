@@ -114,6 +114,7 @@ import { ref, watch } from "vue";
 import { IResponse, Product, ProductDetail } from "@/types";
 
   const route = useRoute();
+  const router = useRouter();
   const productStore = useProductStore();
   const { slug } = useRoute().params as { slug: string };
 
@@ -182,7 +183,8 @@ import { IResponse, Product, ProductDetail } from "@/types";
     calculatePrice();
   }
 
-  watch(productDetailId, () => {
+  watch(productDetailId, (newId) => {
+    router.replace({params: {detailId: newId}})
     updateProductDetail();
   })
 
