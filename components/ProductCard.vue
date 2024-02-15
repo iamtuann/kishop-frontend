@@ -42,6 +42,10 @@ import { ProductBasic } from "~/types";
   text-overflow: ellipsis;
   line-height: 22px;
 }
+.pd-img {
+  width: 100%;
+  max-height: 300px;
+}
 .card-wrapper:hover .pd-img {
   transform: scale(1.08);
 }
