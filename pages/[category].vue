@@ -113,7 +113,7 @@
             />
             <ProductCard 
               v-else
-              v-for="product in listProduct" :key="product.detailId" 
+              v-for="product in listProduct" :key="product.variantId" 
               :product="product"
             />
           </div>

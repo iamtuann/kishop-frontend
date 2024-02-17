@@ -4,7 +4,7 @@ export default <RouterConfig> {
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition;
-    } else if (from.params.detailId && to.params.detailId !== from.params.detailId) {
+    } else if (from.params.variantId && to.params.variantId !== from.params.variantId) {
       return savedPosition;
     } else if (to.hash) {
       return { selector: to.hash };

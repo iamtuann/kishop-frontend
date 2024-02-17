@@ -1,13 +1,13 @@
 <template>
   <div class="card-wrapper">
-    <NuxtLink :to="`/products/${product.slug}${product.detailId ? '/' + product.detailId : ''}`">
+    <NuxtLink :to="`/products/${product.slug}${product.variantId ? '/' + product.variantId : ''}`">
       <div class="overflow-hidden relative">
-        <img class="pd-img aspect-square object-cover duration-200 bg-gray-400" :src="product.thumbnail" :alt="product.name">
+        <img class="pv-img aspect-square object-cover duration-200 bg-gray-400" :src="product.thumbnail" :alt="product.name">
         <span v-if="isSale" class="absolute z-10 top-2 left-2 px-3 py-[6px] font-bold rounded-full text-sm bg-white text-red-600">{{ offPercent }}</span>
       </div>
     </NuxtLink>
     <div class="py-3 card-body">
-      <NuxtLink :to="`/products/${product.slug}${product.detailId ? '/'+product.detailId : ''}`">
+      <NuxtLink :to="`/products/${product.slug}${product.variantId ? '/'+product.variantId : ''}`">
         <h4 class="font-semibold mb-1">{{ product.name }}</h4>
         <p class="description mb-2 text-gray-500">{{ product.description }}</p>
         <div class="mb-2">
@@ -42,11 +42,11 @@ import { ProductBasic } from "~/types";
   text-overflow: ellipsis;
   line-height: 22px;
 }
-.pd-img {
+.pv-img {
   width: 100%;
   max-height: 300px;
 }
-.card-wrapper:hover .pd-img {
+.card-wrapper:hover .pv-img {
   transform: scale(1.08);
 }
 .card-body {
