@@ -3,7 +3,7 @@
   <div class="container mx-auto">
     <div class="grid grid-cols-12 gap-5">
       <div class="col-span-12 md:col-span-7 gap-4">
-        <div class="flex gap-4 lg:mt-12 max-h-[600px] min-h-[455px]">
+        <div class="flex gap-4 lg:mt-10 max-h-[600px] min-h-[455px] sticky top-8">
           <div class="flex flex-shrink-0 relative flex-col grow gap-2 max-w-[60px] h-full overflow-y-auto">
             <div 
               v-for="(url, idx) in productVariantShowing?.imageUrls" 
@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="col-span-12 md:col-span-5">
-        <div class="pt-1 pr-0 pl-0 lg:mt-12 lg:mr-2">
+        <div class="pt-1 pr-0 pl-0 lg:mt-10 lg:mr-2">
           <h1 class="text-2xl font-medium ">{{ product?.name }}</h1>
           <div class="mb-2 mt-2 ">
             <span class="font-semibold text-xl" v-if="isSale">{{ strPrice }}</span>
@@ -53,9 +53,9 @@
                 :id="productVariant.id+''"
                 >
                 <label :for="productVariant.id+''" :title="productVariant.name || product?.name"
-                  class="flex items-center justify-center p-[1px] cursor-pointer bg-white border border-gray-300"
+                  class="flex items-center justify-center p-[1px] cursor-pointer bg-white border border-gray-300 rounded-md overflow-hidden"
                 >
-                <img class="w-12 h-12" :src="productVariant.previewImage">
+                <img class="w-14 h-14" :src="productVariant.previewImage">
                 </label>
               </div>
             </div>

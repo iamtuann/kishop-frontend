@@ -46,6 +46,23 @@ export interface ProductBasic {
   color: string | null
 }
 
+export interface ProductDetail {
+  id: number,
+  variantId: number,
+  quantityId: number,
+  name: string,
+  variantName: string,
+  slug: string
+  color: string,
+  size: string,
+  status: number,
+  brand: string,
+  thumbnail: string,
+  price: number,
+  oldPrice: number,
+  quantity: number,
+}
+
 export interface Brand {
   id: number,
   name: string,

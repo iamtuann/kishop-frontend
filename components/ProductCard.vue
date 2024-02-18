@@ -28,8 +28,8 @@ import { ProductBasic } from "~/types";
   const product = props.product;
   const isSale = product.price < product.oldPrice;
   const formatter = new Intl.NumberFormat('en-US');
-  const strOldPrice = formatter.format(product.oldPrice) + '₫';
-  const strPrice = isSale ? formatter.format(product.price) + '₫' : '';
+  const strOldPrice = isSale ? formatter.format(product.oldPrice) + '₫' : '';
+  const strPrice = formatter.format(product.price) + '₫';
   const offPercent = isSale ? '-' + Math.round((1 - product.price / product.oldPrice) * 100)  + "%" : ''
 </script>
 

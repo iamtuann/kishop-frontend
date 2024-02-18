@@ -47,8 +47,8 @@
         </ul>
         <ul class="flex items-center gap-3">
           <Search />
-          <span class="p-1 material-symbols-outlined default-style-icon cursor-pointer">favorite</span>
-          <span class="p-1 material-symbols-outlined default-style-icon cursor-pointer">shopping_cart</span>
+          <span class="p-1 material-symbols-outlined semibold-style-icon cursor-pointer">favorite</span>
+          <span class="p-1 material-symbols-outlined semibold-style-icon cursor-pointer">shopping_bag</span>
         </ul>
       </nav>
     </header>
