@@ -61,6 +61,12 @@ export interface ProductDetail {
   price: number,
   oldPrice: number,
   quantity: number,
+  total: number
+}
+
+export interface ProductOrder {
+  product: ProductDetail,
+  quantity: number,
 }
 
 export interface Brand {

@@ -1,5 +1,5 @@
 <template>
-  <div class="py-5 flex gap-4 pr-3">
+  <div class="py-5 flex gap-4 pr-3 border-b border-b-gray-300">
     <div class="w-[160px] shrink-0">
       <NuxtLink :to="`/products/${product.slug}/${product.variantId}`">
         <img :src="product.thumbnail" :alt="product.name + ' ' + product.variantName"
@@ -16,11 +16,11 @@
       <p class="description mb-1 text-gray-500">Loại: {{ product.variantName }}</p>
       <p class="mb-1 text-gray-500">Size: {{ product.size }}</p>
       <p class="mb-2 flex">
-        <button type="button" class="act-btn minus-btn" 
-          @click="handleMinusQuantity()">-</button>
+        <button type="button" :disabled="product.quantity == 1" class="act-btn minus-btn disabled:text-gray-300" 
+          @click="handleMinusQuantity">-</button>
         <span class="quantity">{{ product.quantity }}</span>
         <button type="button" class="act-btn plus-btn"
-          @click="handlePlusQuantity()">+</button>
+          @click="handlePlusQuantity">+</button>
       </p>
       <div class="flex items-center py-1">
         <div class="inline-flex mx-2 relative">
@@ -43,16 +43,27 @@ import { ProductDetail } from "~/types";
 const props = defineProps({
   product: { type: Object as () => ProductDetail , required: true }
 })
-const product = props.product;
+
+const cartStore = useCartStore();
+
+const product = toRef(props.product);
 const formatter = new Intl.NumberFormat('en-US');
-const strPrice = formatter.format(product.price) + '₫';
+const strPrice: Ref<string> = computed(() => {
+  return formatter.format(product.value.total) + '₫';
+})
 
 function handleMinusQuantity() {
-
+  product.value.quantity--;
+  if (product.value.quantity == 0) {
+    cartStore.removeProductInCart(product.value.quantityId);
+  } else {
+    cartStore.updateDateQuantyProduct(product.value.quantityId, product.value.quantity);
+  }
 }
 
 function handlePlusQuantity() {
-
+  product.value.quantity++;
+  cartStore.updateDateQuantyProduct(product.value.quantityId, product.value.quantity);
 }
 </script>
 
@@ -94,7 +105,7 @@ function handlePlusQuantity() {
   top: -130%;
   display: block;
   width: max-content;
-  z-index: 2;
+  z-index: -1;
   background-color: #fff;
   padding: 2px 6px;
   font-size: 14px;
@@ -113,8 +124,10 @@ function handlePlusQuantity() {
 }
 .favorite-btn:hover + .tooltip.favorite {
   opacity: 1;
+  z-index: 2;
 }
 .delete-btn:hover + .tooltip.delete {
   opacity: 1;
+  z-index: 2;
 }
 </style>
