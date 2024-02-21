@@ -61,7 +61,8 @@ export interface ProductDetail {
   price: number,
   oldPrice: number,
   quantity: number,
-  total: number
+  total: number,
+  totalOldPrice: number,
 }
 
 export interface ProductOrder {

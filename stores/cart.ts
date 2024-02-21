@@ -26,8 +26,11 @@ export const useCartStore = defineStore({
         //call api
       } else {
         for(let i=0; i<this.listProduct.length; i++) {
-          if (this.listProduct[i].quantityId == qtyId) {
-            this.listProduct[i].quantity = quantity;
+          let product = this.listProduct[i];
+          if (product.quantityId == qtyId) {
+            product.quantity = quantity;
+            product.total = product.quantity * product.price;
+            product.totalOldPrice = product.quantity * product.oldPrice;
           }
         };
         this.saveToLocalStorage();

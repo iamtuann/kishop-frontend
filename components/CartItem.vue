@@ -13,7 +13,10 @@
         </NuxtLink>
         <h4 class="font-semibold">{{ strPrice }}</h4>
       </div>
-      <p class="description mb-1 text-gray-500">Loại: {{ product.variantName }}</p>
+      <div class="flex justify-between">
+        <p class="description mb-1 text-gray-500">Loại: {{ product.variantName }}</p>
+        <h4 v-if="isSale" class="font-medium text-sm line-through text-gray-400">{{ strOldPrice }}</h4>
+      </div>
       <p class="mb-1 text-gray-500">Size: {{ product.size }}</p>
       <p class="mb-2 flex">
         <button type="button" :disabled="product.quantity == 1" class="act-btn minus-btn disabled:text-gray-300" 
@@ -39,18 +42,26 @@
 
 <script setup lang="ts">
 import { ProductDetail } from "~/types";
+import { formatPrice } from "@/utils"
 
 const props = defineProps({
   product: { type: Object as () => ProductDetail , required: true }
 })
 
 const cartStore = useCartStore();
+const isSale: Ref<boolean> = ref(false)
 
 const product = toRef(props.product);
+isSale.value = product.value.price < product.value.oldPrice;
 const formatter = new Intl.NumberFormat('en-US');
+
 const strPrice: Ref<string> = computed(() => {
-  return formatter.format(product.value.total) + '₫';
+  return formatPrice(product.value.total);
 })
+const strOldPrice: Ref<string> = computed(() => {
+  return formatPrice(product.value.totalOldPrice);
+})
+
 
 function handleMinusQuantity() {
   product.value.quantity--;
