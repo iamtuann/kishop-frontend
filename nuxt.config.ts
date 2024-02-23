@@ -3,7 +3,8 @@ export default defineNuxtConfig({
   // devtools: { enabled: true },
   modules: [
     '@nuxtjs/tailwindcss',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@vueuse/nuxt',
   ],
   runtimeConfig: {
     public: {
@@ -13,8 +14,8 @@ export default defineNuxtConfig({
   hooks: {
     'pages:extend'(pages) {
       pages.push({
-        name: 'DetailProduct',
-        path: '/products/:slug/:detailId',
+        name: 'VariantProduct',
+        path: '/products/:slug/:variantId',
         file: '~/pages/products/[slug].vue'
       })
     }

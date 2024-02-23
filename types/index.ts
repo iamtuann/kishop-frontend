@@ -7,11 +7,11 @@ export interface Product {
   createdDate: Date,
   updatedDate: Date,
   brand: Brand,
-  productDetails: ProductDetail[] | [],
+  productVariants: ProductVariant[] | [],
   productPreviewId: number
 }
 
-export interface ProductDetail {
+export interface ProductVariant {
   id: number,
   productName: string,
   name: string,
@@ -33,8 +33,8 @@ export interface ProductQuantity {
 export interface ProductBasic {
   id: number,
   name: string,
-  detailName?: string,
-  detailId?: string,
+  variantName?: string,
+  variantId?: string,
   description: string | null,
   status?: number | null,
   createdDate: Date,
@@ -44,6 +44,29 @@ export interface ProductBasic {
   thumbnail: string,
   slug: string,
   color: string | null
+}
+
+export interface ProductDetail {
+  id: number,
+  variantId: number,
+  quantityId: number,
+  name: string,
+  variantName: string,
+  slug: string
+  color: string,
+  size: string,
+  status: number,
+  brand: string,
+  thumbnail: string,
+  price: number,
+  oldPrice: number,
+  quantity: number,
+  total: number
+}
+
+export interface ProductOrder {
+  product: ProductDetail,
+  quantity: number,
 }
 
 export interface Brand {

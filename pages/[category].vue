@@ -107,8 +107,13 @@
         </div>
         <div class="col-span-12 md:col-span-8">
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <ProductCardSkeleton
+              v-if="isLoadingProducts"
+              v-for="count in 12" :key="count"
+            />
             <ProductCard 
-              v-for="product in listProduct" :key="product.detailId" 
+              v-else
+              v-for="product in listProduct" :key="product.variantId" 
               :product="product"
             />
           </div>
@@ -134,6 +139,7 @@ const isOpenGender = ref(true);
 const isResetFilter = ref(false);
 const isPageGender = ref(false);
 const isPageSale = ref(false);
+const isLoadingProducts = ref(true);
 
 const currentPage = ref(1);
 const pageSize = ref(20);
@@ -203,7 +209,7 @@ switch (routeParams.value) {
 }
 getQueryRouter();
 
-const { data: listProduct } = await useAsyncData<ProductBasic[]>(
+const { data: listProduct, status } = await useAsyncData<ProductBasic[]>(
   'listProduct', 
   () => productStore.filterProduct(
     listCateSelected.value, listBrandSelected.value,
@@ -218,11 +224,19 @@ const { data: listProduct } = await useAsyncData<ProductBasic[]>(
     ]
   }
 );
-console.log(listProduct.value);
+if (status.value === "success") {
+  isLoadingProducts.value = false;
+}
+watch(status, (newStatus) => {
+  if (newStatus === "success") {
+    isLoadingProducts.value = false;
+  } else if (newStatus === "pending") {
+    isLoadingProducts.value = true;
+  }
+})
 
 watch([listCateSelected, listBrandSelected, listColorSelected, listGenderSelected, isSale], () => {
   setQueryRouter()
-console.log(listProduct.value);
 })
 
 function getQueryRouter() {

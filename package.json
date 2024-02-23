@@ -20,6 +20,7 @@
   "version": "0.0.0",
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
+    "@vueuse/nuxt": "^10.8.0",
     "pinia": "^2.1.7",
     "vue3-carousel": "^0.3.1"
   }
