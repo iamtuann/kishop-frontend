@@ -48,7 +48,10 @@
         <ul class="flex items-center gap-3">
           <Search />
           <span class="p-1 material-symbols-outlined semibold-style-icon cursor-pointer">favorite</span>
-          <span class="p-1 material-symbols-outlined semibold-style-icon cursor-pointer">shopping_bag</span>
+          <NuxtLink to="/cart" class="relative">
+            <span class="p-1 material-symbols-outlined semibold-style-icon cursor-pointer">shopping_cart</span>
+            <span v-if="cartStore.countProducts > 0" class="count-cart">{{ cartStore.countProducts }}</span>
+          </NuxtLink>
         </ul>
       </nav>
     </header>
@@ -56,6 +59,8 @@
 
 <script setup lang="ts">
 
+const cartStore = useCartStore();
+cartStore.getProductsInCart();
 </script>
 
 <style scoped>
@@ -105,5 +110,20 @@
   opacity: 1;
   visibility: visible;
   transform: translateY(12px);
+}
+.count-cart {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  left: 17px;
+  top: -1px;
+  font-weight: 500;
+  border-radius: 50%;
+  color: #fff;
+  background-color: #000;
 }
 </style>

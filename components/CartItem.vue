@@ -19,9 +19,9 @@
       </div>
       <p class="mb-1 text-gray-500">Size: {{ product.size }}</p>
       <p class="mb-2 flex">
-        <button type="button" :disabled="product.quantity == 1" class="act-btn minus-btn disabled:text-gray-300" 
+        <button type="button" :disabled="product.quantityOrder == 1" class="act-btn minus-btn disabled:text-gray-300" 
           @click="handleMinusQuantity">-</button>
-        <span class="quantity">{{ product.quantity }}</span>
+        <span class="quantity">{{ product.quantityOrder }}</span>
         <button type="button" class="act-btn plus-btn"
           @click="handlePlusQuantity">+</button>
       </p>
@@ -56,25 +56,25 @@ isSale.value = product.value.price < product.value.oldPrice;
 const formatter = new Intl.NumberFormat('en-US');
 
 const strPrice: Ref<string> = computed(() => {
-  return formatPrice(product.value.total);
+  return formatPrice(product.value.totalPrice);
 })
 const strOldPrice: Ref<string> = computed(() => {
   return formatPrice(product.value.totalOldPrice);
 })
 
 
-function handleMinusQuantity() {
-  product.value.quantity--;
-  if (product.value.quantity == 0) {
-    cartStore.removeProductInCart(product.value.quantityId);
+async function handleMinusQuantity() {
+  product.value.quantityOrder--;
+  if (product.value.quantityOrder == 0) {
+    await cartStore.removeProductInCart(product.value.quantityId);
   } else {
-    cartStore.updateDateQuantyProduct(product.value.quantityId, product.value.quantity);
+    await cartStore.updateDateQuantyProduct(product.value.quantityId, product.value.quantityOrder);
   }
 }
 
-function handlePlusQuantity() {
-  product.value.quantity++;
-  cartStore.updateDateQuantyProduct(product.value.quantityId, product.value.quantity);
+async function handlePlusQuantity() {
+  product.value.quantityOrder++;
+  await cartStore.updateDateQuantyProduct(product.value.quantityId, product.value.quantityOrder);
 }
 </script>
 

@@ -3,7 +3,7 @@
     <div class="grid grid-cols-12 gap-4">
       <div class="col-span-12 lg:col-span-7">
         <h3 class="text-xl font-medium ">Giỏ hàng</h3>
-        <CartItem v-for="product in cartStore.listProduct" :key="product.quantityId" :product="product" />
+        <CartItem v-for="product in cartStore.listProductDetail" :key="product.quantityId" :product="product" />
       </div>
       <div class="col-span-12 lg:col-span-5">
         <h3 class="text-xl font-medium mb-6">Thanh toán</h3>
@@ -34,13 +34,12 @@ import { ProductDetail } from '~/types';
 import { formatPrice } from "@/utils"
 
 const cartStore = useCartStore();
-cartStore.getProductsInCart();
 const deliveryFee: Ref<number> = ref(50000);
 const totalPriceForFreeDelevery = 2000000;
 
 const subtotal = computed(() => {
-  return cartStore.listProduct.reduce((totalPrice, currentProduct) => {
-    return totalPrice + currentProduct.total;
+  return cartStore.listProductDetail.reduce((totalPrice, currentProduct) => {
+    return totalPrice + currentProduct.totalPrice;
   }, 0)
 })
 
@@ -50,7 +49,7 @@ const total = computed(() => {
 })
 
 function hanldeSubmitOrder() {
-  console.log(cartStore.listProduct);
+  console.log(cartStore.listProductDetail);
 }
 </script>
 

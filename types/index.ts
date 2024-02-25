@@ -47,7 +47,7 @@ export interface ProductBasic {
 }
 
 export interface ProductDetail {
-  id: number,
+  productId: number,
   variantId: number,
   quantityId: number,
   name: string,
@@ -60,8 +60,15 @@ export interface ProductDetail {
   thumbnail: string,
   price: number,
   oldPrice: number,
-  quantity: number,
-  total: number,
+  quantityOrder: number,
+  totalPrice: number,
+  totalOldPrice: number,
+}
+
+export interface ProductDetailV1 {
+  quantityId: number,
+  quantityOrder: number,
+  totalPrice: number,
   totalOldPrice: number,
 }
 
