@@ -28,18 +28,22 @@ export const useCartStore = defineStore({
     }
   },
   actions: {
-    async getProductsInCart() {
+    async getProductsBasicInCart() {
       if (isAuthUser) {
         //
       } else {
         this.productsInCart = useLocalStorage<ProductDetailV1[]>("cart_order", []).value;
-        if (this.productsInCart.length > 0) {
-          const response:IResponse<ProductDetail[]> = await $fetch("order/products-info", {
-            method: 'POST',
-            body: this.productsInCart
-          });
-          this.listProductDetail = response.output
-        }
+        console.log(this.productsInCart);
+      }
+    },
+    async getProductsDetailOrdered() {
+      // await this.getProductsBasicInCart();
+      if (this.productsInCart.length > 0) {
+        const response:IResponse<ProductDetail[]> = await $fetch("order/products-info", {
+          method: 'POST',
+          body: this.productsInCart
+        });
+        this.listProductDetail = response.output
       }
     },
     addProductToCart(qtyId: number) {

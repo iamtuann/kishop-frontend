@@ -3,7 +3,14 @@
     <div class="grid grid-cols-12 gap-4">
       <div class="col-span-12 lg:col-span-7">
         <h3 class="text-xl font-medium ">Giỏ hàng</h3>
-        <CartItem v-for="product in cartStore.listProductDetail" :key="product.quantityId" :product="product" />
+        <Suspense>
+          <template #default>
+            <CartList />
+          </template>
+          <template #fallback>
+            <CartItemSkeleton />
+          </template>
+        </Suspense>
       </div>
       <div class="col-span-12 lg:col-span-5">
         <h3 class="text-xl font-medium mb-6">Thanh toán</h3>
@@ -34,6 +41,9 @@ import { ProductDetail } from '~/types';
 import { formatPrice } from "@/utils"
 
 const cartStore = useCartStore();
+// const isLoading = ref(true);
+// await cartStore.getProductsDetailOrdered()
+// isLoading.value = false;
 const deliveryFee: Ref<number> = ref(50000);
 const totalPriceForFreeDelevery = 2000000;
 

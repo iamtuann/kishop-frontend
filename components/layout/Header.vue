@@ -60,7 +60,7 @@
 <script setup lang="ts">
 
 const cartStore = useCartStore();
-cartStore.getProductsInCart();
+await cartStore.getProductsBasicInCart();
 </script>
 
 <style scoped>
