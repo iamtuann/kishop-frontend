@@ -91,7 +91,8 @@
           </div>
 
           <div class="mt-2 mb-4">
-            <button class="btn-primary hover:bg-primary-600 transition-all">
+            <button class="btn-primary hover:bg-primary-600 transition-all"
+            @click="addToCart">
               Thêm vào giỏ
             </button>
             <button class="btn-primary mt-3 bg-white border-gray-400 text-gray-800 hover:border-gray-800 transition-all">
@@ -118,6 +119,7 @@ import { formatPrice } from "@/utils"
   const router = useRouter();
   const productStore = useProductStore();
   const { slug } = useRoute().params as { slug: string };
+  const cartStore = useCartStore()
 
   definePageMeta({
     layout: "default"
@@ -181,6 +183,11 @@ import { formatPrice } from "@/utils"
     imageShowIndex.value = 0;
     imageShowing.value = productVariantShowing.imageUrls[imageShowIndex.value];
     productQuantityId.value = null;
+  }
+  function addToCart() {
+    if (productQuantityId.value) {
+      cartStore.addProductToCart(productQuantityId.value);
+    }
   }
 
   watch(productVariantId, (newId) => {

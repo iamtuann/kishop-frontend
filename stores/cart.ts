@@ -5,7 +5,7 @@ import { useLocalStorage } from "@vueuse/core"
 
 export type cartType = {
   listProductDetail: ProductDetail[] | [],
-  productsInCart: ProductDetailV1[] | []
+  productsInCart: ProductDetailV1[]
 };
 const isAuthUser = false;
 
@@ -46,17 +46,23 @@ export const useCartStore = defineStore({
         this.listProductDetail = response.output
       }
     },
-    addProductToCart(qtyId: number) {
+    async addProductToCart(qtyId: number) {
       let productIsExist = false;
-      for(let i=0; i<this.listProductDetail.length; i++) {
-        if (this.listProductDetail[i].quantityId == qtyId) {
-          this.listProductDetail[i].quantityOrder++;
+      for(let i=0; i<this.productsInCart.length; i++) {
+        if (this.productsInCart[i].quantityId == qtyId) {
+          this.productsInCart[i].quantityOrder++;
           productIsExist = true;
           break;
         }
-        if (!productIsExist) {
-          
+      }
+      if (!productIsExist) {
+        const newProductDetailV1: ProductDetailV1 = {
+          quantityId: qtyId,
+          quantityOrder: 1,
+          totalPrice: 0,
+          totalOldPrice: 0
         }
+        this.productsInCart.push(newProductDetailV1);
       }
     },
     async updateDateQuantyProduct(qtyId: number, quantity: number) {
@@ -75,7 +81,7 @@ export const useCartStore = defineStore({
           if (product.quantityId == response.output.quantityId) {
             product.quantityOrder = response.output.quantityOrder;
             product.totalPrice = response.output.totalPrice;
-            product.totalOldPrice = response.output.totalPrice;
+            product.totalOldPrice = response.output.totalOldPrice;
             break;
           }
         };
