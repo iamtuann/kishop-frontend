@@ -1,43 +1,104 @@
 import { defineStore } from "pinia";
-import { IResponse, ProductDetail } from "~/types/index";
+import { IResponse, ProductDetail, ProductDetailV1 } from "~/types/index";
 import { useLocalStorage } from "@vueuse/core"
 
 
 export type cartType = {
-  listProduct: ProductDetail[] | []
+  listProductDetail: ProductDetail[] | [],
+  productsInCart: ProductDetailV1[]
 };
 const isAuthUser = false;
 
 export const useCartStore = defineStore({
   id: "cartStore",
   state: () => ({
-    listProduct: [],
+    listProductDetail: [],
+    productsInCart: []
   } as cartType ),
+  getters: {
+    countProducts: (state) => {
+      if (state.productsInCart.length > 0) {
+        const totalProducts = state.productsInCart.reduce((total, currentProduct) => {
+          return total + currentProduct.quantityOrder;
+        }, 0);
+        return totalProducts;
+      } else {
+        return 0;
+      }
+    }
+  },
   actions: {
-    getProductsInCart() {
+    async getProductsBasicInCart() {
       if (isAuthUser) {
         //
       } else {
-        this.listProduct = useLocalStorage<ProductDetail[]>("cart_order", []).value;
+        this.productsInCart = useLocalStorage<ProductDetailV1[]>("cart_order", []).value;
+        console.log(this.productsInCart);
       }
     },
-    updateDateQuantyProduct(qtyId: number, quantity: number) {
+    async getProductsDetailOrdered() {
+      // await this.getProductsBasicInCart();
+      if (this.productsInCart.length > 0) {
+        const response:IResponse<ProductDetail[]> = await $fetch("order/products-info", {
+          method: 'POST',
+          body: this.productsInCart
+        });
+        this.listProductDetail = response.output
+      }
+    },
+    async addProductToCart(qtyId: number) {
+      let productIsExist = false;
+      for(let i=0; i<this.productsInCart.length; i++) {
+        if (this.productsInCart[i].quantityId == qtyId) {
+          this.productsInCart[i].quantityOrder++;
+          productIsExist = true;
+          break;
+        }
+      }
+      if (!productIsExist) {
+        const newProductDetailV1: ProductDetailV1 = {
+          quantityId: qtyId,
+          quantityOrder: 1,
+          totalPrice: 0,
+          totalOldPrice: 0
+        }
+        this.productsInCart.push(newProductDetailV1);
+      }
+    },
+    async updateDateQuantyProduct(qtyId: number, quantity: number) {
       if (isAuthUser) {
         //call api
       } else {
-        for(let i=0; i<this.listProduct.length; i++) {
-          if (this.listProduct[i].quantityId == qtyId) {
-            this.listProduct[i].quantity = quantity;
+        const response:IResponse<ProductDetailV1> = await $fetch("order/products-info/v1", {
+          method: 'POST',
+          body: {
+            quantityId: qtyId,
+            quantityOrder: quantity
+          }
+        });
+        for(let i=0; i<this.listProductDetail.length; i++) {
+          let product = this.listProductDetail[i];
+          if (product.quantityId == response.output.quantityId) {
+            product.quantityOrder = response.output.quantityOrder;
+            product.totalPrice = response.output.totalPrice;
+            product.totalOldPrice = response.output.totalOldPrice;
+            break;
           }
         };
+        for (let i = 0; i < this.productsInCart.length; i++) {
+          const product = this.productsInCart[i];
+          if (product.quantityId == response.output.quantityId) {
+            product.quantityOrder = response.output.quantityOrder;
+          }
+        }
         this.saveToLocalStorage();
       }
     },
-    removeProductInCart(qtyId: number) {
+    async removeProductInCart(qtyId: number) {
       
     },
     saveToLocalStorage() {
-      localStorage.setItem("cart_order", JSON.stringify(this.listProduct))
+      localStorage.setItem("cart_order", JSON.stringify(this.productsInCart))
     },
   }
 })

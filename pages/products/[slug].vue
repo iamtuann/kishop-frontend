@@ -37,8 +37,8 @@
         <div class="pt-1 pr-0 pl-0 lg:mt-10 lg:mr-2">
           <h1 class="text-2xl font-medium ">{{ product?.name }}</h1>
           <div class="mb-2 mt-2 ">
-            <span class="font-semibold text-xl" v-if="isSale">{{ strPrice }}</span>
-            <span class="font-semibold" :class="isSale ? 'line-through text-gray-400 ms-2' : 'text-xl'">{{ strOldPrice }}</span>
+            <span class="font-semibold text-xl">{{ strPrice }}</span>
+            <span v-if="isSale" class="font-semibold line-through text-gray-400 ms-2">{{ strOldPrice }}</span>
             <span class="ml-2 font-semibold text-green-600">{{ offPercent }}</span>
           </div>
           <div class="mt-3 mb-4">
@@ -91,7 +91,8 @@
           </div>
 
           <div class="mt-2 mb-4">
-            <button class="btn-primary hover:bg-primary-600 transition-all">
+            <button class="btn-primary hover:bg-primary-600 transition-all"
+            @click="addToCart">
               Thêm vào giỏ
             </button>
             <button class="btn-primary mt-3 bg-white border-gray-400 text-gray-800 hover:border-gray-800 transition-all">
@@ -112,11 +113,13 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { IResponse, Product, ProductVariant } from "@/types";
+import { formatPrice } from "@/utils"
 
   const route = useRoute();
   const router = useRouter();
   const productStore = useProductStore();
   const { slug } = useRoute().params as { slug: string };
+  const cartStore = useCartStore()
 
   definePageMeta({
     layout: "default"
@@ -129,11 +132,16 @@ import { IResponse, Product, ProductVariant } from "@/types";
   let imageShowing: Ref<string> = ref('');
   let imageShowIndex: Ref<number> = ref(0);
   const isSale: Ref<boolean> = ref(false)
-    
-  const formatter = new Intl.NumberFormat('en-US');
-  let strOldPrice: string = "";
-  let strPrice: string = "";
-  let offPercent = "";
+
+  const strPrice: Ref<string> = computed(() => {
+    return formatPrice(productVariantShowing.price);;
+  })
+  const strOldPrice: Ref<string> = computed(() => {
+    return formatPrice(productVariantShowing.oldPrice);;
+  })
+  const offPercent: Ref<string> = computed(() => {
+    return isSale.value ? + Math.round((1 - productVariantShowing.price / productVariantShowing.oldPrice) * 100)  + "% off" : '';
+  })
 
   const { data } = await useAsyncData<IResponse<any>>('product', () => productStore.getProductBySlug(slug));
   product.value = data.value?.output
@@ -159,11 +167,6 @@ import { IResponse, Product, ProductVariant } from "@/types";
       imageShowIndex.value++;
     }
   }
-  function calculatePrice() {
-    strOldPrice = formatter.format(productVariantShowing.oldPrice) + '₫';
-    strPrice = isSale.value ? formatter.format(productVariantShowing.price) + '₫' : '';
-    offPercent = isSale.value ? + Math.round((1 - productVariantShowing.price / productVariantShowing.oldPrice) * 100)  + "% off" : '';
-  }
   function getVariantIdFromRoute() {
     const variantId = route.params.variantId;
     if (Array.isArray(variantId)) {
@@ -180,7 +183,11 @@ import { IResponse, Product, ProductVariant } from "@/types";
     imageShowIndex.value = 0;
     imageShowing.value = productVariantShowing.imageUrls[imageShowIndex.value];
     productQuantityId.value = null;
-    calculatePrice();
+  }
+  function addToCart() {
+    if (productQuantityId.value) {
+      cartStore.addProductToCart(productQuantityId.value);
+    }
   }
 
   watch(productVariantId, (newId) => {
