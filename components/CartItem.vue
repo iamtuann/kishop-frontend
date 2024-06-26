@@ -31,7 +31,8 @@
           <div class="tooltip favorite">Thêm vào yêu thích</div>
         </div>
         <div class="inline-flex mx-2 cursor-pointer relative">
-          <button type="button" class="material-symbols-outlined normal-style-icon delete-btn">delete</button>
+          <button type="button" class="material-symbols-outlined normal-style-icon delete-btn"
+          @click="cartStore.removeProductInCart(product.quantityId)">delete</button>
           <div class="tooltip delete">Xóa khỏi giỏ hàng</div>
         </div>
       </div>

@@ -4,6 +4,10 @@
   "typescript.typeCheck": true,
   "compilerOptions": {
     "strict": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "paths": {
+      "~/*": ["./*"],
+      "@/*": ["./*"]
+    },
   }
 }

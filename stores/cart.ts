@@ -33,7 +33,6 @@ export const useCartStore = defineStore({
         //
       } else {
         this.productsInCart = useLocalStorage<ProductDetailV1[]>("cart_order", []).value;
-        console.log(this.productsInCart);
       }
     },
     async getProductsDetailOrdered() {
@@ -45,6 +44,7 @@ export const useCartStore = defineStore({
         });
         this.listProductDetail = response.output
       }
+      // return this.listProductDetail;
     },
     async addProductToCart(qtyId: number) {
       let productIsExist = false;
@@ -62,7 +62,7 @@ export const useCartStore = defineStore({
           totalPrice: 0,
           totalOldPrice: 0
         }
-        this.productsInCart.push(newProductDetailV1);
+        this.productsInCart.unshift(newProductDetailV1);
       }
     },
     async updateDateQuantyProduct(qtyId: number, quantity: number) {
@@ -91,11 +91,13 @@ export const useCartStore = defineStore({
             product.quantityOrder = response.output.quantityOrder;
           }
         }
-        this.saveToLocalStorage();
+        // this.saveToLocalStorage();
       }
     },
     async removeProductInCart(qtyId: number) {
-      
+      const index = this.listProductDetail.findIndex(product => product.quantityId === qtyId);
+      this.listProductDetail.splice(index, 1);
+      this.productsInCart.splice(index, 1);
     },
     saveToLocalStorage() {
       localStorage.setItem("cart_order", JSON.stringify(this.productsInCart))

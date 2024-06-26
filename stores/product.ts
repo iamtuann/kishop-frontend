@@ -7,7 +7,7 @@ export const useProductStore = defineStore({
 
   }),
   actions: {
-    async getTopNewProduct(pageSize: number = 4) {
+    async getTopNewProduct(pageSize: number = 4): Promise<IResponse> {
       const response:IResponse<any> = await $fetch("products/list", {
         params: {
           pageSize: pageSize,
