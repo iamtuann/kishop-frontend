@@ -50,5 +50,6 @@ export default defineNuxtConfig({
   },
   css: [
     '@/assets/css/app.css',
+    '@/assets/css/tailwind.css'
   ],
 })

@@ -1,5 +1,6 @@
 :root {
   --text-color: rgb(31, 41, 55);
+  --cart-icon-width: 68px;
 }
 
 .default-style-icon {
