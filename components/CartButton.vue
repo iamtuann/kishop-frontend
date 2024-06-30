@@ -1,6 +1,6 @@
 <template>
   <button class="btn-wrap btn-primary hover:bg-primary-600 transition-all duration-200"
-    :class="{ 'is-adding': isAdding, 'is-added': isAdded }">
+    :class="{ 'is-adding': isAdding, 'is-added': isAdded && !isEnded }">
     <div class="add-animation">
       <span></span>
       <div v-if="isAdding" class="flex gap-x-1">
@@ -8,7 +8,7 @@
         <span class="dot"></span>
         <span class="dot"></span>
       </div>
-      <div v-if="isAdded" class="success-animation">
+      <div v-if="isAdded && !isEnded" class="success-animation">
         <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
           <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
           <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
@@ -25,19 +25,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 const props = defineProps({
   isAdding: { type: Boolean, required: true },
   isAdded: { type: Boolean, required: false },
 })
 
+const emits = defineEmits(['ended'])
+
+const isEnded: Ref<boolean> = ref(false);
+const delayEndAnimation: number = 1600;
+const timeDelay = (delayEndAnimation - 400) / 1000 + 's';
+
+watch(() => props.isAdded, (newVal) => {
+  if (newVal === true) {
+    setTimeout(() => {
+      isEnded.value = true;
+      emits('ended');
+    }, delayEndAnimation);
+  } else {
+    isEnded.value = false;
+  }
+}) 
+
 </script>
 
 <style scoped>
-:root {
-  --cart-icon-width: 68px;
-}
 
 .btn-wrap {
   position: relative;
@@ -73,7 +87,7 @@ const props = defineProps({
 
 .btn-wrap.is-added .add-animation {
   right: 0;
-  animation: added .4s ease-in-out 1.2s forwards, ended 0s linear 1.6s;
+  animation: added .4s ease-in-out v-bind(timeDelay) forwards;
 }
 
 .cart-icon {
@@ -130,12 +144,6 @@ const props = defineProps({
 
   100% {
     right: -100%;
-  }
-}
-
-@keyframes ended {
-  100% {
-    right: 100%;
   }
 }
 

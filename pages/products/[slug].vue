@@ -85,7 +85,11 @@
           </div>
 
           <div class="mt-2 mb-4">
-            <CartButton :is-adding="isAddingToCart" :is-added="isAddedToCart" @click="handleAddToCart"/>
+            <CartButton 
+              :is-adding="isAddingToCart" :is-added="isAddedToCart" 
+              @click="handleAddToCart"
+              @ended="isAddedToCart = false"
+            />
             <button class="btn-primary mt-3 bg-white border-gray-400 text-gray-800 hover:border-gray-800 transition-all">
               <span>Yêu thích</span>
               <span class="material-symbols-outlined arrow-icon ml-2">favorite</span>
@@ -125,6 +129,7 @@ import { formatPrice } from "@/utils"
   const isSale: Ref<boolean> = ref(false)
   const isAddingToCart: Ref<boolean> = ref(false)
   const isAddedToCart: Ref<boolean> = ref(false)
+  const delayAddToCart = 1000;
 
   const strPrice: Ref<string> = computed(() => {
     return formatPrice(productVariantShowing.price);;
@@ -189,7 +194,6 @@ import { formatPrice } from "@/utils"
     updateProductVariant();
   })
 
-  const delayAddToCart = 3000;
   async function handleAddToCart() {
     if (isAddingToCart.value) {
       return;
@@ -197,16 +201,14 @@ import { formatPrice } from "@/utils"
     if (productQuantityId.value) {
       isAddedToCart.value = false;
       isAddingToCart.value = true;
-      await Promise.all([addToCart(), delay(delayAddToCart)]);
+      await Promise.all([addToCart(productQuantityId.value), delay(delayAddToCart)]);
       isAddingToCart.value = false;
       isAddedToCart.value = true;
     }
   }
 
-  async function addToCart() {
-    // cartStore.addProductToCart(productQuantityId.value);
-    console.log('add to cart');
-    
+  async function addToCart(qtyId: number) {
+    cartStore.addProductToCart(qtyId);
   }
 
   function delay(ms: number) {
