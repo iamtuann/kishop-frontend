@@ -49,8 +49,10 @@
           <Search />
           <span class="p-1 material-symbols-outlined semibold-style-icon cursor-pointer">favorite</span>
           <NuxtLink to="/cart" class="relative">
-            <span class="p-1 material-symbols-outlined semibold-style-icon cursor-pointer">shopping_cart</span>
-            <span v-if="cartStore.countProducts > 0" class="count-cart">{{ cartStore.countProducts }}</span>
+            <div>
+              <span class="p-1 material-symbols-outlined semibold-style-icon cursor-pointer">shopping_cart</span>
+              <span v-show="cartStore.countProducts > 0" class="count-cart">{{ cartStore.countProducts }}</span>
+            </div>
           </NuxtLink>
         </ul>
       </nav>
@@ -58,9 +60,12 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from "vue";
 
 const cartStore = useCartStore();
-await cartStore.getProductsBasicInCart();
+onMounted(async () => {
+  await cartStore.getProductsBasicInCart();
+})
 </script>
 
 <style scoped>

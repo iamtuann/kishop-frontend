@@ -17,16 +17,10 @@
           <div class="rounded-lg overflow-hidden relative grow w-auto h-auto lg:w-[535px] lg:h-[600px] max-w-[535px]">
             <img :src="imageShowing" :alt="product?.name" class="w-full h-full bg-gray-100 object-cover object-center">
             <div class="absolute flex bottom-3 right-4 gap-2">
-              <div 
-                class="arrow"
-                @click="prevImage"
-              >
+              <div class="arrow" @click="prevImage">
                 <span class="material-symbols-outlined arrow-icon">arrow_back_ios_new</span>
               </div>
-              <div
-                class="arrow"
-                @click="forwardImage"
-              >
+              <div class="arrow" @click="forwardImage">
                 <span class="material-symbols-outlined arrow-icon">arrow_forward_ios</span>
               </div>
             </div>
@@ -50,7 +44,7 @@
                 <input 
                 type="radio" hidden :value="productVariant.id"
                 v-model="productVariantId"
-                :id="productVariant.id+''"
+                :id="productVariant.id"
                 >
                 <label :for="productVariant.id+''" :title="productVariant.name || product?.name"
                   class="flex items-center justify-center p-[1px] cursor-pointer bg-white border border-gray-300 rounded-md overflow-hidden"
@@ -91,10 +85,11 @@
           </div>
 
           <div class="mt-2 mb-4">
-            <button class="btn-primary hover:bg-primary-600 transition-all"
-            @click="addToCart">
-              Thêm vào giỏ
-            </button>
+            <CartButton 
+              :is-adding="isAddingToCart" :is-added="isAddedToCart" 
+              @click="handleAddToCart"
+              @ended="isAddedToCart = false"
+            />
             <button class="btn-primary mt-3 bg-white border-gray-400 text-gray-800 hover:border-gray-800 transition-all">
               <span>Yêu thích</span>
               <span class="material-symbols-outlined arrow-icon ml-2">favorite</span>
@@ -132,6 +127,9 @@ import { formatPrice } from "@/utils"
   let imageShowing: Ref<string> = ref('');
   let imageShowIndex: Ref<number> = ref(0);
   const isSale: Ref<boolean> = ref(false)
+  const isAddingToCart: Ref<boolean> = ref(false)
+  const isAddedToCart: Ref<boolean> = ref(false)
+  const delayAddToCart = 1000;
 
   const strPrice: Ref<string> = computed(() => {
     return formatPrice(productVariantShowing.price);;
@@ -143,7 +141,7 @@ import { formatPrice } from "@/utils"
     return isSale.value ? + Math.round((1 - productVariantShowing.price / productVariantShowing.oldPrice) * 100)  + "% off" : '';
   })
 
-  const { data } = await useAsyncData<IResponse<any>>('product', () => productStore.getProductBySlug(slug));
+  const { data } = await useAsyncData<IResponse<any>>(`product-${slug}`, () => productStore.getProductBySlug(slug));
   product.value = data.value?.output
   
   if (product.value != null) {
@@ -167,6 +165,11 @@ import { formatPrice } from "@/utils"
       imageShowIndex.value++;
     }
   }
+
+  watch(imageShowIndex, (newVal) => {
+    imageShowing.value = productVariantShowing.imageUrls[newVal];
+  })
+
   function getVariantIdFromRoute() {
     const variantId = route.params.variantId;
     if (Array.isArray(variantId)) {
@@ -177,6 +180,7 @@ import { formatPrice } from "@/utils"
       return null;
     }
   }
+
   function updateProductVariant() {
     productVariantShowing = product.value?.productVariants.find(pv => pv.id == productVariantId.value) || productVariantShowing;
     isSale.value = productVariantShowing.price < productVariantShowing.oldPrice;
@@ -184,20 +188,32 @@ import { formatPrice } from "@/utils"
     imageShowing.value = productVariantShowing.imageUrls[imageShowIndex.value];
     productQuantityId.value = null;
   }
-  function addToCart() {
-    if (productQuantityId.value) {
-      cartStore.addProductToCart(productQuantityId.value);
-    }
-  }
-
+  
   watch(productVariantId, (newId) => {
     router.replace({params: {variantId: newId}})
     updateProductVariant();
   })
 
-  watch(imageShowIndex, (newVal) => {
-    imageShowing.value = productVariantShowing.imageUrls[newVal];
-  })
+  async function handleAddToCart() {
+    if (isAddingToCart.value) {
+      return;
+    }
+    if (productQuantityId.value) {
+      isAddedToCart.value = false;
+      isAddingToCart.value = true;
+      await Promise.all([addToCart(productQuantityId.value), delay(delayAddToCart)]);
+      isAddingToCart.value = false;
+      isAddedToCart.value = true;
+    }
+  }
+
+  async function addToCart(qtyId: number) {
+    cartStore.addProductToCart(qtyId);
+  }
+
+  function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
   
 </script>
 
