@@ -55,33 +55,35 @@
             </div>
             <h4 class="mt-2 text-sm">{{ productVariantShowing.name || "" }}</h4>
           </div>
-          <div class="my-3 ">
+          <div class="my-3">
             <div class="mb-2 flex justify-between">
               <h4 class="font-medium">Kích cỡ</h4>
               <h4 class="font-medium text-gray-500 cursor-pointer">Hướng dẫn</h4>
             </div>
 
-            <div class="grid grid-cols-4 gap-2">
+            <div class="grid grid-cols-4 gap-2" :class="{'size-error': !isSelectSize}">
               <div v-for="productQuantity in productVariantShowing.productQuantities" :key="productQuantity.id"
                 class="relative input-wrap"
               >
                 <input 
-                type="radio" hidden :value="productQuantity.id"
-                v-model="productQuantityId" 
-                name="size" :id="productQuantity.size.name"
-                :disabled="productQuantity.quantity == 0"
+                  type="radio" hidden :value="productQuantity.id"
+                  v-model="productQuantityId" 
+                  name="size" :id="productQuantity.size.name"
+                  :disabled="productQuantity.quantity == 0"
                 >
                 <label v-if="productQuantity.quantity > 0 " :for="productQuantity.size.name"
                   class="flex items-center justify-center h-12 cursor-pointer bg-white rounded border border-gray-300 font-medium"
                 >
-                {{ productQuantity.size.name }}
+                  {{ productQuantity.size.name }}
                 </label>
                 <label v-else :for="productQuantity.size.name"
                   class="flex items-center justify-center h-12 cursor-not-allowed rounded bg-gray-200 text-gray-400 border border-gray-300">
-                {{ productQuantity.size.name }}
+                  {{ productQuantity.size.name }}
                 </label>
               </div>
             </div>
+
+            <div v-show="!isSelectSize" class="text-red-700 mt-2 text-sm">Vui lòng chọn một kích cỡ</div>
           </div>
 
           <div class="mt-2 mb-4">
@@ -126,7 +128,9 @@ import { formatPrice } from "@/utils"
   let productVariantId:Ref<number> = ref(0);
   let imageShowing: Ref<string> = ref('');
   let imageShowIndex: Ref<number> = ref(0);
-  const isSale: Ref<boolean> = ref(false)
+  const isSale: Ref<boolean> = ref(false);
+  const isSelectSize: Ref<boolean> = ref(true);
+
   const isAddingToCart: Ref<boolean> = ref(false)
   const isAddedToCart: Ref<boolean> = ref(false)
   const delayAddToCart = 1000;
@@ -151,6 +155,7 @@ import { formatPrice } from "@/utils"
     await navigateTo('/404')
   }
 
+  //handle slide image
   function prevImage() {
     if (imageShowIndex.value == 0) {
       imageShowIndex.value = productVariantShowing.imageUrls.length -1;
@@ -170,6 +175,7 @@ import { formatPrice } from "@/utils"
     imageShowing.value = productVariantShowing.imageUrls[newVal];
   })
 
+  //handle product variant
   function getVariantIdFromRoute() {
     const variantId = route.params.variantId;
     if (Array.isArray(variantId)) {
@@ -194,16 +200,27 @@ import { formatPrice } from "@/utils"
     updateProductVariant();
   })
 
+  //quantity
+  watch(productQuantityId, (newQtyId) => {
+    if (newQtyId) {
+      isSelectSize.value = true;
+    }
+  })
+
+  //add to cart
   async function handleAddToCart() {
     if (isAddingToCart.value) {
       return;
     }
     if (productQuantityId.value) {
+      isSelectSize.value = true;
       isAddedToCart.value = false;
       isAddingToCart.value = true;
       await Promise.all([addToCart(productQuantityId.value), delay(delayAddToCart)]);
       isAddingToCart.value = false;
       isAddedToCart.value = true;
+    } else {
+      isSelectSize.value = false;
     }
   }
 
@@ -227,5 +244,10 @@ import { formatPrice } from "@/utils"
 .input-wrap input[type="radio"]:checked + label,
 .input-wrap input[type="radio"]:hover + label {
   border: 1px solid rgb(17, 17, 17);
+}
+.size-error {
+  box-shadow: rgb(212, 63, 33) 0px 0px 0px 1px;
+  padding: 1px;
+  border-radius: 4px;
 }
 </style>
