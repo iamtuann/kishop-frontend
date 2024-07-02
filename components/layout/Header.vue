@@ -60,7 +60,10 @@
         </ul>
 
         <!-- Nav mobile -->
-        <div class="md:hidden mobile-menu-wrap" :class="{'menu-open': isOpenMenu}">
+        <div
+          class="md:hidden mobile-menu-wrap" :class="{'menu-open': isOpenMenu}" 
+          tabindex="0" @keydown.esc="handleExit" ref="mobileMenuRef"
+        >
           <div class="flex px-6 py-3 justify-end">
             <button class="flex" @click="isOpenMenu = !isOpenMenu">
               <span class="text-3xl leading-none material-symbols-outlined semibold-style-icon cursor-pointer">close</span>
@@ -88,10 +91,17 @@
 import { onMounted, ref } from "vue";
 
 const isOpenMenu: Ref<boolean> = ref(false);
-
+const mobileMenuRef = ref<HTMLDivElement>();
 const cartStore = useCartStore();
+
 onMounted(async () => {
   await cartStore.getProductsBasicInCart();
+})
+
+watch(isOpenMenu, (newVal) => {
+  if (newVal) {
+    mobileMenuRef.value?.focus();
+  }
 })
 
 const routes = [
@@ -101,6 +111,12 @@ const routes = [
   {title: 'Giảm giá', href: 'flash-sale', children: []},
   {title: 'Về chúng tôi', href: 'about', children: []},
 ]
+
+function handleExit() {
+  if (isOpenMenu.value) {
+    isOpenMenu.value = false;
+  }
+}
 </script>
 
 <style scoped>
@@ -179,6 +195,7 @@ const routes = [
   transition: transform .5s cubic-bezier(.4,0,.2,1);
   background-color: #FFF;
   z-index: 100;
+  outline: none;
 }
 
 .mobile-menu-wrap.menu-open {
