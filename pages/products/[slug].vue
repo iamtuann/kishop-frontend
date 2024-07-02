@@ -44,7 +44,7 @@
                 <input 
                 type="radio" hidden :value="productVariant.id"
                 v-model="productVariantId"
-                :id="productVariant.id"
+                :id="productVariant.id.toString()"
                 >
                 <label :for="productVariant.id+''" :title="productVariant.name || product?.name"
                   class="flex items-center justify-center p-[1px] cursor-pointer bg-white border border-gray-300 rounded-md overflow-hidden"
