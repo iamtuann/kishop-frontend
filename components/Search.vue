@@ -1,8 +1,13 @@
 <template>
-  <div class="search-wrap hidden md:flex items-center bg-gray-100 font-sans">
-    <input v-model="searchInput" type="text" class="search-input lg:w-[200px] w-[150px] flex-1 bg-transparent border-none outline-none text-sm text-gray-900 px-1" placeholder="Tìm kiếm sản phẩm">
+  <form @submit.prevent="search" class="search-wrap hidden md:flex items-center bg-gray-100 font-sans">
+    <input 
+      v-model="searchInput" 
+      type="text" 
+      class="search-input lg:w-[200px] w-[150px] flex-1 bg-transparent border-none outline-none text-gray-700 px-1" 
+      placeholder="Tìm kiếm sản phẩm"
+    >
     <span class="material-symbols-outlined normal-style-icon cursor-pointer">search</span>
-  </div>
+  </form>
   <div class="md:hidden" @click="isOpenSearch = !isOpenSearch">
     <span class="material-symbols-outlined p-[6px] semibold-style-icon cursor-pointer">search</span>
   </div>
@@ -11,8 +16,10 @@
     tabindex="0" @keydown.esc="handleExit"
   >
     <div class="pt-3 px-6 flex gap-2 sm:gap-6 items-center">
-      <div class="search-input-container">
-        <span class="p-[6px] material-symbols-outlined normal-style-icon cursor-pointer">search</span>
+      <form @submit.prevent="search" class="search-input-container">
+        <button type="submit">
+          <span class="p-[6px] material-symbols-outlined normal-style-icon cursor-pointer">search</span>
+        </button>
         <input type="text" 
           class="search-input flex-1 bg-transparent border-none outline-none text-sm text-gray-900 px-1"
           placeholder="Tìm kiếm sản phẩm"
@@ -20,7 +27,7 @@
           ref="searchInputRef"
         >
         <span @click="clearInput" class="clear-btn material-symbols-outlined normal-style-icon">close</span>
-      </div>
+      </form>
       <button class="flex" @click="isOpenSearch = !isOpenSearch">
         <span class="text-3xl leading-none material-symbols-outlined semibold-style-icon cursor-pointer">chevron_right</span>
       </button>
@@ -34,6 +41,14 @@ import { ref, watch } from "vue";
 const isOpenSearch: Ref<boolean> = ref(false);
 const searchInput: Ref<string> = ref('');
 const searchInputRef = ref<HTMLDivElement>();
+const router = useRouter()
+
+function search() {
+  if (isOpenSearch.value) {
+    isOpenSearch.value = false;
+  }
+  router.push({path: '/search', query: { q: searchInput.value }})
+}
 
 watch(isOpenSearch, (newVal) => {
   if (newVal) {
@@ -64,14 +79,13 @@ function handleExit() {
   width: 100%;
 }
 .search-input {
-  color: var(--text-color);
-  font-weight: 600;
+  /* color: var(--text-color); */
+  font-weight: 500;
   font-size: 15px;
 }
 .search-input::placeholder {
   font-size: 14px;
   line-height: 1;
-  font-weight: 500;
 }
 
 .mobile-search-wrap {
