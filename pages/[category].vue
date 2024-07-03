@@ -149,7 +149,6 @@ const pageSize = ref(20);
 const orderBy = ref("");
 const sortingKey = ref("");
 const isSale = ref(false);
-const keyword = ref("");
 const sortingSelected: object = ref({})
 const listSorting = [
   {
@@ -178,7 +177,13 @@ const listSorting = [
     orderBy: "desc"
   },
 ]
-
+const keyword = computed(() => {
+  if (route.query.q) {
+    return route.query.q.toString();
+  } else {
+    return "";
+  }
+});
 const listCateSelected: Ref<string[]> = ref([]);
 const listColorSelected: Ref<string[]> = ref([]);
 const listBrandSelected: Ref<string[]> = ref([]);
@@ -251,48 +256,34 @@ watch([listCateSelected, listBrandSelected, listColorSelected, listGenderSelecte
   setQueryRouter()
 })
 
-watch(() => route.query, () => {
+watch(() => route.query.q, () => {
   getQueryRouter();
 })
 
 function getQueryRouter() {
+  resetFilter();
   if (Array.isArray(route.query.categories)) {
     listCateSelected.value = route.query.categories as string[]
   } else if (route.query.categories) {
     listCateSelected.value = [route.query.categories as string]
-  } else {
-    listCateSelected.value = [];
   }
   if (Array.isArray(route.query.brands)) {
     listBrandSelected.value = route.query.brands as string[]
   } else if (route.query.brands) {
     listBrandSelected.value = [route.query.brands as string]
-  } else {
-    listBrandSelected.value = [];
   }
   if (Array.isArray(route.query.colors)) {
     listColorSelected.value = route.query.colors as string[]
   } else if (route.query.colors) {
     listColorSelected.value = [route.query.colors as string]
-  } else {
-    listColorSelected.value = [];
   }
   if (Array.isArray(route.query.genders)) {
     listGenderSelected.value = route.query.genders as string[]
   } else if (route.query.genders) {
     listGenderSelected.value = [route.query.genders as string]
-  } else {
-    listGenderSelected.value = [];
   }
   if (route.query.sale) {
     isSale.value = route.query.sale === 'true';
-  } else {
-    isSale.value = false;
-  }
-  if (route.query.q) {
-    keyword.value = route.query.q.toString();
-  } else {
-    keyword.value = "";
   }
 }
 function setQueryRouter() {
@@ -324,6 +315,7 @@ function resetFilter() {
   listCateSelected.value = [];
   listBrandSelected.value = [];
   listColorSelected.value = [];
+  listGenderSelected.value = [];
   isSale.value = false;
 }
 
