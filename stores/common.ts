@@ -8,15 +8,15 @@ export const useCommonStore = defineStore({
   }),
   actions: {
     async getAllBrands(): Promise<Brand[]> {
-      const response:IResponse<Brand[]> = await $fetch("brands/all");
+      const response:IResponse<Brand[]> = await $fetch("brands");
       return response.output;
     },
     async getAllColors(): Promise<Color[]> {
-      const response:IResponse<Color[]> = await $fetch("colors/all");
+      const response:IResponse<Color[]> = await $fetch("colors");
       return response.output;
     },
     async getAllCategories(): Promise<Category[]> {
-      const response:IResponse<Category[]> = await $fetch("categories/all");
+      const response:IResponse<Category[]> = await $fetch("categories");
       return response.output;
     }
   }

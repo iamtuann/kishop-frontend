@@ -69,7 +69,7 @@ export const useCartStore = defineStore({
       if (isAuthUser) {
         //call api
       } else {
-        const response:IResponse<ProductDetailV1> = await $fetch("order/products-info/v1", {
+        const response:IResponse<ProductDetailV1> = await $fetch("order/update-quantity", {
           method: 'POST',
           body: {
             quantityId: qtyId,
