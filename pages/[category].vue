@@ -1,8 +1,8 @@
 <template>
   <div class="container mx-auto mt-6">
-    <div class="banner h-[320px] rounded-3xl overflow-hidden">
+    <!-- <div class="banner h-[320px] rounded-3xl overflow-hidden">
       <img class="object-cover object-center h-full w-full" src="../assets/images/banner_men.png" alt="banner men fashion">
-    </div>
+    </div> -->
     <div class="mt-5">
       <div class="flex justify-between pb-4">
         <h2 class="text-4xl font-semibold italic">Men's shoes</h2>
@@ -19,49 +19,49 @@
         <div class="col-span-12 md:col-span-2 pr-4">
           <div class="cate-item border-t border-gray-300 pb-2">
             <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
-              @click="isOpenCate = !isOpenCate"
+              @click="pageStates.isOpenCate = !pageStates.isOpenCate"
             >
               <div class="text-base font-semibold">Loại sản phẩm</div>
-              <div class="arrow-icon" :class="{open: isOpenCate}">
+              <div class="arrow-icon" :class="{open: pageStates.isOpenCate}">
                 <span class="left"></span>
                 <span class="right"></span>
               </div>
             </div>
-            <div :class="{open: isOpenCate}" class="cate-body">
+            <div :class="{open: pageStates.isOpenCate}" class="cate-body">
               <label v-for="cate in listCate" :key="cate.id" class="checkbox mb-2 font-medium">
                 <input type="checkbox" v-model="listCateSelected" :value="cate.slug">
                 {{ cate.name }}
               </label>
             </div>
           </div>
-          <div class="cate-item border-t border-gray-300 pb-2" v-if="!isPageGender">
+          <div class="cate-item border-t border-gray-300 pb-2" v-if="!pageStates.isPageGender">
             <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
-              @click="isOpenGender = !isOpenGender"
+              @click="pageStates.isOpenGender = !pageStates.isOpenGender"
             >
               <div class="text-base font-semibold">Giới tính</div>
-              <div class="arrow-icon" :class="{open: isOpenGender}">
+              <div class="arrow-icon" :class="{open: pageStates.isOpenGender}">
                 <span class="left"></span>
                 <span class="right"></span>
               </div>
             </div>
-            <div :class="{open: isOpenGender}" class="cate-body">
+            <div :class="{open: pageStates.isOpenGender}" class="cate-body">
               <label v-for="gender in listGender" :key="gender" class="checkbox mb-2 font-medium">
                 <input type="checkbox" v-model="listGenderSelected" :value="gender">
                 {{ gender }}
               </label>
             </div>
           </div>
-          <div class="cate-item border-t border-gray-300 pb-2" v-if="!isPageSale" >
+          <div class="cate-item border-t border-gray-300 pb-2" v-if="!pageStates.isPageSale" >
             <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
-              @click="isOpenSale = !isOpenSale"
+              @click="pageStates.isOpenSale = !pageStates.isOpenSale"
             >
               <div class="text-base font-semibold">Giảm giá</div>
-              <div class="arrow-icon" :class="{open: isOpenSale}">
+              <div class="arrow-icon" :class="{open: pageStates.isOpenSale}">
                 <span class="left"></span>
                 <span class="right"></span>
               </div>
             </div>
-            <div :class="{open: isOpenSale}" class="cate-body">
+            <div :class="{open: pageStates.isOpenSale}" class="cate-body">
               <label class="checkbox mb-2 font-medium">
                 <input type="checkbox" v-model="isSale">Giảm giá
               </label>
@@ -69,15 +69,15 @@
           </div>
           <div class="cate-item border-t border-gray-300 pb-2">
             <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
-              @click="isOpenColor = !isOpenColor"
+              @click="pageStates.isOpenColor = !pageStates.isOpenColor"
             >
               <div class="text-base font-semibold">Màu sắc</div>
-              <div class="arrow-icon" :class="{open: isOpenColor}">
+              <div class="arrow-icon" :class="{open: pageStates.isOpenColor}">
                 <span class="left"></span>
                 <span class="right"></span>
               </div>
             </div>
-            <div :class="{open: isOpenColor}" class="cate-body grid grid-cols-3 gap-y-3">
+            <div :class="{open: pageStates.isOpenColor}" class="cate-body grid grid-cols-3 gap-y-3">
               <label class="cursor-pointer flex flex-col items-center select-none" v-for="color in listColor" :key="color.id">
                 <input type="checkbox" v-model="listColorSelected" :value="color.engName" class="hide checkbox-color">
                 <div class="w-7 h-7 rounded-full mb-1 color-wrap grid place-content-center"
@@ -89,15 +89,15 @@
           </div>
           <div class="cate-item border-t border-gray-300 pb-2">
             <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
-              @click="isOpenBrand = !isOpenBrand"
+              @click="pageStates.isOpenBrand = !pageStates.isOpenBrand"
             >
               <div class="text-base font-semibold">Hãng</div>
-              <div class="arrow-icon" :class="{open: isOpenBrand}">
+              <div class="arrow-icon" :class="{open: pageStates.isOpenBrand}">
                 <span class="left"></span>
                 <span class="right"></span>
               </div>
             </div>
-            <div :class="{open: isOpenBrand}" class="cate-body">
+            <div :class="{open: pageStates.isOpenBrand}" class="cate-body">
               <label v-for="brand in listBrand" :key="brand.id" class="checkbox mb-2 font-medium">
                 <input type="checkbox" v-model="listBrandSelected" :value="brand.name">
                 {{ brand.name }}
@@ -108,7 +108,7 @@
         <div class="col-span-12 md:col-span-8">
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <ProductCardSkeleton
-              v-if="isLoadingProducts"
+              v-if="pageStates.isLoadingProducts"
               v-for="count in 12" :key="count"
             />
             <ProductCard 
@@ -131,15 +131,18 @@ const router = useRouter()
 const route = useRoute()
 const productStore = useProductStore();
 const commonStore = useCommonStore();
-const isOpenCate = ref(true);
-const isOpenSale = ref(true);
-const isOpenColor = ref(true);
-const isOpenBrand = ref(true);
-const isOpenGender = ref(true);
-const isResetFilter = ref(false);
-const isPageGender = ref(false);
-const isPageSale = ref(false);
-const isLoadingProducts = ref(true);
+
+const pageStates = reactive({
+  isOpenCate: true,
+  isOpenSale: true,
+  isOpenColor: true,
+  isOpenBrand: true,
+  isOpenGender: true,
+  isResetFilter: false,
+  isPageGender: false,
+  isPageSale: false,
+  isLoadingProducts: true,
+})
 
 const currentPage = ref(1);
 const pageSize = ref(20);
@@ -174,7 +177,13 @@ const listSorting = [
     orderBy: "desc"
   },
 ]
-
+const keyword = computed(() => {
+  if (route.query.q) {
+    return route.query.q.toString();
+  } else {
+    return "";
+  }
+});
 const listCateSelected: Ref<string[]> = ref([]);
 const listColorSelected: Ref<string[]> = ref([]);
 const listBrandSelected: Ref<string[]> = ref([]);
@@ -185,25 +194,32 @@ const listGenderSelected: Ref<string[]> = ref([]);
 const { data: listBrand } = useAsyncData<Brand[]>('brands', () => commonStore.getAllBrands());
 const { data: listColor } = useAsyncData<Color[]>('colors', () => commonStore.getAllColors());
 const { data: listCate } = useAsyncData<Category[]>('categories', () => commonStore.getAllCategories());
-const listGender = ["Nam", "Nữ", "Unisex"]
+const listGender = ["Nam", "Nữ", "Unisex", "Trẻ em"]
 
-if (isResetFilter.value) {
+if (pageStates.isResetFilter) {
   resetFilter();
 }
-const routeParams = ref(route.params.category);
+const routeParams = ref(route.params);
 // const defaultCateParam: Ref<string> = ref('');
-switch (routeParams.value) {
+switch (route.params.category) {
   case "men":
     listGenderSelected.value.push("Nam");
-    isPageGender.value = true;
+    pageStates.isPageGender = true;
     break;
   case "women":
     listGenderSelected.value.push("Nữ");
-    isPageGender.value = true;
+    pageStates.isPageGender = true;
+    break;
+  case "kids":
+    listGenderSelected.value.push("Trẻ em");
+    pageStates.isPageGender = true;
     break;
   case "flash-sale":
     isSale.value = true;
-    isPageSale.value = true;
+    pageStates.isPageSale = true;
+    break;
+  case "search":
+    break;
   default:
     break;
 }
@@ -212,6 +228,7 @@ getQueryRouter();
 const { data: listProduct, status } = await useAsyncData<ProductBasic[]>(
   'listProduct', 
   () => productStore.filterProduct(
+    keyword.value,
     listCateSelected.value, listBrandSelected.value,
     listColorSelected.value, listGenderSelected.value, isSale.value,
     currentPage.value, pageSize.value,
@@ -220,18 +237,18 @@ const { data: listProduct, status } = await useAsyncData<ProductBasic[]>(
     watch: [
       listCateSelected, listBrandSelected,
       listColorSelected, listGenderSelected, isSale, 
-      currentPage, pageSize, sortingKey, orderBy
+      currentPage, pageSize, sortingKey, orderBy, keyword
     ]
   }
 );
 if (status.value === "success") {
-  isLoadingProducts.value = false;
+  pageStates.isLoadingProducts = false;
 }
 watch(status, (newStatus) => {
   if (newStatus === "success") {
-    isLoadingProducts.value = false;
+    pageStates.isLoadingProducts = false;
   } else if (newStatus === "pending") {
-    isLoadingProducts.value = true;
+    pageStates.isLoadingProducts = true;
   }
 })
 
@@ -239,7 +256,12 @@ watch([listCateSelected, listBrandSelected, listColorSelected, listGenderSelecte
   setQueryRouter()
 })
 
+watch(() => route.query.q, () => {
+  getQueryRouter();
+})
+
 function getQueryRouter() {
+  resetFilter();
   if (Array.isArray(route.query.categories)) {
     listCateSelected.value = route.query.categories as string[]
   } else if (route.query.categories) {
@@ -275,13 +297,16 @@ function setQueryRouter() {
   if (listBrandSelected.value.length > 0) {
     queryParams.brands = listBrandSelected.value
   }
-  if (listGenderSelected.value.length > 0 && !isPageGender.value) {
+  if (listGenderSelected.value.length > 0 && !pageStates.isPageGender) {
     queryParams.genders = listGenderSelected.value
   }
-  if (isSale.value && !isPageSale.value) {
+  if (isSale.value && !pageStates.isPageSale) {
     queryParams.sale = isSale.value;
   }
-  router.push({ query: queryParams })
+  if (keyword.value != "") {
+    queryParams.q = keyword.value;
+  }
+  router.replace({ query: queryParams })
 }
 // function setCateParams() {
 //   cateParams.value = [defaultCateParam.value, ...listCateSelected.value];
@@ -290,6 +315,7 @@ function resetFilter() {
   listCateSelected.value = [];
   listBrandSelected.value = [];
   listColorSelected.value = [];
+  listGenderSelected.value = [];
   isSale.value = false;
 }
 

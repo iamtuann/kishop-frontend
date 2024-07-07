@@ -1,8 +1,8 @@
 <template>
-  <header class="shadow-sm bg-white">
+  <header class="shadow-sm bg-white px-5">
       <nav class="container mx-auto py-2 flex justify-between items-center h-16">
         <NuxtLink to="/" class="font-bold text-xl text-primary-600">KiShop</NuxtLink>
-        <ul class="flex gap-2">
+        <ul class="hidden md:flex gap-2 md:gap-1">
           <!-- <li class="relative nav-item-parent">
             <div class="nav-item flex items-center">
               <span class="">Thương hiệu </span>
@@ -39,33 +39,84 @@
               </div>
             </ul>
           </li> -->
-          <li class=""><NuxtLink class="nav-item" to="/">Trang chủ</NuxtLink></li>
-          <li class=""><NuxtLink class="nav-item" to="/men">Nam</NuxtLink></li>
-          <li class=""><NuxtLink class="nav-item" to="/women">Nữ</NuxtLink></li>
-          <li class=""><NuxtLink class="nav-item" to="/flash-sale">Giảm giá</NuxtLink></li>
-          <li class=""><NuxtLink class="nav-item" to="/about">Về chúng tôi</NuxtLink></li>
+          <li v-for="route in routes" :key="route.href">
+            <NuxtLink class="nav-item" :to="route.href">{{ route.title }}</NuxtLink>
+          </li>
         </ul>
-        <ul class="flex items-center gap-3">
+        <ul class="flex items-center gap-1">
           <Search />
-          <span class="p-1 material-symbols-outlined semibold-style-icon cursor-pointer">favorite</span>
+          <NuxtLink to="/">
+            <span class="p-[6px] material-symbols-outlined semibold-style-icon cursor-pointer">person</span>
+          </NuxtLink>
           <NuxtLink to="/cart" class="relative">
             <div>
-              <span class="p-1 material-symbols-outlined semibold-style-icon cursor-pointer">shopping_cart</span>
+              <span class="p-[6px] material-symbols-outlined semibold-style-icon cursor-pointer">shopping_cart</span>
               <span v-show="cartStore.countProducts > 0" class="count-cart">{{ cartStore.countProducts }}</span>
             </div>
           </NuxtLink>
+          <div class="md:hidden" @click="isOpenMenu = !isOpenMenu">
+            <span class="p-[6px] material-symbols-outlined semibold-style-icon cursor-pointer">menu</span>
+          </div>
         </ul>
+
+        <!-- Nav mobile -->
+        <div
+          class="md:hidden mobile-menu-wrap" :class="{'menu-open': isOpenMenu}" 
+          tabindex="0" @keydown.esc="handleExit" ref="mobileMenuRef"
+        >
+          <div class="flex px-6 py-3 justify-end">
+            <button class="flex" @click="isOpenMenu = !isOpenMenu">
+              <span class="text-3xl leading-none material-symbols-outlined semibold-style-icon cursor-pointer">close</span>
+            </button>
+          </div>
+          <div class="py-6">
+            <NuxtLink 
+              v-for="route in routes" 
+              :key="route.href"
+              :to="route.href"
+              @click="isOpenMenu = false"
+              class="flex justify-between items-center nav-item-mobile"
+            >
+              <span>{{ route.title }}</span>
+              <span class="text-3xl leading-none material-symbols-outlined normal-style-icon">chevron_right</span>
+            </NuxtLink>
+          </div>
+        </div>
+        <div class="overlay md:hidden" :class="{'menu-open': isOpenMenu}" @click="isOpenMenu = !isOpenMenu"></div>
       </nav>
     </header>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 
+const isOpenMenu: Ref<boolean> = ref(false);
+const mobileMenuRef = ref<HTMLDivElement>();
 const cartStore = useCartStore();
+
 onMounted(async () => {
   await cartStore.getProductsBasicInCart();
 })
+
+watch(isOpenMenu, (newVal) => {
+  if (newVal) {
+    mobileMenuRef.value?.focus();
+  }
+})
+
+const routes = [
+  {title: 'Nam', href: 'men', children: []},
+  {title: 'Nữ', href: 'women', children: []},
+  {title: 'Trẻ em', href: 'kids', children: []},
+  {title: 'Giảm giá', href: 'flash-sale', children: []},
+  {title: 'Về chúng tôi', href: 'about', children: []},
+]
+
+function handleExit() {
+  if (isOpenMenu.value) {
+    isOpenMenu.value = false;
+  }
+}
 </script>
 
 <style scoped>
@@ -125,10 +176,66 @@ onMounted(async () => {
   justify-content: center;
   font-size: 9px;
   left: 17px;
-  top: -1px;
+  top: 1px;
   font-weight: 500;
   border-radius: 50%;
   color: #fff;
   background-color: #000;
+}
+
+.mobile-menu-wrap {
+  position: fixed;
+  overflow: hidden;
+  padding: 12px 0;
+  top: 0;
+  right: 0;
+  width: min(100vw, 320px);
+  height: 100%;
+  transform: translate(101%);
+  transition: transform .5s cubic-bezier(.4,0,.2,1);
+  background-color: #FFF;
+  z-index: 100;
+  outline: none;
+}
+
+.mobile-menu-wrap.menu-open {
+  transform: translate(0);
+}
+
+.nav-item-mobile {
+  padding: 8px 24px 8px 36px;
+  font-size: 20px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.nav-item-mobile:hover {
+  color: #707072;
+}
+
+.overlay {
+  background-color: rgba(17, 17, 17, 0.36);
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  -webkit-transition: opacity 250ms, visibility 0s linear 250ms;
+  transition: opacity 250ms, visibility 0s linear 250ms;
+  visibility: hidden;
+  z-index: 99;
+}
+.overlay.menu-open {
+  opacity: 1;
+  visibility: visible;
+  -webkit-transition: opacity 800ms ease, visibility 0s;
+  transition: opacity 800ms ease, visibility 0s;
+}
+
+@media (max-width: 1023px) { 
+  .nav-item {
+    padding: 8px 6px;
+    font-size: 15px;
+  }
 }
 </style>

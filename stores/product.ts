@@ -7,7 +7,7 @@ export const useProductStore = defineStore({
 
   }),
   actions: {
-    async getTopNewProduct(pageSize: number = 4): Promise<IResponse> {
+    async getTopNewProduct(pageSize: number = 4): Promise<IResponse<any>> {
       const response:IResponse<any> = await $fetch("products/list", {
         params: {
           pageSize: pageSize,
@@ -22,6 +22,7 @@ export const useProductStore = defineStore({
       return response;
     },
     async filterProduct (
+      name: string,
       categories: string[],
       brandNames: string[],
       colors: string[],
@@ -32,6 +33,7 @@ export const useProductStore = defineStore({
     ): Promise<ProductBasic[]> {
       const response:IResponse<ProductBasic[]> = await $fetch("products/list", {
         params: {
+          name,
           categories,
           brandNames,
           colors,
