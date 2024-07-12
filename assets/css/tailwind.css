@@ -27,6 +27,6 @@ body {
   }
 
   .card-wrapper {
-    @apply shadow-sm rounded-md overflow-hidden
+    @apply shadow-sm rounded-sm overflow-hidden
   }
 }

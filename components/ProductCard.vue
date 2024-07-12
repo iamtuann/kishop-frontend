@@ -8,14 +8,15 @@
     </NuxtLink>
     <div class="py-3 card-body">
       <NuxtLink :to="`/products/${product.slug}${product.variantId ? '/'+product.variantId : ''}`">
-        <h4 class="font-semibold mb-1">{{ product.name }}</h4>
-        <p class="description mb-2 text-gray-500">{{ product.description }}</p>
+        <!-- <span class="brand">{{ product.brand }}</span> -->
+        <h4 class="font-medium text-base mb-1 text-gray-700">{{ product.name }}</h4>
+        <!-- <p class="description mb-2 text-gray-500">{{ product.description }}</p> -->
         <div class="mb-2">
-          <span class="font-semibold text-red-700" v-if="isSale">{{ strPrice }}</span>
+          <span class="font-semibold text-lg">{{ strPrice }}</span>
           <span class="font-semibold" :class="isSale ? 'line-through text-gray-400 text-sm ms-2' : ''">{{ strOldPrice }}</span>
         </div>
       </NuxtLink>
-      <button class="btn-small">Add to cart</button>
+      <!-- <button class="btn-small">Add to cart</button> -->
     </div>
   </div>
 </template>
@@ -26,7 +27,11 @@ import { ProductBasic } from "~/types";
     product: { type: Object as () => ProductBasic , required: true }
   })
   const product = props.product;
+  console.log(product);
+  
   const isSale = product.price < product.oldPrice;
+  console.log(product.price, product.oldPrice);
+  
   const formatter = new Intl.NumberFormat('en-US');
   const strOldPrice = isSale ? formatter.format(product.oldPrice) + '₫' : '';
   const strPrice = formatter.format(product.price) + '₫';

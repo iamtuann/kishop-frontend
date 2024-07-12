@@ -29,7 +29,8 @@
       </div>
       <div class="col-span-12 md:col-span-5">
         <div class="pt-1 pr-0 pl-0 lg:mt-10 lg:mr-2">
-          <h1 class="text-2xl font-medium ">{{ product?.name }}</h1>
+          <span class="font-semibold text-red-600 uppercase">{{ product?.brand.name }}</span>
+          <h1 class="text-2xl font-medium mt-2">{{ product?.name }}</h1>
           <div class="mb-2 mt-2 ">
             <span class="font-semibold text-xl">{{ strPrice }}</span>
             <span v-if="isSale" class="font-semibold line-through text-gray-400 ms-2">{{ strOldPrice }}</span>
