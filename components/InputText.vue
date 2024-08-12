@@ -1,5 +1,5 @@
 <template>
-  <div class="form-group w-full flex flex-col gap-1 mb-[16px]">
+  <div class="form-group w-full flex flex-col gap-1">
     <div class="font-sans flex items-center">
       <label class="font-medium text-sm">{{ label }}</label>
       <span class="text-sm ml-[2px] text-red-700" v-if="required" >*</span>
@@ -15,7 +15,9 @@
         @input="onInput"  
       />
     </div>
-    <div v-show="message != ''" class="message">{{ message }}</div>
+    <div class="message">
+      <div v-show="message != ''">{{ message }}</div>
+    </div>
   </div>
 </template>
 
@@ -51,7 +53,7 @@ function validate() {
       if (result !== true) {
         message.value = result;
         isValid.value = false
-        break;
+        return isValid.value;
       }
     }
   }
@@ -67,6 +69,11 @@ function onInput(e: Event) {
   const target = e.target as HTMLInputElement
   emit("update:modelValue", target.value)
 }
+
+defineExpose({
+  validate,
+  isValid
+})
 
 </script>
 
@@ -85,6 +92,8 @@ function onInput(e: Event) {
 .message {
   color: #ff5454;
   margin: 0 10px;
-  font-size: 12.8px;
+  font-size: 13px;
+  line-height: 14px;
+  height: 14px;
 }
 </style>

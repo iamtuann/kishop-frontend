@@ -7,8 +7,10 @@
           Đăng nhập
         </p>
       </div>
-      <div class="mt-4">
-        <InputText 
+      <form class="mt-2" @submit.prevent="handleLogin">
+        <InputText
+          ref="emailRef"
+          class="mb-2"
           name="email"
           label="Email"
           placeholder="Nhập email của bạn"
@@ -17,6 +19,7 @@
           :rules="[isRequired('email'), isEmail]"
         />
         <InputText 
+          ref="passwordRef"
           name="password"
           label="Mật khẩu"
           placeholder="****"
@@ -27,15 +30,18 @@
         >
           <template v-slot:right_label>
             <div class="flex cursor-pointer" @click="isShowing = !isShowing">
-              <span v-show="!isShowing" class="default-style-icon material-symbols-outlined text-gray-500 leading-5">visibility</span>
-              <span v-show="isShowing" class="default-style-icon material-symbols-outlined text-gray-500 leading-5">visibility_off</span>
+              <span v-show="!isShowing" class="default-style-icon material-symbols-outlined text-gray-500 leading-5 select-none">visibility</span>
+              <span v-show="isShowing" class="default-style-icon material-symbols-outlined text-gray-500 leading-5 select-none">visibility_off</span>
             </div>
           </template>
         </InputText>
-      </div>
-      <button class="btn-primary text-lg mt-5 hover:bg-primary-600 transition-all">
-        <span>Đăng nhập</span>
-      </button>
+
+        <span v-show="errMsg" class="message">{{ errMsg }}</span>
+
+        <button type="submit" class="btn-primary text-lg mt-4 hover:bg-primary-600 transition-all">
+          <span>Đăng nhập</span>
+        </button>
+      </form>
       
       <div class="my-6 flex items-center gap-x-4">
         <hr class="border-gray-300 border-t-[2px] flex-1">
@@ -62,11 +68,15 @@
 </template>
 
 <script setup lang="ts">
-import { isRequired, isEmail } from "@/utils/validationRules";
+import { isRequired, isEmail } from "@/utils";
+import InputText from "~/components/InputText.vue";
+import { validateForm } from "~/utils/validateForm";
 
 definePageMeta({
   layout: "blank"
 })
+
+const authStore = useAuthStore();
 
 type loginInput = {
   email: string,
@@ -77,7 +87,32 @@ const login: loginInput = reactive({
   email: "",
   password: ""
 })
+const emailRef = ref(null);
+const passwordRef = ref(null);
 const isShowing: Ref<boolean> = ref(false);
+const errMsg: Ref<string> = ref("");
+
+async function handleLogin() {
+  errMsg.value = "";
+  try {
+    const valid = validateForm([emailRef, passwordRef]);
+    if(valid) {
+      const response = await authStore.login(login.email, login.password);
+      if(response.statusCode === 200) {
+        await navigateTo('/')
+      } else {
+        errMsg.value = response.error;
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    errMsg.value = "Opps, có lỗi xảy ra vui lòng thử lại sau!";
+  }
+}
+
+watch(login, () => {
+  errMsg.value = "";
+})
 </script>
 
 <style scoped>
@@ -97,5 +132,12 @@ const isShowing: Ref<boolean> = ref(false);
   padding: 32px 100px;
   border: 1px solid rgba(102, 102, 102, 0.5);
   height: 100%;
+}
+.message {
+  color: #ff5454;
+  margin: 0 10px;
+  font-size: 13px;
+  line-height: 16px;
+  height: 16px;
 }
 </style>

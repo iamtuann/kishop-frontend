@@ -1,4 +1,28 @@
 <template>
+  <div class="px-3 py-2 bg-primary font-sans">
+    <div class="flex justify-between items-center container mx-auto text-xs text-white ">
+      <div class="flex items-center">
+        <i class="fa-light fa-phone fa-lg"></i>
+        <span class="ms-2">+84 989 382 xxx</span>
+      </div>
+      <div class="hidden md:block">
+        Get 50% Off on selected Item | Shop now
+      </div>
+      <div v-if="!authStore.isAuthenticated" class="flex items-center font-medium">
+        <NuxtLink :to="{name: 'login'}" class="hover:underline">
+          Đăng nhập
+        </NuxtLink>
+        <div class="border-white h-3 mx-3 border-r"></div>
+        <NuxtLink :to="{name: 'login'}"  class="hover:underline">
+          Đăng ký
+        </NuxtLink>
+      </div>
+      <NuxtLink to="/" v-else class="flex gap-2 items-center">
+        <i class="fa-light fa-circle-user text-base"></i>
+        <span>Hi, {{ authStore.user.lastName + "!"|| "" }}</span>
+      </NuxtLink>
+    </div>
+  </div>
   <header class="shadow-sm bg-white px-5">
       <nav class="container mx-auto py-2 flex justify-between items-center h-16">
         <NuxtLink to="/" class="font-bold text-xl text-primary-600">KiShop</NuxtLink>
@@ -43,19 +67,20 @@
             <NuxtLink class="nav-item" :to="route.href">{{ route.title }}</NuxtLink>
           </li>
         </ul>
-        <ul class="flex items-center gap-1">
+        <ul class="flex items-center gap-2">
           <Search />
-          <NuxtLink to="/">
-            <span class="p-[6px] material-symbols-outlined semibold-style-icon cursor-pointer">person</span>
-          </NuxtLink>
-          <NuxtLink to="/cart" class="relative">
+          <NuxtLink :to="{name: 'cart'}" class="relative">
             <div>
-              <span class="p-[6px] material-symbols-outlined semibold-style-icon cursor-pointer">shopping_cart</span>
+              <span class="p-[6px] cursor-pointer">
+                <i class="fa-light fa-bag-shopping fa-lg"></i>
+              </span>
               <span v-show="cartStore.countProducts > 0" class="count-cart">{{ cartStore.countProducts }}</span>
             </div>
           </NuxtLink>
           <div class="md:hidden" @click="isOpenMenu = !isOpenMenu">
-            <span class="p-[6px] material-symbols-outlined semibold-style-icon cursor-pointer">menu</span>
+            <span class="p-[6px] cursor-pointer">
+              <i class="fa-regular fa-bars fa-lg"></i>
+            </span>
           </div>
         </ul>
 
@@ -65,8 +90,8 @@
           tabindex="0" @keydown.esc="handleExit" ref="mobileMenuRef"
         >
           <div class="flex px-6 py-3 justify-end">
-            <button class="flex" @click="isOpenMenu = !isOpenMenu">
-              <span class="text-3xl leading-none material-symbols-outlined semibold-style-icon cursor-pointer">close</span>
+            <button class="flex text-2xl leading-none cursor-pointer" @click="isOpenMenu = !isOpenMenu">
+              <i class="fa-regular fa-xmark"></i>
             </button>
           </div>
           <div class="py-6">
@@ -78,7 +103,9 @@
               class="flex justify-between items-center nav-item-mobile"
             >
               <span>{{ route.title }}</span>
-              <span class="text-3xl leading-none material-symbols-outlined normal-style-icon">chevron_right</span>
+              <span class="text-lg leading-none">
+                <i class="fa-regular fa-chevron-right"></i>
+              </span>
             </NuxtLink>
           </div>
         </div>
@@ -93,6 +120,7 @@ import { onMounted, ref } from "vue";
 const isOpenMenu: Ref<boolean> = ref(false);
 const mobileMenuRef = ref<HTMLDivElement>();
 const cartStore = useCartStore();
+const authStore = useAuthStore();
 
 onMounted(async () => {
   await cartStore.getProductsBasicInCart();
@@ -175,8 +203,8 @@ function handleExit() {
   align-items: center;
   justify-content: center;
   font-size: 9px;
-  left: 17px;
-  top: 1px;
+  left: 14px;
+  top: -2px;
   font-weight: 500;
   border-radius: 50%;
   color: #fff;
