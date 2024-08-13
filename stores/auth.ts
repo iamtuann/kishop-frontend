@@ -3,8 +3,9 @@ import { IResponse } from '~/types';
 import { useLocalStorage, RemovableRef } from "@vueuse/core";
 
 export type authStoreType = {
-  token: RemovableRef<string>,
-  user: RemovableRef<authResponse>;
+  token: string,
+  user: authResponse,
+  isAuthenticated: boolean
 }
 
 export type authResponse = {
@@ -19,11 +20,10 @@ export type authResponse = {
 export const useAuthStore = defineStore({
   id: 'authStore',
   state: () => ({
-    token: useLocalStorage("token", ""),
-    user: useLocalStorage("user", {})
-  } as authStoreType ),
+    user: {},
+    isAuthenticated: false,
+  } as authStoreType),
   getters: {
-    isAuthenticated: (state) => !!state.token,
   },
   actions: {
     async login(email: string, password: string) {
@@ -37,8 +37,10 @@ export const useAuthStore = defineStore({
       if (response.statusCode === 200) {
         this.token = response.output.token;
         this.user = response.output;
+        this.isAuthenticated = true;
       }
       return response;
     }
-  }
+  },
+  persist: true,
 })

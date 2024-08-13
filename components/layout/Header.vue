@@ -8,7 +8,7 @@
       <div class="hidden md:block">
         Get 50% Off on selected Item | Shop now
       </div>
-      <div v-if="!authStore.isAuthenticated" class="flex items-center font-medium">
+      <div v-if="!isAuthenticated" class="flex items-center font-medium">
         <NuxtLink :to="{name: 'login'}" class="hover:underline">
           Đăng nhập
         </NuxtLink>
@@ -19,7 +19,7 @@
       </div>
       <NuxtLink to="/" v-else class="flex gap-2 items-center">
         <i class="fa-light fa-circle-user text-base"></i>
-        <span>Hi, {{ authStore.user.lastName + "!"|| "" }}</span>
+        <span>Hi, {{ authStore.user?.lastName || "" }}</span>
       </NuxtLink>
     </div>
   </div>
@@ -30,7 +30,6 @@
           <!-- <li class="relative nav-item-parent">
             <div class="nav-item flex items-center">
               <span class="">Thương hiệu </span>
-              <span class="material-symbols-outlined default-style-icon">expand_more</span>
             </div>
             <ul class="nav-child text-gray-600 font-semibold flex flex-wrap bg-white shadow-md">
               <div class="w-2/4">
@@ -116,11 +115,13 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { storeToRefs } from "pinia";
 
 const isOpenMenu: Ref<boolean> = ref(false);
 const mobileMenuRef = ref<HTMLDivElement>();
 const cartStore = useCartStore();
 const authStore = useAuthStore();
+const {isAuthenticated} = storeToRefs(authStore)
 
 onMounted(async () => {
   await cartStore.getProductsBasicInCart();
