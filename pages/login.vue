@@ -30,8 +30,12 @@
         >
           <template v-slot:right_label>
             <div class="flex cursor-pointer" @click="isShowing = !isShowing">
-              <span v-show="!isShowing" class="default-style-icon material-symbols-outlined text-gray-500 leading-5 select-none">visibility</span>
-              <span v-show="isShowing" class="default-style-icon material-symbols-outlined text-gray-500 leading-5 select-none">visibility_off</span>
+              <span v-show="!isShowing" class="text-gray-500 leading-5 select-none">
+                <i class="fa-regular fa-eye"></i>
+              </span>
+              <span v-show="isShowing" class="text-gray-500 leading-5 select-none">
+                <i class="fa-regular fa-eye-slash"></i>
+              </span>
             </div>
           </template>
         </InputText>

@@ -27,10 +27,8 @@ import { ProductBasic } from "~/types";
     product: { type: Object as () => ProductBasic , required: true }
   })
   const product = props.product;
-  console.log(product);
   
   const isSale = product.price < product.oldPrice;
-  console.log(product.price, product.oldPrice);
   
   const formatter = new Intl.NumberFormat('en-US');
   const strOldPrice = isSale ? formatter.format(product.oldPrice) + '₫' : '';
