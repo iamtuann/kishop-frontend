@@ -1,14 +1,16 @@
 import { ofetch } from "ofetch";
 
 export default defineNuxtPlugin((nuxtApp) => {
+  const config = useRuntimeConfig();
+  const authStore = useAuthStore();
   globalThis.$fetch = ofetch.create({
-    baseURL: useRuntimeConfig().public.BASE_URL,
+    baseURL: config.public.BASE_URL,
     headers: {
       'Content-Type': 'application/json',
       Accept: "*/*",
     },
     onRequest({ request, options }) {
-      let token = process.server ? '' : localStorage.getItem("token") || ""
+      let token = authStore.user.token;
       if (token) {
         options.headers = { Authorization: `Bearer ${token}` }
       } else {

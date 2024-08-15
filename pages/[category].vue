@@ -108,7 +108,7 @@
         <div class="col-span-12 md:col-span-8">
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <ProductCardSkeleton
-              v-if="pageStates.isLoadingProducts"
+              v-if="pending"
               v-for="count in 12" :key="count"
             />
             <ProductCard 
@@ -141,9 +141,7 @@ const pageStates = reactive({
   isResetFilter: false,
   isPageGender: false,
   isPageSale: false,
-  isLoadingProducts: true,
 })
-
 const currentPage = ref(1);
 const pageSize = ref(20);
 const orderBy = ref("");
@@ -189,8 +187,6 @@ const listColorSelected: Ref<string[]> = ref([]);
 const listBrandSelected: Ref<string[]> = ref([]);
 const listGenderSelected: Ref<string[]> = ref([]);
 
-//const cateParams: Ref<string[]> = ref([]);
-
 const { data: listBrand } = useAsyncData<Brand[]>('brands', () => commonStore.getAllBrands());
 const { data: listColor } = useAsyncData<Color[]>('colors', () => commonStore.getAllColors());
 const { data: listCate } = useAsyncData<Category[]>('categories', () => commonStore.getAllCategories());
@@ -199,8 +195,7 @@ const listGender = ["Nam", "Nữ", "Unisex", "Trẻ em"]
 if (pageStates.isResetFilter) {
   resetFilter();
 }
-const routeParams = ref(route.params);
-// const defaultCateParam: Ref<string> = ref('');
+
 switch (route.params.category) {
   case "men":
     listGenderSelected.value.push("Nam");
@@ -225,8 +220,8 @@ switch (route.params.category) {
 }
 getQueryRouter();
 
-const { data: listProduct, status } = await useAsyncData<ProductBasic[]>(
-  'listProduct', 
+const { data: listProduct, pending } = await useAsyncData<ProductBasic[]>(
+  `listProduct`, 
   () => productStore.filterProduct(
     keyword.value,
     listCateSelected.value, listBrandSelected.value,
@@ -238,19 +233,11 @@ const { data: listProduct, status } = await useAsyncData<ProductBasic[]>(
       listCateSelected, listBrandSelected,
       listColorSelected, listGenderSelected, isSale, 
       currentPage, pageSize, sortingKey, orderBy, keyword
-    ]
-  }
+    ],
+    lazy: true,
+    default: () => [] as ProductBasic[],
+  },
 );
-if (status.value === "success") {
-  pageStates.isLoadingProducts = false;
-}
-watch(status, (newStatus) => {
-  if (newStatus === "success") {
-    pageStates.isLoadingProducts = false;
-  } else if (newStatus === "pending") {
-    pageStates.isLoadingProducts = true;
-  }
-})
 
 watch([listCateSelected, listBrandSelected, listColorSelected, listGenderSelected, isSale], () => {
   setQueryRouter()
@@ -261,7 +248,7 @@ watch(() => route.query.q, () => {
 })
 
 function getQueryRouter() {
-  resetFilter();
+  // resetFilter();
   if (Array.isArray(route.query.categories)) {
     listCateSelected.value = route.query.categories as string[]
   } else if (route.query.categories) {
@@ -308,9 +295,7 @@ function setQueryRouter() {
   }
   router.replace({ query: queryParams })
 }
-// function setCateParams() {
-//   cateParams.value = [defaultCateParam.value, ...listCateSelected.value];
-// }
+
 function resetFilter() {
   listCateSelected.value = [];
   listBrandSelected.value = [];

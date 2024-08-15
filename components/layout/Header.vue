@@ -134,11 +134,11 @@ watch(isOpenMenu, (newVal) => {
 })
 
 const routes = [
-  {title: 'Nam', href: 'men', children: []},
-  {title: 'Nữ', href: 'women', children: []},
-  {title: 'Trẻ em', href: 'kids', children: []},
-  {title: 'Giảm giá', href: 'flash-sale', children: []},
-  {title: 'Về chúng tôi', href: 'about', children: []},
+  {title: 'Nam', href: '/men', children: []},
+  {title: 'Nữ', href: '/women', children: []},
+  {title: 'Trẻ em', href: '/kids', children: []},
+  {title: 'Giảm giá', href: '/flash-sale', children: []},
+  {title: 'Về chúng tôi', href: '/about', children: []},
 ]
 
 function handleExit() {

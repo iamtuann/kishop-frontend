@@ -1,9 +1,7 @@
 import { defineStore } from 'pinia';
 import { IResponse } from '~/types';
-import { useLocalStorage, RemovableRef } from "@vueuse/core";
 
 export type authStoreType = {
-  token: string,
   user: authResponse,
   isAuthenticated: boolean
 }
@@ -35,12 +33,15 @@ export const useAuthStore = defineStore({
         }
       });
       if (response.statusCode === 200) {
-        this.token = response.output.token;
         this.user = response.output;
         this.isAuthenticated = true;
       }
       return response;
     }
   },
-  persist: true,
+  persist: {
+    storage: persistedState.cookiesWithOptions({
+      maxAge: 86400000,
+    }),
+  },
 })
