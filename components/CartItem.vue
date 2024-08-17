@@ -27,12 +27,16 @@
       </p>
       <div class="flex items-center py-1">
         <div class="inline-flex mx-2 relative">
-          <button type="button" class="material-symbols-outlined normal-style-icon favorite-btn">favorite</button>
+          <button type="button" class="favorite-btn">
+            <i class="fa-regular fa-heart fa-lg"></i>
+          </button>
           <div class="tooltip favorite">Thêm vào yêu thích</div>
         </div>
         <div class="inline-flex mx-2 cursor-pointer relative">
-          <button type="button" class="material-symbols-outlined normal-style-icon delete-btn"
-          @click="cartStore.removeProductInCart(product.quantityId)">delete</button>
+          <button type="button" class="delete-btn"
+            @click="cartStore.removeProductInCart(product.quantityId)">
+            <i class="fa-regular fa-trash fa-lg"></i>
+          </button>
           <div class="tooltip delete">Xóa khỏi giỏ hàng</div>
         </div>
       </div>

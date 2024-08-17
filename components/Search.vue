@@ -1,15 +1,15 @@
 <template>
-  <form @submit.prevent="search" class="search-wrap hidden md:flex items-center bg-gray-100 font-sans">
+  <form @submit.prevent="search" class="search-wrap lg:w-[320px] w-[220px] hidden md:flex items-center bg-gray-100 font-sans">
     <input 
       v-model="searchInput" 
       type="text" 
-      class="search-input lg:w-[200px] w-[150px] flex-1 bg-transparent border-none outline-none text-gray-700 px-1" 
+      class="search-input flex-1 bg-transparent border-none outline-none text-gray-700 px-1" 
       placeholder="Tìm kiếm sản phẩm"
     >
-    <span class="material-symbols-outlined normal-style-icon cursor-pointer">search</span>
+    <button><i class="fa-regular fa-magnifying-glass"></i></button>
   </form>
-  <div class="md:hidden" @click="isOpenSearch = !isOpenSearch">
-    <span class="material-symbols-outlined p-[6px] semibold-style-icon cursor-pointer">search</span>
+  <div class="md:hidden p-[6px] cursor-pointer" @click="isOpenSearch = !isOpenSearch">
+    <i class="fa-regular fa-magnifying-glass fa-lg"></i>
   </div>
   <div 
     class="md:hidden mobile-search-wrap" :class="{'search-open': isOpenSearch}" 
@@ -17,8 +17,8 @@
   >
     <div class="pt-3 px-6 flex gap-2 sm:gap-6 items-center">
       <form @submit.prevent="search" class="search-input-container">
-        <button type="submit">
-          <span class="p-[6px] material-symbols-outlined normal-style-icon cursor-pointer">search</span>
+        <button type="submit" class="px-2 py-[6px]">
+          <i class="fa-regular fa-magnifying-glass"></i>
         </button>
         <input type="text" 
           class="search-input flex-1 bg-transparent border-none outline-none text-sm text-gray-900 px-1"
@@ -26,10 +26,12 @@
           v-model="searchInput"
           ref="searchInputRef"
         >
-        <span @click="clearInput" class="clear-btn material-symbols-outlined normal-style-icon">close</span>
+        <span @click="clearInput" class="clear-btn">
+          <i class="fa-regular fa-xmark"></i>
+        </span>
       </form>
-      <button class="flex" @click="isOpenSearch = !isOpenSearch">
-        <span class="text-3xl leading-none material-symbols-outlined semibold-style-icon cursor-pointer">chevron_right</span>
+      <button class="flex px-1 leading-none" @click="isOpenSearch = !isOpenSearch">
+        <i class="fa-regular fa-chevron-right"></i>
       </button>
     </div>
   </div>
@@ -79,7 +81,7 @@ function handleExit() {
   width: 100%;
 }
 .search-input {
-  /* color: var(--text-color); */
+  width: 100%;
   font-weight: 500;
   font-size: 15px;
 }
@@ -108,7 +110,11 @@ function handleExit() {
 .clear-btn {
   font-size: 16px;
   border-radius: 50%;
-  padding: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-right: 6px;
   cursor: pointer;
   visibility: hidden;

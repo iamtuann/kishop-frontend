@@ -18,10 +18,10 @@
             <img :src="imageShowing" :alt="product?.name" class="w-full h-full bg-gray-100 object-cover object-center">
             <div class="absolute flex bottom-3 right-4 gap-2">
               <div class="arrow" @click="prevImage">
-                <span class="material-symbols-outlined arrow-icon">arrow_back_ios_new</span>
+                <i class="fa-regular fa-chevron-left"></i>
               </div>
               <div class="arrow" @click="forwardImage">
-                <span class="material-symbols-outlined arrow-icon">arrow_forward_ios</span>
+                <i class="fa-regular fa-chevron-right"></i>
               </div>
             </div>
           </div>
@@ -95,7 +95,7 @@
             />
             <button class="btn-primary mt-3 bg-white border-gray-400 text-gray-800 hover:border-gray-800 transition-all">
               <span>Yêu thích</span>
-              <span class="material-symbols-outlined arrow-icon ml-2">favorite</span>
+              <i class="ml-2 fa-light fa-heart"></i>
             </button>
           </div>
           <div class="pt-6">
@@ -236,9 +236,6 @@ import { formatPrice } from "@/utils"
 </script>
 
 <style scoped>
-.arrow-icon {
-  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 20
-}
 .arrow {
   @apply inline-flex items-center justify-center w-8 h-8 rounded-full cursor-pointer bg-white select-none
 }

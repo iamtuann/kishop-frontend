@@ -15,9 +15,7 @@
         </svg>
       </div>
       <div class="cart-icon">
-        <span class="material-symbols-outlined semibold-style-icon">
-          shopping_cart
-        </span>
+        <i class="fa-light fa-cart-shopping fa-lg"></i>
       </div>
     </div>
     <span>Thêm vào giỏ</span>

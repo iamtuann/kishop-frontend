@@ -5,6 +5,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
     '@vueuse/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
   ],
   runtimeConfig: {
     public: {
@@ -34,16 +35,16 @@ export default defineNuxtConfig({
       ],
       link: [
         { 
-          rel: "stylesheet",
-          href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200'
-        },
-        { 
           rel: "preconnect",
           href: 'https://fonts.googleapis.com'
         },
         { 
           rel: "preconnect",
           href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap'
+        },
+        { 
+          rel: "stylesheet",
+          href: 'https://site-assets.fontawesome.com/releases/v6.6.0/css/all.css'
         },
       ]
     }
