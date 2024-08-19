@@ -1,6 +1,9 @@
 :root {
   --text-color: rgb(31, 41, 55);
   --cart-icon-width: 68px;
+  --tw-color-white: theme('colors.white');
+  --tw-color-black: theme('colors.black');
+  --tw-color-primary: theme('colors.primary.DEFAULT');
 }
 .checkbox {
   display: grid;

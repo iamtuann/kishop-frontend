@@ -59,11 +59,12 @@ export default {
   theme: {
     extend: {
       colors: {
+        transparent: 'transparent',
+        current: 'currentColor',
         primary: MyTheme.colors.green,
         green: MyTheme.colors.green,
         blue: MyTheme.colors.blue,
         red: MyTheme.colors.red,
-        slate: colors.slate,
       },
       fontFamily: {
         sans: ['Montserrat', ...defaultTheme.fontFamily.sans],
