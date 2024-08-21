@@ -18,18 +18,18 @@
           <p>Tổng tiền hàng</p>
           <p class="ml-2">{{ formatPrice(subtotal) }}</p>
         </div>
-        <div class="flex justify-between text-gray-800 font-medium mb-3">
+        <!-- <div class="flex justify-between text-gray-800 font-medium mb-3">
           <p>Phí vận chuyển </p>
           <p v-if="subtotal > totalPriceForFreeDelevery" class="ml-2 text-primary-600 font-semibold">Free</p>
           <p v-else class="ml-2">{{ formatPrice(deliveryFee) }}</p>
-        </div>
+        </div> -->
 
-        <div class="flex justify-between text-gray-800 font-medium mb-3 mt-5 py-4 border-t border-b border-gray-300">
-          <p>Tổng thanh toán </p>
+        <!-- <div class="flex justify-between text-gray-800 font-medium mb-3 mt-5 py-4 border-t border-b border-gray-300">
+          <p>Tạm tính </p>
           <p class="ml-2">{{ formatPrice(total) }}</p>
-        </div>
+        </div> -->
         <div class="pt-5 pb-3">
-          <button type="button" class="btn-primary" @click="hanldeSubmitOrder">Thanh toán</button>
+          <button type="button" class="btn-primary" @click="hanldeSubmitOrder">Đặt hàng</button>
         </div>
       </div>
     </div>
@@ -59,7 +59,8 @@ const total = computed(() => {
 })
 
 function hanldeSubmitOrder() {
-  console.log(cartStore.listProductDetail);
+  // console.log(cartStore.listProductDetail);
+  navigateTo("/checkout")
 }
 </script>
 

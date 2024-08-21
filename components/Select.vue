@@ -13,16 +13,16 @@
     </div>
     <div class="select-wrap" :class="{ disabled: disabled }">
       <div class="selected"
-       :class="{ open: open }" 
-       @click="items.length > 0 ? open = !open : ''"
+        :class="{ open: open }" 
+        @click="items.length > 0 ? open = !open : ''"
       >
-        <span v-if="selected != null">
+        <span v-if="selected != null && !isEmptyValue(selected)">
           {{ getTitle(selected) }}
         </span>
         <span v-else>
           {{ titleDefault }}
         </span>
-        <div v-if="!disabled" class="arrow-icon" :class="{ open: open }">
+        <div v-if="!disabled && items.length > 0" class="arrow-icon" :class="{ open: open }">
           <span class="left"></span>
           <span class="right"></span>
         </div>
@@ -33,11 +33,7 @@
           class="px-4 py-2 cursor-pointer select-none flex items-center hover:bg-primary-100"
           v-for="(item, i) in items"
           :key="i"
-          @click="
-            selected = item;
-            open = false;
-            $emit('update:modelValue', item);
-          "
+          @click="handleSelect(item)"
         >
           {{ getTitle(item) }}
         </div>
@@ -99,6 +95,12 @@ function validate() {
   return isValid.value;
 }
 
+function handleSelect(item: string | object) {
+  selected.value = item;
+  open.value = false;
+  emit('update:modelValue', item);
+}
+
 function setDropdownPosition() {
   if (selectEl.value) {
     const spaceBelow = window.innerHeight - selectEl.value.getBoundingClientRect().bottom;
@@ -108,6 +110,19 @@ function setDropdownPosition() {
     } else {
       dropdownOpenDirection.value = 'above';
     }
+  }
+}
+
+function isEmptyValue(value: string | object) {
+  if (typeof value === 'object') {
+    for (const prop in value) {
+      if (Object.hasOwn(value, prop)) {
+        return false;
+      }
+    }
+    return true;
+  } else {
+    return !value;
   }
 }
 
