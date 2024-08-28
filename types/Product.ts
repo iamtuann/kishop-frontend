@@ -23,10 +23,10 @@ export interface ProductVariant {
   status: number,
   previewImage: string,
   imageUrls: string[],
-  productQuantities: ProductQuantity[],
+  productDetails: ProductDetail[],
 }
 
-export interface ProductQuantity {
+export interface ProductDetail {
   id: number,
   size: Size,
   quantity: number
@@ -46,35 +46,4 @@ export interface ProductBasic {
   thumbnail: string,
   slug: string,
   color: string | null
-}
-
-export interface ProductDetail {
-  productId: number,
-  variantId: number,
-  quantityId: number,
-  name: string,
-  variantName: string,
-  slug: string
-  color: string,
-  size: string,
-  status: number,
-  brand: string,
-  thumbnail: string,
-  price: number,
-  oldPrice: number,
-  quantityOrder: number,
-  totalPrice: number,
-  totalOldPrice: number,
-}
-
-export interface ProductDetailV1 {
-  quantityId: number,
-  quantityOrder: number,
-  totalPrice: number,
-  totalOldPrice: number,
-}
-
-export interface ProductOrder {
-  product: ProductDetail,
-  quantity: number,
 }

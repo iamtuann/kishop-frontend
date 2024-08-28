@@ -1,56 +1,74 @@
 <template>
-  <div class="py-5 flex gap-4 pr-3 border-b border-b-gray-300">
-    <div class="w-[160px] shrink-0">
+  <div class="py-5 flex gap-3 pr-3 border-b border-b-gray-300">
+    <div 
+      class="shrink-0"
+      :class="size=='small' ? 'w-24': 'w-[160px]'"
+    >
       <NuxtLink :to="`/products/${product.slug}/${product.variantId}`">
         <img :src="product.thumbnail" :alt="product.name + ' ' + product.variantName"
         class="w-full rounded-md">
       </NuxtLink>
     </div>
-    <div class="grow">
-      <div class="flex justify-between">
-        <NuxtLink :to="`/products/${product.slug}/${product.variantId}`">
-          <h4 class="font-semibold text-lg hover:underline">{{ product.name }}</h4>
-        </NuxtLink>
-        <h4 class="font-semibold">{{ strPrice }}</h4>
-      </div>
-      <div class="flex justify-between">
-        <p class="description mb-1 text-gray-500">Loại: {{ product.variantName }}</p>
-        <h4 v-if="isSale" class="font-medium text-sm line-through text-gray-400">{{ strOldPrice }}</h4>
-      </div>
-      <p class="mb-1 text-gray-500">Size: {{ product.size }}</p>
-      <p class="mb-2 flex">
-        <button type="button" :disabled="product.quantityOrder == 1" class="act-btn minus-btn disabled:text-gray-300" 
-          @click="handleMinusQuantity">-</button>
-        <span class="quantity">{{ product.quantityOrder }}</span>
-        <button type="button" class="act-btn plus-btn"
-          @click="handlePlusQuantity">+</button>
-      </p>
-      <div class="flex items-center py-1">
-        <div class="inline-flex mx-2 relative">
-          <button type="button" class="favorite-btn">
-            <i class="fa-regular fa-heart fa-lg"></i>
-          </button>
-          <div class="tooltip favorite">Thêm vào yêu thích</div>
-        </div>
-        <div class="inline-flex mx-2 cursor-pointer relative">
-          <button type="button" class="delete-btn"
-            @click="cartStore.removeProductInCart(product.quantityId)">
-            <i class="fa-regular fa-trash fa-lg"></i>
-          </button>
-          <div class="tooltip delete">Xóa khỏi giỏ hàng</div>
-        </div>
-      </div>
 
+    <div class="grow mt-[2px]">
+      <NuxtLink :to="`/products/${product.slug}/${product.variantId}`">
+        <h4 class="font-semibold text-lg hover:underline mb-1" :class="{'leading-5': size=='small'}">
+          {{ product.name }}
+        </h4>
+      </NuxtLink>
+      <p :class="classText()">
+        {{ product.variantName }}
+      </p>
+      <p :class="classText()">
+        Size: {{ product.size }}
+      </p>
+
+      <p v-if="!hideQuantity" :class="classText()">
+        Số lượng: {{ product.quantity }}
+      </p>
+      <div v-if="!hideActions" class="mt-2">
+        <div class="mb-2 flex">
+          <button type="button" :disabled="product.quantity == 1" class="act-btn minus-btn disabled:text-gray-300" 
+            @click="handleMinusQuantity">-</button>
+          <span class="quantity">{{ product.quantity }}</span>
+          <button type="button" class="act-btn plus-btn"
+            @click="handlePlusQuantity">+</button>
+        </div>
+        <div class="flex items-center py-1">
+          <div class="inline-flex mx-2 relative">
+            <button type="button" class="favorite-btn">
+              <i class="fa-regular fa-heart fa-lg"></i>
+            </button>
+            <div class="tooltip favorite">Thêm vào yêu thích</div>
+          </div>
+          <div class="inline-flex mx-2 cursor-pointer relative">
+            <button type="button" class="delete-btn"
+              @click="cartStore.removeProductInCart(product.detailId)">
+              <i class="fa-regular fa-trash fa-lg"></i>
+            </button>
+            <div class="tooltip delete">Xóa khỏi giỏ hàng</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h4 class="font-semibold text-lg">{{ strPrice }}</h4>
+      <p v-if="isSale" class="font-medium text-sm line-through text-gray-400 float-right">{{ strOldPrice }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ProductDetail } from "~/types";
+import { CartItemDetail } from "~/types";
 import { formatPrice } from "@/utils"
 
+type Size = "default" | "small";
+
 const props = defineProps({
-  product: { type: Object as () => ProductDetail , required: true }
+  product: { type: Object as PropType<CartItemDetail>  , required: true },
+  hideActions: { type: Boolean },
+  hideQuantity: { type: Boolean },
+  size: { type: String as PropType<Size> }
 })
 
 const cartStore = useCartStore();
@@ -67,19 +85,26 @@ const strOldPrice: Ref<string> = computed(() => {
   return formatPrice(product.value.totalOldPrice);
 })
 
+function classText() {
+  if (props.size == 'small') {
+    return 'text-gray-500 text-[14px] leading-5';
+  } else {
+    return 'text-gray-500'
+  }
+}
 
 async function handleMinusQuantity() {
-  product.value.quantityOrder--;
-  if (product.value.quantityOrder == 0) {
-    await cartStore.removeProductInCart(product.value.quantityId);
+  product.value.quantity--;
+  if (product.value.quantity == 0) {
+    await cartStore.removeProductInCart(product.value.detailId);
   } else {
-    await cartStore.updateDateQuantyProduct(product.value.quantityId, product.value.quantityOrder);
+    await cartStore.updateDateQuantyProduct(product.value.detailId, product.value.quantity);
   }
 }
 
 async function handlePlusQuantity() {
-  product.value.quantityOrder++;
-  await cartStore.updateDateQuantyProduct(product.value.quantityId, product.value.quantityOrder);
+  product.value.quantity++;
+  await cartStore.updateDateQuantyProduct(product.value.detailId, product.value.quantity);
 }
 </script>
 
