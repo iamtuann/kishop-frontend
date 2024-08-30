@@ -16,7 +16,7 @@
         <h3 class="text-xl font-medium mb-6">Thanh toán</h3>
         <div class="flex justify-between text-gray-800 font-medium mb-3">
           <p>Tổng tiền hàng</p>
-          <p class="ml-2">{{ formatPrice(subtotal) }}</p>
+          <p class="ml-2">{{ formatPrice(totalPriceCartItems) }}</p>
         </div>
         <!-- <div class="flex justify-between text-gray-800 font-medium mb-3">
           <p>Phí vận chuyển </p>
@@ -37,29 +37,14 @@
 </template>
 
 <script setup lang="ts">
-import { ProductDetail } from '~/types';
 import { formatPrice } from "@/utils"
 
 const cartStore = useCartStore();
-// const isLoading = ref(true);
-// await cartStore.getProductsDetailOrdered()
-// isLoading.value = false;
-const deliveryFee: Ref<number> = ref(50000);
-const totalPriceForFreeDelevery = 2000000;
-
-const subtotal = computed(() => {
-  return cartStore.listProductDetail.reduce((totalPrice, currentProduct) => {
-    return totalPrice + currentProduct.totalPrice;
-  }, 0)
-})
-
-const total = computed(() => {
-  const deleveryFeeFinal = subtotal.value > totalPriceForFreeDelevery ? 0 : deliveryFee.value;
-  return subtotal.value + deleveryFeeFinal;
-})
+const { totalPriceCartItems } = storeToRefs(cartStore)
+// const deliveryFee: Ref<number> = ref(50000);
+// const totalPriceForFreeDelevery = 2000000;
 
 function hanldeSubmitOrder() {
-  // console.log(cartStore.listProductDetail);
   navigateTo("/checkout")
 }
 </script>

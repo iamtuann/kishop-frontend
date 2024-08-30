@@ -24,16 +24,17 @@ export default defineNuxtPlugin((nuxtApp) => {
       console.log(error);
       return Promise.reject(error);
     },
-    // onResponse({request, options, response}) {
-      
-    // },
+    onResponse({request, options, response}) {
+      if (response._data?.statusCode === 401) {
+        authStore.clearData();
+        navigateTo("/login");
+      }
+    },
     onResponseError({ request, response, options }) {
       const status = response.status;
       if (status === 401) {
-        // localStorage.removeItem('token');
-        // localStorage.removeItem('fullname');
-        // localStorage.removeItem('role');
-        // router.push("/login");
+        authStore.clearData();
+        navigateTo("/login");
       } else if (status == 500) {
         // router.push("/error/500");;
       }

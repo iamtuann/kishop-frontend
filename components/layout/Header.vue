@@ -61,7 +61,8 @@
             <span class="p-[6px] cursor-pointer">
               <i class="fa-light fa-bag-shopping fa-lg"></i>
             </span>
-            <span v-show="cartStore.countProducts > 0" class="count-cart">{{ cartStore.countProducts }}</span>
+            <span v-if="!isAuthenticated" v-show="cartStore.totalCartItemsLocal > 0" class="count-cart">{{ cartStore.totalCartItemsLocal }}</span>
+            <span v-else v-show="cartStore.totalCartItemsAuth > 0" class="count-cart">{{ cartStore.totalCartItemsAuth }}</span>
           </div>
         </NuxtLink>
         <div class="md:hidden" @click="isOpenMenu = !isOpenMenu">
@@ -127,12 +128,16 @@ const isOpenMenu: Ref<boolean> = ref(false);
 const mobileMenuRef = ref<HTMLDivElement>();
 const cartStore = useCartStore();
 const authStore = useAuthStore();
-const {isAuthenticated} = storeToRefs(authStore)
+const {isAuthenticated} = storeToRefs(authStore);
 
+if (isAuthenticated.value) {
+  await useAsyncData("count-items", () => cartStore.countCartItemsAuth());
+}
 onMounted(async () => {
-  await cartStore.getProductsBasicInCart();
+  if (!isAuthenticated.value) {
+    await cartStore.getCartItemsFromLocal();
+  }
 })
-
 watch(isOpenMenu, (newVal) => {
   if (newVal) {
     mobileMenuRef.value?.focus();

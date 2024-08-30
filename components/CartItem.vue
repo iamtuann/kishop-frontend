@@ -74,9 +74,8 @@ const props = defineProps({
 const cartStore = useCartStore();
 const isSale: Ref<boolean> = ref(false)
 
-const product = toRef(props.product);
+const { product } = toRefs(props);
 isSale.value = product.value.price < product.value.oldPrice;
-const formatter = new Intl.NumberFormat('en-US');
 
 const strPrice: Ref<string> = computed(() => {
   return formatPrice(product.value.totalPrice);
@@ -98,13 +97,13 @@ async function handleMinusQuantity() {
   if (product.value.quantity == 0) {
     await cartStore.removeProductInCart(product.value.detailId);
   } else {
-    await cartStore.updateDateQuantyProduct(product.value.detailId, product.value.quantity);
+    await cartStore.updateDateCartItem(product.value.detailId, product.value.quantity);
   }
 }
 
 async function handlePlusQuantity() {
   product.value.quantity++;
-  await cartStore.updateDateQuantyProduct(product.value.detailId, product.value.quantity);
+  await cartStore.updateDateCartItem(product.value.detailId, product.value.quantity);
 }
 </script>
 

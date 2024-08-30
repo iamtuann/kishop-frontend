@@ -17,14 +17,25 @@
 </template>
 
 <script setup lang="ts">
-
+import { storeToRefs } from "pinia";
 type Size = "default" | "small";
 
 const props = defineProps({
   itemSize: { type: String as PropType<Size>, required: false, default: 'default' },
 })
+const authStore = useAuthStore();
+const {isAuthenticated} = storeToRefs(authStore);
 const cartStore = useCartStore();
-await useAsyncData('productsOrder', () => cartStore.getCartItemsFromLocal());
+
+if (isAuthenticated.value) {
+  await useAsyncData("get-cartItems", () => cartStore.getAuthCartItems());
+}
+onMounted(async () => {
+  if (!isAuthenticated.value) {
+    await cartStore.getCartItemsFromLocal();
+  }
+})
+
 </script>
 
 <style scoped>

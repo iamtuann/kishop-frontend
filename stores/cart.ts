@@ -5,18 +5,21 @@ import { useLocalStorage } from "@vueuse/core"
 
 export type cartType = {
   cartItemDetails: CartItemDetail[] | [],
-  cartItemLocals: CartItemRequest[]
+  cartItemLocals: CartItemRequest[],
+  cartItemBasicsAuth: CartItemBasic[],
+  totalCartItemsAuth: number
 };
-const isAuthUser = false;
 
 export const useCartStore = defineStore({
   id: "cartStore",
   state: () => ({
     cartItemDetails: [],
-    cartItemLocals: []
+    cartItemLocals: [],
+    cartItemBasicsAuth: [],
+    totalCartItemsAuth: 0
   } as cartType ),
   getters: {
-    countProducts: (state) => {
+    totalCartItemsLocal: (state) => {
       if (state.cartItemLocals.length > 0) {
         const totalProducts = state.cartItemLocals.reduce((total, currentProduct) => {
           return total + currentProduct.quantity;
@@ -25,19 +28,24 @@ export const useCartStore = defineStore({
       } else {
         return 0;
       }
+    },
+    totalPriceCartItems: (state) => {
+      if (state.cartItemDetails.length > 0) {
+        return state.cartItemDetails.reduce((totalPrice, currentProduct) => {
+          return totalPrice + currentProduct.totalPrice;
+        }, 0)
+      } else {
+        return 0;
+      }
     }
   },
   actions: {
-    async getProductsBasicInCart() {
-      if (isAuthUser) {
-        //
-      } else {
-        this.cartItemLocals = useLocalStorage<CartItemRequest[]>("cart_order", []).value;
-      }
+    getCartItemsLocals() {
+      this.cartItemLocals = useLocalStorage<CartItemRequest[]>("cart_order", []).value;
     },
     async getCartItemsFromLocal() {
       if (this.cartItemLocals.length == 0) {
-        await this.getProductsBasicInCart();
+        this.getCartItemsLocals();
       }
       if (this.cartItemLocals.length > 0) {
         const response:IResponse<CartItemDetail[]> = await $fetch("carts/items", {
@@ -48,57 +56,82 @@ export const useCartStore = defineStore({
       }
       // return this.listProductDetail;
     },
-    async getAuthCartItems() {
-      
+    async countCartItemsAuth() {
+      const response: IResponse<number> = await $fetch("carts/count-items");
+      this.totalCartItemsAuth = response.output;
+      return response.output;
     },
-    async addProductToCart(qtyId: number) {
-      let productIsExist = false;
-      for(let i=0; i<this.cartItemLocals.length; i++) {
-        if (this.cartItemLocals[i].detailId == qtyId) {
-          this.cartItemLocals[i].quantity++;
-          productIsExist = true;
+    async getAuthCartItemBasics() {
+      const response: IResponse<CartItemBasic[]> = await $fetch("carts/items-basic");
+      this.cartItemBasicsAuth = response.output;
+    },
+    async getAuthCartItems() {
+      const response: IResponse<CartItemDetail[]> = await $fetch("carts/items");
+      this.cartItemDetails = response.output;
+    },
+    async addProductToCart(detailId: number) {
+      if (useAuthStore().isAuthenticated) {
+        const response:IResponse<CartItemBasic> = await $fetch("carts/update-item", {
+          method: 'POST',
+          body: {
+            detailId: detailId
+          }
+        });
+        await this.countCartItemsAuth();
+      } else {
+        const cartItem = this.cartItemLocals.find(item => item.detailId === detailId);
+        if (cartItem) {
+          cartItem.quantity++;
+        } else {
+          const newCartItem: CartItemRequest = {
+            detailId: detailId,
+            quantity: 1,
+          }
+          this.cartItemLocals.unshift(newCartItem);
+        }
+      }
+    },
+    async updateDateCartItem(detailId: number, quantity: number) {
+      const response:IResponse<CartItemBasic> = await $fetch("carts/update-item", {
+        method: 'POST',
+        body: {
+          detailId: detailId,
+          quantity: quantity
+        }
+      });
+      //update info cart items detail
+      for(let i=0; i<this.cartItemDetails.length; i++) {
+        let product = this.cartItemDetails[i];
+        if (product.detailId == response.output.detailId) {
+          product.quantity = response.output.quantity;
+          product.totalPrice = response.output.totalPrice;
+          product.totalOldPrice = response.output.totalOldPrice;
           break;
         }
-      }
-      if (!productIsExist) {
-        const newProductDetailV1: CartItemRequest = {
-          detailId: qtyId,
-          quantity: 1,
+      };
+      if (!useAuthStore().isAuthenticated) {
+        //update cart items local
+        for (let i = 0; i < this.cartItemLocals.length; i++) {
+          if (this.cartItemLocals[i].detailId == response.output.detailId) {
+            this.cartItemLocals[i].quantity = response.output.quantity;
+          }
         }
-        this.cartItemLocals.unshift(newProductDetailV1);
+      } else {
+        await this.countCartItemsAuth();
       }
     },
-    async updateDateQuantyProduct(detailId: number, quantity: number) {
-      if (isAuthUser) {
-        //call api
-      } else {
+    async removeProductInCart(detailId: number) {
+      if (useAuthStore().isAuthenticated) {
         const response:IResponse<CartItemBasic> = await $fetch("carts/update-item", {
           method: 'POST',
           body: {
             detailId: detailId,
-            quantity: quantity
+            quantity: 0
           }
         });
-        for(let i=0; i<this.cartItemDetails.length; i++) {
-          let product = this.cartItemDetails[i];
-          if (product.detailId == response.output.detailId) {
-            product.quantity = response.output.quantity;
-            product.totalPrice = response.output.totalPrice;
-            product.totalOldPrice = response.output.totalOldPrice;
-            break;
-          }
-        };
-        for (let i = 0; i < this.cartItemLocals.length; i++) {
-          const product = this.cartItemLocals[i];
-          if (product.detailId == response.output.detailId) {
-            product.quantity = response.output.quantity;
-          }
-        }
-        // this.saveToLocalStorage();
+        await this.countCartItemsAuth();
       }
-    },
-    async removeProductInCart(qtyId: number) {
-      const index = this.cartItemDetails.findIndex(product => product.detailId === qtyId);
+      const index = this.cartItemDetails.findIndex(product => product.detailId === detailId);
       this.cartItemDetails.splice(index, 1);
       this.cartItemLocals.splice(index, 1);
     },
