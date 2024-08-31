@@ -5,7 +5,7 @@
         <h3 class="text-xl font-medium ">Giỏ hàng</h3>
         <Suspense>
           <template #default>
-            <CartList />
+            <CartList :cart-items="cartStore.cartItemDetails" />
           </template>
           <template #fallback>
             <CartItemSkeleton />
@@ -16,7 +16,7 @@
         <h3 class="text-xl font-medium mb-6">Thanh toán</h3>
         <div class="flex justify-between text-gray-800 font-medium mb-3">
           <p>Tổng tiền hàng</p>
-          <p class="ml-2">{{ formatPrice(totalPriceCartItems) }}</p>
+          <p class="ml-2">{{ formatPrice(cartStore.totalPriceCartItems) }}</p>
         </div>
         <!-- <div class="flex justify-between text-gray-800 font-medium mb-3">
           <p>Phí vận chuyển </p>
@@ -40,9 +40,17 @@
 import { formatPrice } from "@/utils"
 
 const cartStore = useCartStore();
-const { totalPriceCartItems } = storeToRefs(cartStore)
-// const deliveryFee: Ref<number> = ref(50000);
-// const totalPriceForFreeDelevery = 2000000;
+const authStore = useAuthStore();
+const {isAuthenticated} = storeToRefs(authStore);
+
+if (isAuthenticated.value) {
+  await useAsyncData("get-cartItems", () => cartStore.getAuthCartItems());
+}
+onMounted(async () => {
+  if (!isAuthenticated.value) {
+    await cartStore.getCartItemsFromLocal();
+  }
+})
 
 function hanldeSubmitOrder() {
   navigateTo("/checkout")

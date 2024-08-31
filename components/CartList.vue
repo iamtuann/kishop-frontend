@@ -1,14 +1,14 @@
 <template>
   <CartItem
-    v-if="itemSize == 'default'"
-    v-for="product in cartStore.cartItemDetails"
+    v-if="props.itemSize == 'default'"
+    v-for="product in props.cartItems"
     :key="product.detailId"
     :product="product"
     hide-quantity  
   />
   <CartItem
-    v-if="itemSize == 'small'"
-    v-for="product in cartStore.cartItemDetails"
+    v-if="props.itemSize == 'small'"
+    v-for="product in props.cartItems"
     :key="product.detailId"
     :product="product"
     hide-actions
@@ -17,23 +17,12 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
+import { CartItemDetail } from "~/types";
 type Size = "default" | "small";
 
 const props = defineProps({
   itemSize: { type: String as PropType<Size>, required: false, default: 'default' },
-})
-const authStore = useAuthStore();
-const {isAuthenticated} = storeToRefs(authStore);
-const cartStore = useCartStore();
-
-if (isAuthenticated.value) {
-  await useAsyncData("get-cartItems", () => cartStore.getAuthCartItems());
-}
-onMounted(async () => {
-  if (!isAuthenticated.value) {
-    await cartStore.getCartItemsFromLocal();
-  }
+  cartItems: { type: Object as PropType<CartItemDetail[]> },
 })
 
 </script>

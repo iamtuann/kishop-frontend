@@ -89,6 +89,7 @@ export const useCartStore = defineStore({
           }
           this.cartItemLocals.unshift(newCartItem);
         }
+        this.saveToLocalStorage();
       }
     },
     async updateDateCartItem(detailId: number, quantity: number) {
