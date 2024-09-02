@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { AdressResponse, AdressData } from "~/types";
+import { AdressResponse, AdressData, CartItemDetail, IResponse } from "~/types";
+import { OrderPaymentInfo } from "~/types/Order";
 import { externalFetch } from "~/utils";
 
 export const useCheckoutStore = defineStore({
@@ -24,5 +25,9 @@ export const useCheckoutStore = defineStore({
       const response: AdressResponse = await externalFetch(`https://esgoo.net/api-tinhthanh/3/${districtId}.htm`);
       return response.data;
     },
+    async getPaymentInfo():Promise<OrderPaymentInfo> {
+      const response: IResponse<OrderPaymentInfo> = await $fetch("orders/payment-info");
+      return response.output;
+    }
   }
 })

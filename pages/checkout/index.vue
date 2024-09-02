@@ -71,21 +71,21 @@
       </div>
       <div class="col-span-5">
         <p class="text-lg">Danh sách sản phẩm</p>
-        <div class="mt-3">
-          <CartList item-size="small" />
+        <div class="mt-3" v-if="paymentInfo">
+          <CartList item-size="small" :cart-items="paymentInfo.cartItemDetails" />
 
           <div class="flex justify-between my-3">
             <p>Tạm tính</p>
-            <p class="ml-2">{{ formatPrice(subtotal) }}</p>
+            <p class="ml-2">{{ formatPrice(paymentInfo.subTotalPrice) }}</p>
           </div>
           <div class="flex justify-between mb-3">
             <p>Phí vận chuyển </p>
-            <p v-if="subtotal > totalPriceForFreeDelevery" class="ml-2 text-primary-600 font-semibold">Free</p>
-            <p v-else class="ml-2">{{ formatPrice(deliveryFee) }}</p>
+            <p v-if="paymentInfo.shippingFee <= 0" class="ml-2 text-primary-600 font-semibold">Free</p>
+            <p v-else class="ml-2">{{ formatPrice(paymentInfo.shippingFee) }}</p>
           </div>
           <div class="flex justify-between text-lg font-medium mb-3 mt-5 py-4 border-t-2 border-gray-700">
             <p>Tổng tiền</p>
-            <p class="ml-2">{{ formatPrice(total) }}</p>
+            <p class="ml-2">{{ formatPrice(paymentInfo.totalPrice) }}</p>
           </div>
           <div class="pt-5 pb-3">
             <button type="button" class="btn-primary" @click="hanldeSubmitOrder">Đặt hàng</button>
@@ -99,13 +99,14 @@
 <script setup lang="ts">
 import { isRequired } from "@/utils/validationRules";
 import { AdressData } from "~/types";
+import { OrderPaymentInfo } from "~/types/Order";
 
 definePageMeta({
   layout: "simple",
 });
 
 const checkoutStore = useCheckoutStore();
-const cartStore = useCartStore();
+const authStore = useAuthStore();
 
 const selectedProvince = ref<AdressData>({} as AdressData);
 const selectedDistrict = ref<AdressData>({} as AdressData);
@@ -122,27 +123,21 @@ const shippingInfo = reactive({
   paymentType: ""
 })
 
+const paymentInfo = ref<OrderPaymentInfo | null>(null);
+
 function isRequiredSelect(name: string) {
   return (v: string | object) => !!v || `Vui lòng chọn ${name}`;
 }
-
-const deliveryFee: Ref<number> = ref(50000);
-const totalPriceForFreeDelevery = 1000000;
-
-const subtotal = computed(() => {
-  return cartStore.cartItemDetails.reduce((totalPrice, currentProduct) => {
-    return totalPrice + currentProduct.totalPrice;
-  }, 0)
-})
 
 function hanldeSubmitOrder() {
   
 }
 
-const total = computed(() => {
-  const deleveryFeeFinal = subtotal.value > totalPriceForFreeDelevery ? 0 : deliveryFee.value;
-  return subtotal.value + deleveryFeeFinal;
-})
+if (authStore.isAuthenticated) {
+  const { data } = await useAsyncData("payment-info", () => checkoutStore.getPaymentInfo());
+  paymentInfo.value = data.value;
+}
+
 
 const { data: provinces } = useAsyncData<AdressData[]>('provinces',
   () => checkoutStore.getProvinces(), {
