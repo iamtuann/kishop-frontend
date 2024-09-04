@@ -44,6 +44,7 @@
 
 <script setup lang="ts">
 import { ref, watch, toRef, toRefs } from "vue";
+import { isEmptyValue } from "~/utils";
 const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps({
@@ -113,19 +114,6 @@ function setDropdownPosition() {
   }
 }
 
-function isEmptyValue(value: string | object) {
-  if (typeof value === 'object') {
-    for (const prop in value) {
-      if (Object.hasOwn(value, prop)) {
-        return false;
-      }
-    }
-    return true;
-  } else {
-    return !value;
-  }
-}
-
 watch(open, (isDropdownOpened) => {
   if (isDropdownOpened) {
     setDropdownPosition();
@@ -135,6 +123,11 @@ watch(open, (isDropdownOpened) => {
 watch(modelValue, (newVal) => {
   selected.value = newVal;
   validate();
+})
+
+defineExpose({
+  validate,
+  isValid
 })
 </script>
 

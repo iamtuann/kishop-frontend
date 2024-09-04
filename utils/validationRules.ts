@@ -1,5 +1,18 @@
 export function isRequired(name: string) {
-  return (v: string) => !!v || `Vui lòng nhập ${name}`;
+  return (v: string | object) => !isEmptyValue(v) || `Vui lòng nhập ${name}`;
+}
+
+export function isEmptyValue(value: string | object) {
+  if (typeof value === 'object') {
+    for (const prop in value) {
+      if (Object.hasOwn(value, prop)) {
+        return false;
+      }
+    }
+    return true;
+  } else {
+    return !value;
+  }
 }
 
 export function isEmail(v: string) {

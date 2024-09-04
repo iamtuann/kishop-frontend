@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
-import { IResponse, CartItemDetail, CartItemRequest, CartItemBasic } from "~/types/index";
+import { IResponse, ItemDetail, CartItemRequest, ItemBasic } from "~/types/index";
 import { useLocalStorage } from "@vueuse/core"
 
 
 export type cartType = {
-  cartItemDetails: CartItemDetail[] | [],
+  cartItemDetails: ItemDetail[] | [],
   cartItemLocals: CartItemRequest[],
-  cartItemBasicsAuth: CartItemBasic[],
+  cartItemBasicsAuth: ItemBasic[],
   totalCartItemsAuth: number
 };
 
@@ -30,7 +30,7 @@ export const useCartStore = defineStore({
       }
     },
     totalPriceCartItems: (state) => {
-      if (state.cartItemDetails.length > 0) {
+      if (state.cartItemDetails?.length > 0) {
         return state.cartItemDetails.reduce((totalPrice, currentProduct) => {
           return totalPrice + currentProduct.totalPrice;
         }, 0)
@@ -48,7 +48,7 @@ export const useCartStore = defineStore({
         this.getCartItemsLocals();
       }
       if (this.cartItemLocals.length > 0) {
-        const response:IResponse<CartItemDetail[]> = await $fetch("carts/items", {
+        const response:IResponse<ItemDetail[]> = await $fetch("carts/items", {
           method: 'POST',
           body: this.cartItemLocals
         });
@@ -62,16 +62,16 @@ export const useCartStore = defineStore({
       return response.output;
     },
     async getAuthCartItemBasics() {
-      const response: IResponse<CartItemBasic[]> = await $fetch("carts/items-basic");
+      const response: IResponse<ItemBasic[]> = await $fetch("carts/items-basic");
       this.cartItemBasicsAuth = response.output;
     },
     async getAuthCartItems() {
-      const response: IResponse<CartItemDetail[]> = await $fetch("carts/items");
+      const response: IResponse<ItemDetail[]> = await $fetch("carts/items");
       this.cartItemDetails = response.output;
     },
     async addProductToCart(detailId: number) {
       if (useAuthStore().isAuthenticated) {
-        const response:IResponse<CartItemBasic> = await $fetch("carts/update-item", {
+        const response:IResponse<ItemBasic> = await $fetch("carts/update-item", {
           method: 'POST',
           body: {
             detailId: detailId
@@ -93,7 +93,7 @@ export const useCartStore = defineStore({
       }
     },
     async updateDateCartItem(detailId: number, quantity: number) {
-      const response:IResponse<CartItemBasic> = await $fetch("carts/update-item", {
+      const response:IResponse<ItemBasic> = await $fetch("carts/update-item", {
         method: 'POST',
         body: {
           detailId: detailId,
@@ -123,7 +123,7 @@ export const useCartStore = defineStore({
     },
     async removeProductInCart(detailId: number) {
       if (useAuthStore().isAuthenticated) {
-        const response:IResponse<CartItemBasic> = await $fetch("carts/update-item", {
+        const response:IResponse<ItemBasic> = await $fetch("carts/update-item", {
           method: 'POST',
           body: {
             detailId: detailId,

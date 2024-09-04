@@ -3,7 +3,7 @@ export interface CartItemRequest {
   quantity: number,
 }
 
-export interface CartItemBasic {
+export interface ItemBasic {
   id: number,
   detailId: number,
   price: number,
@@ -13,7 +13,7 @@ export interface CartItemBasic {
   totalOldPrice: number
 }
 
-export interface CartItemDetail extends CartItemBasic {
+export interface ItemDetail extends ItemBasic {
   productId: number,
   variantId: number,
   name: string,

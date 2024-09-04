@@ -6,14 +6,16 @@
         <p class="text-lg">Thông tin nhận hàng</p>
         <div class="mt-3">
           <InputText 
+            ref="nameRef"
             class="mb-1"
-            v-model="shippingInfo.fullName"
+            v-model="shippingInfo.receiverName"
             label="Họ và tên"
             name="fullName"
             required
             :rules="[isRequired('họ tên')]"
           />
           <InputText 
+            ref="phoneRef"
             class="mb-1"
             v-model="shippingInfo.phoneNumber"
             label="Số điện thoại"
@@ -22,39 +24,43 @@
             :rules="[isRequired('số điện thoại')]"
           />
           <Select 
+            ref="provinceRef"
             class="mb-1"
             v-model="selectedProvince"
             name="city"
             :items="provinces"
             item-title="name"
-            :rules="[isRequiredSelect('tỉnh/ thành phố')]"
+            :rules="[isRequired('tỉnh/ thành phố')]"
             label="Tỉnh/ Thành phố"
             required
             title-default="Chọn tỉnh/ thành phố"
           />
           <Select 
+            ref="districtRef"
             class="mb-1"
             v-model="selectedDistrict"
             name="district"
             :items="districts"
             item-title="name"
-            :rules="[isRequiredSelect('quận/ huyện')]"
+            :rules="[isRequired('quận/ huyện')]"
             label="Quận/ Huyện"
             required
             title-default="Chọn quận/ huyện"
           />
           <Select 
+            ref="wardRef"
             class="mb-1"
             v-model="selectedWard"
             name="ward"
             :items="wards"
             item-title="name"
-            :rules="[isRequiredSelect('phường/ xã')]"
+            :rules="[isRequired('phường/ xã')]"
             label="Phường/ Xã"
             required
             title-default="Chọn phường/ xã"
           />
           <InputText 
+            ref="detailAdressRef"
             class="mb-1"
             v-model="shippingInfo.detailAdress"
             label="Địa chỉ cụ thể"
@@ -72,7 +78,7 @@
       <div class="col-span-5">
         <p class="text-lg">Danh sách sản phẩm</p>
         <div class="mt-3" v-if="paymentInfo">
-          <CartList item-size="small" :cart-items="paymentInfo.cartItemDetails" />
+          <CartList item-size="small" :cart-items="paymentInfo.itemDetails" />
 
           <div class="flex justify-between my-3">
             <p>Tạm tính</p>
@@ -97,9 +103,8 @@
 </template>
 
 <script setup lang="ts">
-import { isRequired } from "@/utils/validationRules";
-import { AdressData } from "~/types";
-import { OrderPaymentInfo } from "~/types/Order";
+import { AdressData, OrderPaymentInfo, OrderShippingInfo } from "~/types";
+import { validateForm, isRequired } from "~/utils";
 
 definePageMeta({
   layout: "simple",
@@ -112,29 +117,39 @@ const selectedProvince = ref<AdressData>({} as AdressData);
 const selectedDistrict = ref<AdressData>({} as AdressData);
 const selectedWard = ref<AdressData>({} as AdressData);
 
-const shippingInfo = reactive({
-  fullName: "",
+const nameRef = ref(null);
+const phoneRef = ref(null);
+const provinceRef = ref(null);
+const districtRef = ref(null);
+const wardRef = ref(null);
+const detailAdressRef = ref(null);
+
+const shippingInfo = reactive<OrderShippingInfo>({
+  receiverName: "",
   phoneNumber: "",
   province: "",
   district: "",
   ward: "",
   detailAdress: "",
   note: "",
-  paymentType: ""
+  paymentType: "COD"
 })
 
 const paymentInfo = ref<OrderPaymentInfo | null>(null);
 
-function isRequiredSelect(name: string) {
-  return (v: string | object) => !!v || `Vui lòng chọn ${name}`;
-}
-
-function hanldeSubmitOrder() {
-  
+async function hanldeSubmitOrder() {
+  const valid = validateForm([nameRef, phoneRef, provinceRef, districtRef, wardRef, detailAdressRef]);
+  if (valid) {
+    const { data } = await useAsyncData("create-order", () => checkoutStore.createOrder(shippingInfo));
+    console.log(data);
+  }
 }
 
 if (authStore.isAuthenticated) {
   const { data } = await useAsyncData("payment-info", () => checkoutStore.getPaymentInfo());
+  if (data.value?.itemDetails.length == 0) {
+    navigateTo("/cart");
+  }
   paymentInfo.value = data.value;
 }
 
@@ -159,12 +174,18 @@ const { data: wards } = useAsyncData<AdressData[]>('wards',
   default: () => [] as AdressData[],
 });
 
-watch(selectedProvince, () => {
+watch(selectedProvince, (province) => {
   selectedDistrict.value = {} as AdressData;
+  shippingInfo.province = province.full_name;
 })
 
-watch(selectedDistrict, () => {
+watch(selectedDistrict, (district) => {
   selectedWard.value = {} as AdressData;
+  shippingInfo.district = district.full_name;
+})
+
+watch(selectedWard, (ward) => {
+  shippingInfo.ward = ward.full_name;
 })
 
 

@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
-import { AdressResponse, AdressData, CartItemDetail, IResponse } from "~/types";
-import { OrderPaymentInfo } from "~/types/Order";
+import { AdressResponse, AdressData, IResponse, OrderPaymentInfo, OrderShippingInfo } from "~/types";
 import { externalFetch } from "~/utils";
 
 export const useCheckoutStore = defineStore({
@@ -28,6 +27,13 @@ export const useCheckoutStore = defineStore({
     async getPaymentInfo():Promise<OrderPaymentInfo> {
       const response: IResponse<OrderPaymentInfo> = await $fetch("orders/payment-info");
       return response.output;
+    },
+    async createOrder(shippingInfo: OrderShippingInfo): Promise<IResponse<any>> {
+      const response: IResponse<any> = await $fetch("orders", {
+        method: 'POST',
+        body: shippingInfo
+      })
+      return response;
     }
   }
 })
