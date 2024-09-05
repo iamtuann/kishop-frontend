@@ -60,9 +60,9 @@
             title-default="Chọn phường/ xã"
           />
           <InputText 
-            ref="detailAdressRef"
+            ref="detailAddressRef"
             class="mb-1"
-            v-model="shippingInfo.detailAdress"
+            v-model="shippingInfo.detailAddress"
             label="Địa chỉ cụ thể"
             name="address"
             required
@@ -122,7 +122,7 @@ const phoneRef = ref(null);
 const provinceRef = ref(null);
 const districtRef = ref(null);
 const wardRef = ref(null);
-const detailAdressRef = ref(null);
+const detailAddressRef = ref(null);
 
 const shippingInfo = reactive<OrderShippingInfo>({
   receiverName: "",
@@ -130,7 +130,7 @@ const shippingInfo = reactive<OrderShippingInfo>({
   province: "",
   district: "",
   ward: "",
-  detailAdress: "",
+  detailAddress: "",
   note: "",
   paymentType: "COD"
 })
@@ -138,17 +138,19 @@ const shippingInfo = reactive<OrderShippingInfo>({
 const paymentInfo = ref<OrderPaymentInfo | null>(null);
 
 async function hanldeSubmitOrder() {
-  const valid = validateForm([nameRef, phoneRef, provinceRef, districtRef, wardRef, detailAdressRef]);
+  const valid = validateForm([nameRef, phoneRef, provinceRef, districtRef, wardRef, detailAddressRef]);
   if (valid) {
     const { data } = await useAsyncData("create-order", () => checkoutStore.createOrder(shippingInfo));
-    console.log(data);
+    if (data.value?.statusCode === 200) {
+      navigateTo('/checkout/success');
+    }
   }
 }
 
 if (authStore.isAuthenticated) {
   const { data } = await useAsyncData("payment-info", () => checkoutStore.getPaymentInfo());
   if (data.value?.itemDetails.length == 0) {
-    navigateTo("/cart");
+    navigateTo("/cart", { replace: true });
   }
   paymentInfo.value = data.value;
 }

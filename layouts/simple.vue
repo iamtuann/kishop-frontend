@@ -1,6 +1,6 @@
 <template>
-  <LayoutHeader type="simple" />
-  <div>
+  <div class="flex flex-col min-h-screen">
+    <LayoutHeader type="simple" />
     <slot />
   </div>
 </template>
