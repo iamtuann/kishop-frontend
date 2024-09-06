@@ -1,5 +1,5 @@
 <template>
-  <div class="py-5 flex gap-4 pr-3 border-b border-b-gray-300">
+  <div class="py-5 flex gap-4 pr-3">
     <div class="shrink-0">
       <CommonAnimatedPlaceholder width="160px" height="160px" border-radius="4px"/>
     </div>

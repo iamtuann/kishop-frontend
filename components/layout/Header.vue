@@ -139,14 +139,6 @@ const cartStore = useCartStore();
 const authStore = useAuthStore();
 const {isAuthenticated} = storeToRefs(authStore);
 
-if (isAuthenticated.value) {
-  await useAsyncData("count-items", () => cartStore.countCartItemsAuth());
-}
-onMounted(async () => {
-  if (!isAuthenticated.value) {
-    await cartStore.getCartItemsFromLocal();
-  }
-})
 watch(isOpenMenu, (newVal) => {
   if (newVal) {
     mobileMenuRef.value?.focus();

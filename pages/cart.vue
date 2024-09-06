@@ -1,16 +1,24 @@
 <template>
   <div class="container mx-auto pt-10">
-    <div class="grid grid-cols-12 gap-4">
+    <template v-if="isLoadingCart">
+      <CartItemSkeleton v-for="number in 2" :key="number" />
+    </template>
+    <template v-if="!isLoadingCart && cartStore.cartItemDetails.length == 0">
+      <div class="flex flex-col items-center">
+        <img src="~/assets/images/empty-cart.png" alt="không có sản phẩm trong giỏ hàng">
+        <p class="font-medium text-2xl">Không có sản phẩm trong giỏ hàng</p>
+        <NuxtLink class="btn-small mt-4 px-6 py-3 text-base" to="/">Mua sắm ngay</NuxtLink>
+      </div>
+    </template>
+    <div v-if="!isLoadingCart && cartStore.cartItemDetails.length > 0" class="grid grid-cols-12 gap-4">
       <div class="col-span-12 lg:col-span-7">
         <h3 class="text-xl font-medium ">Giỏ hàng</h3>
-        <Suspense>
-          <template #default>
-            <CartList :cart-items="cartStore.cartItemDetails" />
-          </template>
-          <template #fallback>
-            <CartItemSkeleton />
-          </template>
-        </Suspense>
+        <CartItem
+          v-for="product in cartStore.cartItemDetails"
+          :key="product.detailId"
+          :product="product"
+          hide-quantity  
+        />
       </div>
       <div class="col-span-12 lg:col-span-5">
         <h3 class="text-xl font-medium mb-6">Thanh toán</h3>
@@ -18,16 +26,6 @@
           <p>Tổng tiền hàng</p>
           <p class="ml-2">{{ formatPrice(cartStore.totalPriceCartItems) }}</p>
         </div>
-        <!-- <div class="flex justify-between text-gray-800 font-medium mb-3">
-          <p>Phí vận chuyển </p>
-          <p v-if="subtotal > totalPriceForFreeDelevery" class="ml-2 text-primary-600 font-semibold">Free</p>
-          <p v-else class="ml-2">{{ formatPrice(deliveryFee) }}</p>
-        </div> -->
-
-        <!-- <div class="flex justify-between text-gray-800 font-medium mb-3 mt-5 py-4 border-t border-b border-gray-300">
-          <p>Tạm tính </p>
-          <p class="ml-2">{{ formatPrice(total) }}</p>
-        </div> -->
         <div class="pt-5 pb-3">
           <button type="button" class="btn-primary" @click="hanldeSubmitOrder">Đặt hàng</button>
         </div>
@@ -42,14 +40,16 @@ import { formatPrice } from "@/utils"
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const {isAuthenticated} = storeToRefs(authStore);
+const isLoadingCart = ref<boolean>(true);
 
 if (isAuthenticated.value) {
-  await useAsyncData("get-cartItems", () => cartStore.getAuthCartItems());
+  await useAsyncData("get-cartItems", () => cartStore.getCartItemDetailsAuth());
 }
 onMounted(async () => {
   if (!isAuthenticated.value) {
-    await cartStore.getCartItemsFromLocal();
+    await cartStore.getCartItemDetailsLocal();
   }
+  isLoadingCart.value = false;
 })
 
 function hanldeSubmitOrder() {

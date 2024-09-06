@@ -9,6 +9,18 @@
 </template>
 
 <script setup lang="ts">
+const cartStore = useCartStore();
+const authStore = useAuthStore();
+const {isAuthenticated} = storeToRefs(authStore);
+
+if (isAuthenticated.value) {
+  await useAsyncData("count-items", () => cartStore.countCartItemsAuth());
+}
+onMounted(async () => {
+  if (!isAuthenticated.value) {
+    cartStore.getCartItemsFromLocals();
+  }
+})
 
 </script>
 

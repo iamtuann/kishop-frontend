@@ -78,8 +78,13 @@
       <div class="col-span-5">
         <p class="text-lg">Danh sách sản phẩm</p>
         <div class="mt-3" v-if="paymentInfo">
-          <CartList item-size="small" :cart-items="paymentInfo.itemDetails" />
-
+          <CartItem
+            v-for="product in paymentInfo.itemDetails"
+            :key="product.detailId"
+            :product="product"
+            hide-actions
+            size="small"
+          />
           <div class="flex justify-between my-3">
             <p>Tạm tính</p>
             <p class="ml-2">{{ formatPrice(paymentInfo.subTotalPrice) }}</p>

@@ -59,13 +59,13 @@
 </template>
 
 <script setup lang="ts">
-import { CartItemDetail } from "~/types";
+import { ItemDetail } from "~/types";
 import { formatPrice } from "@/utils"
 
 type Size = "default" | "small";
 
 const props = defineProps({
-  product: { type: Object as PropType<CartItemDetail>  , required: true },
+  product: { type: Object as PropType<ItemDetail>  , required: true },
   hideActions: { type: Boolean },
   hideQuantity: { type: Boolean },
   size: { type: String as PropType<Size> }
