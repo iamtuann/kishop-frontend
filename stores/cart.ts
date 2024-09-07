@@ -52,7 +52,6 @@ export const useCartStore = defineStore({
         });
         this.cartItemDetails = response.output
       }
-      // return this.listProductDetail;
     },
     async countCartItemsAuth() {
       const response: IResponse<number> = await $fetch("carts/count-items");

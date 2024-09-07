@@ -1,16 +1,16 @@
 <template>
   <div class="container mx-auto pt-10">
-    <template v-if="isLoadingCart">
+    <template v-if="pending">
       <CartItemSkeleton v-for="number in 2" :key="number" />
     </template>
-    <template v-if="!isLoadingCart && cartStore.cartItemDetails.length == 0">
+    <template v-if="!pending && cartStore.cartItemDetails.length == 0">
       <div class="flex flex-col items-center">
         <img src="~/assets/images/empty-cart.png" alt="không có sản phẩm trong giỏ hàng">
         <p class="font-medium text-2xl">Không có sản phẩm trong giỏ hàng</p>
         <NuxtLink class="btn-small mt-4 px-6 py-3 text-base" to="/">Mua sắm ngay</NuxtLink>
       </div>
     </template>
-    <div v-if="!isLoadingCart && cartStore.cartItemDetails.length > 0" class="grid grid-cols-12 gap-4">
+    <div v-if="!pending && cartStore.cartItemDetails.length > 0" class="grid grid-cols-12 gap-4">
       <div class="col-span-12 lg:col-span-7">
         <h3 class="text-xl font-medium ">Giỏ hàng</h3>
         <CartItem
@@ -36,21 +36,12 @@
 
 <script setup lang="ts">
 import { formatPrice } from "@/utils"
+import { useCustomFetchData } from "~/composables";
+import { ItemDetail } from "~/types";
 
 const cartStore = useCartStore();
-const authStore = useAuthStore();
-const {isAuthenticated} = storeToRefs(authStore);
-const isLoadingCart = ref<boolean>(true);
 
-if (isAuthenticated.value) {
-  await useAsyncData("get-cartItems", () => cartStore.getCartItemDetailsAuth());
-}
-onMounted(async () => {
-  if (!isAuthenticated.value) {
-    await cartStore.getCartItemDetailsLocal();
-  }
-  isLoadingCart.value = false;
-})
+const { pending } = await useCustomFetchData<ItemDetail[]>(cartStore.getCartItemDetailsAuth, cartStore.getCartItemDetailsLocal);
 
 function hanldeSubmitOrder() {
   navigateTo("/checkout")
