@@ -63,23 +63,23 @@
             </div>
 
             <div class="grid grid-cols-4 gap-2" :class="{'size-error': !isSelectSize}">
-              <div v-for="productQuantity in productVariantShowing.productQuantities" :key="productQuantity.id"
+              <div v-for="productDetail in productVariantShowing.productDetails" :key="productDetail.id"
                 class="relative input-wrap"
               >
                 <input 
-                  type="radio" hidden :value="productQuantity.id"
-                  v-model="productQuantityId" 
-                  name="size" :id="productQuantity.size.name"
-                  :disabled="productQuantity.quantity == 0"
+                  type="radio" hidden :value="productDetail.id"
+                  v-model="productDetailId" 
+                  name="size" :id="productDetail.size.name"
+                  :disabled="productDetail.quantity == 0"
                 >
-                <label v-if="productQuantity.quantity > 0 " :for="productQuantity.size.name"
+                <label v-if="productDetail.quantity > 0 " :for="productDetail.size.name"
                   class="flex items-center justify-center h-12 cursor-pointer bg-white rounded border border-gray-300 font-medium"
                 >
-                  {{ productQuantity.size.name }}
+                  {{ productDetail.size.name }}
                 </label>
-                <label v-else :for="productQuantity.size.name"
+                <label v-else :for="productDetail.size.name"
                   class="flex items-center justify-center h-12 cursor-not-allowed rounded bg-gray-200 text-gray-400 border border-gray-300">
-                  {{ productQuantity.size.name }}
+                  {{ productDetail.size.name }}
                 </label>
               </div>
             </div>
@@ -125,7 +125,7 @@ import { formatPrice } from "@/utils"
   
   const product: Ref<Product | null> = ref(null);
   let productVariantShowing:ProductVariant;
-  let productQuantityId: Ref<number | null> = ref(null);
+  let productDetailId: Ref<number | null> = ref(null);
   let productVariantId:Ref<number> = ref(0);
   let imageShowing: Ref<string> = ref('');
   let imageShowIndex: Ref<number> = ref(0);
@@ -193,7 +193,7 @@ import { formatPrice } from "@/utils"
     isSale.value = productVariantShowing.price < productVariantShowing.oldPrice;
     imageShowIndex.value = 0;
     imageShowing.value = productVariantShowing.imageUrls[imageShowIndex.value];
-    productQuantityId.value = null;
+    productDetailId.value = null;
   }
   
   watch(productVariantId, (newId) => {
@@ -202,7 +202,7 @@ import { formatPrice } from "@/utils"
   })
 
   //quantity
-  watch(productQuantityId, (newQtyId) => {
+  watch(productDetailId, (newQtyId) => {
     if (newQtyId) {
       isSelectSize.value = true;
     }
@@ -213,11 +213,11 @@ import { formatPrice } from "@/utils"
     if (isAddingToCart.value) {
       return;
     }
-    if (productQuantityId.value) {
+    if (productDetailId.value) {
       isSelectSize.value = true;
       isAddedToCart.value = false;
       isAddingToCart.value = true;
-      await Promise.all([addToCart(productQuantityId.value), delay(delayAddToCart)]);
+      await Promise.all([addToCart(productDetailId.value), delay(delayAddToCart)]);
       isAddingToCart.value = false;
       isAddedToCart.value = true;
     } else {
@@ -225,8 +225,8 @@ import { formatPrice } from "@/utils"
     }
   }
 
-  async function addToCart(qtyId: number) {
-    cartStore.addProductToCart(qtyId);
+  async function addToCart(detailId: number) {
+    cartStore.addProductToCart(detailId);
   }
 
   function delay(ms: number) {

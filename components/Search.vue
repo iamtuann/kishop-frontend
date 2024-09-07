@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="search" class="search-wrap lg:w-[320px] w-[220px] hidden md:flex items-center bg-gray-100 font-sans">
+  <form @submit.prevent="search" class="search-wrap lg:w-[280px] w-[220px] hidden md:flex items-center bg-gray-100 font-sans">
     <input 
       v-model="searchInput" 
       type="text" 

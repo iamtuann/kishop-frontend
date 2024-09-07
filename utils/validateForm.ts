@@ -1,8 +1,9 @@
 import { Ref } from 'vue';
 import type { ComponentPublicInstance } from 'vue'
 import InputText from '~/components/InputText.vue';
+import Select from "~/components/Select.vue";
 
-type params = Ref<ComponentPublicInstance<typeof InputText> | null>[]
+type params = Ref<ComponentPublicInstance<typeof InputText | typeof Select> | null>[]
 
 export function validateForm(inputRefs: params) {
   inputRefs.forEach((input) => {

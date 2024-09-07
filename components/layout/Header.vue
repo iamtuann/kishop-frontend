@@ -1,5 +1,5 @@
 <template>
-  <div class="px-3 py-2 bg-primary font-sans">
+  <div v-if="props.type != 'simple'" class="hidden md:block px-3 py-2 bg-primary font-sans">
     <div class="flex justify-between items-center container mx-auto text-xs text-white ">
       <div class="flex items-center">
         <i class="fa-light fa-phone fa-lg"></i>
@@ -8,7 +8,7 @@
       <div class="hidden md:block">
         Get 50% Off on selected Item | Shop now
       </div>
-      <div v-if="!isAuthenticated" class="flex items-center font-medium">
+      <div v-if="!isAuthenticated" class="hidden md:flex items-center font-medium">
         <NuxtLink :to="{name: 'login'}" class="hover:underline">
           Đăng nhập
         </NuxtLink>
@@ -17,116 +17,136 @@
           Đăng ký
         </NuxtLink>
       </div>
-      <NuxtLink to="/" v-else class="flex gap-2 items-center">
-        <i class="fa-light fa-circle-user text-base"></i>
-        <span>Hi, {{ authStore.user?.lastName || "" }}</span>
-      </NuxtLink>
     </div>
   </div>
-  <header class="shadow-sm bg-white px-5">
-      <nav class="container mx-auto py-2 flex justify-between items-center h-16">
-        <NuxtLink to="/" class="font-bold text-xl text-primary-600">KiShop</NuxtLink>
-        <ul class="hidden md:flex gap-2 md:gap-1">
-          <!-- <li class="relative nav-item-parent">
-            <div class="nav-item flex items-center">
-              <span class="">Thương hiệu </span>
+  <header class="shadow-sm bg-white">
+    <nav class="container mx-auto py-2 flex justify-between items-center h-16">
+      <NuxtLink to="/" class="font-bold text-xl text-primary-600">KiShop</NuxtLink>
+      <ul v-if="props.type != 'simple'" class="hidden md:flex gap-2 md:gap-1">
+        <!-- <li class="relative nav-item-parent">
+          <div class="nav-item flex items-center">
+            <span class="">Thương hiệu </span>
+          </div>
+          <ul class="nav-child text-gray-600 font-semibold flex flex-wrap bg-white shadow-md">
+            <div class="w-2/4">
+              <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
+                <NuxtLink class="block" to="/nike">Nike</NuxtLink>
+              </li>
+              <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
+                <NuxtLink class="block" to="/adidas">Adidas</NuxtLink>
+              </li>
+              <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
+                <NuxtLink class="block" to="/vans">Vans</NuxtLink>
+              </li>
+              <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
+                <NuxtLink class="block" to="/converse">Converse</NuxtLink>
+              </li>
             </div>
-            <ul class="nav-child text-gray-600 font-semibold flex flex-wrap bg-white shadow-md">
-              <div class="w-2/4">
-                <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
-                  <NuxtLink class="block" to="/nike">Nike</NuxtLink>
-                </li>
-                <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
-                  <NuxtLink class="block" to="/adidas">Adidas</NuxtLink>
-                </li>
-                <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
-                  <NuxtLink class="block" to="/vans">Vans</NuxtLink>
-                </li>
-                <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
-                  <NuxtLink class="block" to="/converse">Converse</NuxtLink>
-                </li>
-              </div>
-              <div class="w-2/4">
-                <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
-                  <NuxtLink class="block" to="/reebok">Reebook</NuxtLink>
-                </li>
-                <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
-                  <NuxtLink class="block" to="/fila">Fila</NuxtLink>
-                </li>
-                <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
-                  <NuxtLink class="block" to="/new-balance">New Balance</NuxtLink>
-                </li>
-                <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
-                  <NuxtLink class="block" to="/asic">Asic</NuxtLink>
-                </li>
-              </div>
-            </ul>
-          </li> -->
-          <li v-for="route in routes" :key="route.href">
-            <NuxtLink class="nav-item" :to="route.href">{{ route.title }}</NuxtLink>
-          </li>
-        </ul>
-        <ul class="flex items-center gap-2">
-          <Search />
-          <NuxtLink :to="{name: 'cart'}" class="relative">
-            <div>
-              <span class="p-[6px] cursor-pointer">
-                <i class="fa-light fa-bag-shopping fa-lg"></i>
-              </span>
-              <span v-show="cartStore.countProducts > 0" class="count-cart">{{ cartStore.countProducts }}</span>
+            <div class="w-2/4">
+              <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
+                <NuxtLink class="block" to="/reebok">Reebook</NuxtLink>
+              </li>
+              <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
+                <NuxtLink class="block" to="/fila">Fila</NuxtLink>
+              </li>
+              <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
+                <NuxtLink class="block" to="/new-balance">New Balance</NuxtLink>
+              </li>
+              <li class="px-2 py-3 hover:text-primary transition-colors linear duration-300">
+                <NuxtLink class="block" to="/asic">Asic</NuxtLink>
+              </li>
             </div>
-          </NuxtLink>
-          <div class="md:hidden" @click="isOpenMenu = !isOpenMenu">
+          </ul>
+        </li> -->
+        <li v-for="route in routes" :key="route.href">
+          <NuxtLink class="nav-item" :to="route.href">{{ route.title }}</NuxtLink>
+        </li>
+      </ul>
+      <ul class="flex items-center gap-4">
+        <Search v-if="props.type != 'simple'" />
+        <NuxtLink :to="{name: 'cart'}" class="relative">
+          <div>
             <span class="p-[6px] cursor-pointer">
-              <i class="fa-regular fa-bars fa-lg"></i>
+              <i class="fa-light fa-bag-shopping fa-lg"></i>
             </span>
+            <span v-if="!isAuthenticated" v-show="cartStore.totalCartItemsLocal > 0" class="count-cart">{{ cartStore.totalCartItemsLocal }}</span>
+            <span v-else v-show="cartStore.totalCartItemsAuth > 0" class="count-cart">{{ cartStore.totalCartItemsAuth }}</span>
           </div>
-        </ul>
+        </NuxtLink>
+        
+        <NuxtLink to="/" v-if="isAuthenticated" class="p-1 cursor-pointer">
+          <i class="fa-light fa-circle-user fa-lg"></i>
+        </NuxtLink>
 
-        <!-- Nav mobile -->
-        <div
-          class="md:hidden mobile-menu-wrap" :class="{'menu-open': isOpenMenu}" 
-          tabindex="0" @keydown.esc="handleExit" ref="mobileMenuRef"
-        >
-          <div class="flex px-6 py-3 justify-end">
-            <button class="flex text-2xl leading-none cursor-pointer" @click="isOpenMenu = !isOpenMenu">
-              <i class="fa-regular fa-xmark"></i>
-            </button>
-          </div>
-          <div class="py-6">
-            <NuxtLink 
-              v-for="route in routes" 
-              :key="route.href"
-              :to="route.href"
-              @click="isOpenMenu = false"
-              class="flex justify-between items-center nav-item-mobile"
-            >
-              <span>{{ route.title }}</span>
-              <span class="text-lg leading-none">
-                <i class="fa-regular fa-chevron-right"></i>
-              </span>
-            </NuxtLink>
-          </div>
+        <div class="md:hidden" @click="isOpenMenu = !isOpenMenu">
+          <span class="p-[6px] cursor-pointer">
+            <i class="fa-regular fa-bars fa-lg"></i>
+          </span>
         </div>
-        <div class="overlay md:hidden" :class="{'menu-open': isOpenMenu}" @click="isOpenMenu = !isOpenMenu"></div>
-      </nav>
-    </header>
+      </ul>
+
+      <!-- Nav mobile -->
+      <div
+        class="md:hidden mobile-menu-wrap" :class="{'menu-open': isOpenMenu}" 
+        tabindex="0" @keydown.esc="handleExit" ref="mobileMenuRef"
+      >
+        <div class="flex px-6 py-3 justify-end">
+          <button class="flex text-2xl leading-none cursor-pointer" @click="isOpenMenu = !isOpenMenu">
+            <i class="fa-regular fa-xmark"></i>
+          </button>
+        </div>
+        <div class="py-6">
+          <NuxtLink 
+            v-for="route in routes" 
+            :key="route.href"
+            :to="route.href"
+            @click="isOpenMenu = false"
+            class="flex justify-between items-center nav-item-mobile"
+          >
+            <span>{{ route.title }}</span>
+            <span class="text-lg leading-none">
+              <i class="fa-regular fa-chevron-right"></i>
+            </span>
+          </NuxtLink>
+        </div>
+        <div v-if="!isAuthenticated" class="flex gap-x-4 mt-4 justify-center font-medium">
+          <NuxtLink :to="{name: 'login'}" class="button-mobile">
+            Đăng nhập
+          </NuxtLink>
+          <NuxtLink :to="{name: 'login'}"  class="button-mobile">
+            Đăng ký
+          </NuxtLink>
+        </div>
+      </div>
+      <div class="overlay md:hidden" :class="{'menu-open': isOpenMenu}" @click="isOpenMenu = !isOpenMenu"></div>
+    </nav>
+  </header>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 
+type HeaderType = "default" | "simple";
+
+const props = defineProps({
+  type: {type: String as PropType<HeaderType>, required: false}
+})
+
 const isOpenMenu: Ref<boolean> = ref(false);
 const mobileMenuRef = ref<HTMLDivElement>();
 const cartStore = useCartStore();
 const authStore = useAuthStore();
-const {isAuthenticated} = storeToRefs(authStore)
+const {isAuthenticated} = storeToRefs(authStore);
 
+if (isAuthenticated.value) {
+  await useAsyncData("count-items", () => cartStore.countCartItemsAuth());
+}
 onMounted(async () => {
-  await cartStore.getProductsBasicInCart();
+  if (!isAuthenticated.value) {
+    await cartStore.getCartItemsFromLocal();
+  }
 })
-
 watch(isOpenMenu, (newVal) => {
   if (newVal) {
     mobileMenuRef.value?.focus();
@@ -239,6 +259,10 @@ function handleExit() {
 }
 .nav-item-mobile:hover {
   color: #707072;
+}
+
+.button-mobile {
+  @apply px-4 py-2 bg-white rounded-full border-slate-950 border hover:bg-slate-950 hover:text-white transition-all duration-200 ease-in-out
 }
 
 .overlay {

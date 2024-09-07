@@ -37,6 +37,9 @@ export const useAuthStore = defineStore({
         this.isAuthenticated = true;
       }
       return response;
+    },
+    clearData() {
+      this.$reset();
     }
   },
   persist: {
