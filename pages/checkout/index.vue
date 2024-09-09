@@ -110,13 +110,13 @@
 <script setup lang="ts">
 import { AdressData, OrderPaymentInfo, OrderShippingInfo } from "~/types";
 import { validateForm, isRequired } from "~/utils";
+import { useCustomFetchData } from "~/composables";
 
 definePageMeta({
   layout: "simple",
 });
 
 const checkoutStore = useCheckoutStore();
-const authStore = useAuthStore();
 
 const selectedProvince = ref<AdressData>({} as AdressData);
 const selectedDistrict = ref<AdressData>({} as AdressData);
@@ -140,8 +140,6 @@ const shippingInfo = reactive<OrderShippingInfo>({
   paymentType: "COD"
 })
 
-const paymentInfo = ref<OrderPaymentInfo | null>(null);
-
 async function hanldeSubmitOrder() {
   const valid = validateForm([nameRef, phoneRef, provinceRef, districtRef, wardRef, detailAddressRef]);
   if (valid) {
@@ -152,14 +150,13 @@ async function hanldeSubmitOrder() {
   }
 }
 
-if (authStore.isAuthenticated) {
-  const { data } = await useAsyncData("payment-info", () => checkoutStore.getPaymentInfo());
-  if (data.value?.itemDetails.length == 0) {
+const { data: paymentInfo, pending } = await useCustomFetchData<OrderPaymentInfo>(checkoutStore.getPaymentInfo, checkoutStore.getPaymentInfoFromCartItem);
+
+watch(paymentInfo, () => {
+  if (!paymentInfo.value?.itemDetails || paymentInfo.value?.itemDetails.length == 0) {
     navigateTo("/cart", { replace: true });
   }
-  paymentInfo.value = data.value;
-}
-
+})
 
 const { data: provinces } = useAsyncData<AdressData[]>('provinces',
   () => checkoutStore.getProvinces(), {

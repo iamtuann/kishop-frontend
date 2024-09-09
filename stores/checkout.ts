@@ -41,14 +41,36 @@ export const useCheckoutStore = defineStore({
       const response: IResponse<OrderPaymentInfo> = await $fetch("orders/payment-info");
       return response.output;
     },
+    async getPaymentInfoFromCartItem():Promise<OrderPaymentInfo> {
+      const cartStore = useCartStore();
+      if (cartStore.cartItemLocals == null || cartStore.cartItemLocals.length == 0) {
+        return {} as OrderPaymentInfo;
+      }
+      const response: IResponse<OrderPaymentInfo> = await $fetch("orders/payment-info", {
+        method: 'POST',
+        body: cartStore.cartItemLocals
+      })
+      return response.output;
+    },
     async createOrder(shippingInfo: OrderShippingInfo): Promise<IResponse<Order>> {
+      const cartStore = useCartStore();
+      const authStore = useAuthStore();
+      const body = authStore.isAuthenticated ? {
+        shippingInfo
+      } : {
+        shippingInfo,
+        products: cartStore.cartItemLocals
+      }
       const response: IResponse<Order> = await $fetch("orders", {
         method: 'POST',
-        body: shippingInfo
+        body: body
       })
       if (response.statusCode === 200) {
         this.isCheckoutSuccess = true;
         this.orderInfo = response.output;
+        if (!authStore.isAuthenticated) {
+          cartStore.removeAllCartItemLocal();
+        }
       }
       return response;
     }

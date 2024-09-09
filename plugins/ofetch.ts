@@ -32,6 +32,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     },
     onResponseError({ request, response, options }) {
       const status = response.status;
+      console.log(status);
       if (status === 401) {
         authStore.clearData();
         navigateTo("/login");

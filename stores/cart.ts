@@ -132,5 +132,10 @@ export const useCartStore = defineStore({
     saveToLocalStorage() {
       localStorage.setItem("cart_order", JSON.stringify(this.cartItemLocals))
     },
+    removeAllCartItemLocal() {
+      localStorage.removeItem("cart_order");
+      this.cartItemDetails = [];
+      this.cartItemLocals = [];
+    }
   }
 })

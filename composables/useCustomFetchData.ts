@@ -24,11 +24,7 @@ export async function useCustomFetchData<Data = any>(apiSS: functionArgument, ap
         data.value = await apiSS();
         pending.value = false;
       } else if (process.client && !isAuthenticated) {
-        if (apiCS instanceof Promise) {
-          data.value = await apiCS();
-        } else {
-          data.value = apiCS();
-        }
+        data.value = await apiCS();
         pending.value = false;
       }
     } catch (err) {
