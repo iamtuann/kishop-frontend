@@ -17,8 +17,8 @@ body {
   }
 
   .btn-primary {
-    @apply py-4 px-6 w-full min-h-[58px] rounded-full leading-none border border-transparent flex items-center
-    justify-center text-white font-semibold mx-auto bg-primary 
+    @apply py-3 px-6 w-full min-h-[58px] rounded-full leading-none border border-transparent flex items-center
+    justify-center text-white font-semibold mx-auto bg-primary transition-all
   }
 
   .section-title {

@@ -13,7 +13,7 @@
           Đăng nhập
         </NuxtLink>
         <div class="border-white h-3 mx-3 border-r"></div>
-        <NuxtLink :to="{name: 'login'}"  class="hover:underline">
+        <NuxtLink :to="{name: 'register'}"  class="hover:underline">
           Đăng ký
         </NuxtLink>
       </div>
@@ -113,7 +113,7 @@
           <NuxtLink :to="{name: 'login'}" class="button-mobile">
             Đăng nhập
           </NuxtLink>
-          <NuxtLink :to="{name: 'login'}"  class="button-mobile">
+          <NuxtLink :to="{name: 'register'}"  class="button-mobile">
             Đăng ký
           </NuxtLink>
         </div>

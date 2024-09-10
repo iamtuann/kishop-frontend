@@ -3,14 +3,14 @@
     <div class="login-wrap">
       <div class="text-center">
         <NuxtLink to="/" class="font-bold text-xl text-primary-600">KiShop</NuxtLink>
-        <p class="mt-4 font-medium font-sans text-lg">
+        <p class="mt-3 font-medium font-sans text-xl uppercase">
           Đăng nhập
         </p>
       </div>
-      <form class="mt-2" @submit.prevent="handleLogin">
+      <form class="mt-3" @submit.prevent="handleLogin">
         <InputText
           ref="emailRef"
-          class="mb-2"
+          class="mb-1"
           name="email"
           label="Email"
           placeholder="Nhập email của bạn"
@@ -42,30 +42,34 @@
 
         <span v-show="errMsg" class="message">{{ errMsg }}</span>
 
-        <button type="submit" class="btn-primary text-lg mt-4 hover:bg-primary-600 transition-all">
+        <button type="submit" class="btn-primary rounded-lg py-3 text-lg mt-4 hover:bg-primary-600 transition-all">
           <span>Đăng nhập</span>
         </button>
       </form>
       
-      <div class="my-6 flex items-center gap-x-4">
+      <div class="my-5 flex items-center gap-x-4">
         <hr class="border-gray-300 border-t-[2px] flex-1">
-        <span class="text-gray-500 font-sans">HOẶC</span>
+        <span class="text-gray-500 font-sans text-sm">HOẶC</span>
         <hr class="border-gray-300 border-t-[2px] flex-1">
       </div>
       
       <div>
-        <button class="btn-primary bg-white border-gray-600 text-gray-700 hover:border-gray-800">
+        <button class="btn-primary rounded-lg py-3 bg-white border-gray-600 text-gray-700 hover:border-gray-800">
           <div class="flex items-center gap-4">
             <img src="../assets/images/logo-fb-small.png" width="25" height="25" alt="facebook">
             <span>Đăng nhập bằng Facebook</span>
           </div>
         </button>
-        <button class="btn-primary mt-3 bg-white border-gray-600 text-gray-800 hover:border-gray-800 transition-all">
+        <button class="btn-primary rounded-lg py-3 mt-3 bg-white border-gray-600 text-gray-800 hover:border-gray-800 transition-all">
           <div class="flex items-center gap-4">
             <img src="../assets/images/logo-gg-small.png" width="25" height="25" alt="google">
             <span>Đăng nhập bằng Google</span>
           </div>
         </button>
+        <p class="text-gray-700 mt-3 text-center">
+          Chưa có tài khoản? 
+          <NuxtLink to="/register" class="font-medium underline text-primary-600">Đăng ký</NuxtLink>
+        </p>
       </div>
     </div>
   </div>
@@ -128,12 +132,12 @@ watch(login, () => {
 }
 
 .login-wrap {
-  width: 650px;
+  width: 620px;
   max-width: 100%;
   background-color: #fff;
   border-radius: 24px;
   margin-top: 40px;
-  padding: 32px 100px;
+  padding: 28px 80px;
   border: 1px solid rgba(102, 102, 102, 0.5);
   height: 100%;
 }
