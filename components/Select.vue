@@ -51,6 +51,7 @@ const props = defineProps({
   name: {type: String, required: false},
   modelValue: { type: [String, Object], required: true },
   default: { type: [String, Object], required: false },
+  returnObject: { type: Boolean, default: false },
   items: { type: Array as PropType<(string[] | object[])>, required: true },
   label: { type: String, required: false },
   disabled: { type: Boolean, required: false },
@@ -65,26 +66,29 @@ const props = defineProps({
   },
 })
 const selectEl = ref<HTMLElement | null>(null);
-const {modelValue} = toRefs(props);
+const { modelValue } = toRefs(props);
 const message = ref("");
 const isValid = ref(true);
-const selected = props.default ? toRef(props.default) : ref(null);
+const selected = ref(getItemFromValue(modelValue.value)) || (props.default ? toRef(props.default) : ref(null));
 const open = ref(false);
 const dropdownOpenDirection = ref("below")
 
-function getTitle(item: Record<string, any> | string): string {
-  if(typeof item === "object" && item != null) {
-    return item[props.itemTitle];
-  } else {
-    return item;
+watch(open, (isDropdownOpened) => {
+  if (isDropdownOpened) {
+    setDropdownPosition();
   }
-}
+})
+
+watch(modelValue, (newVal) => {
+  selected.value = getItemFromValue(newVal);
+  validate();
+})
 
 function validate() {
   message.value = "";
   if (props.rules && props.rules.length > 0) {
     for (let i = 0; i < props.rules.length; i++) {
-      const result = props.rules[i](modelValue.value);
+      const result = props.rules[i](getValue(modelValue.value));
       if (result !== true) {
         message.value = result;
         isValid.value = false
@@ -99,7 +103,7 @@ function validate() {
 function handleSelect(item: string | object) {
   selected.value = item;
   open.value = false;
-  emit('update:modelValue', item);
+  emit('update:modelValue', getValue(item));
 }
 
 function setDropdownPosition() {
@@ -114,16 +118,44 @@ function setDropdownPosition() {
   }
 }
 
-watch(open, (isDropdownOpened) => {
-  if (isDropdownOpened) {
-    setDropdownPosition();
+function getTitle(item: Record<string, any> | string): string {
+  if(typeof item === "object" && item != null) {
+    return item[props.itemTitle];
+  } else {
+    return item;
   }
-})
+}
 
-watch(modelValue, (newVal) => {
-  selected.value = newVal;
-  validate();
-})
+function getValue(item: Record<string, any> | string): Record<string, any> | string {
+  if (typeof item === "object" && !props.returnObject) {
+    return item[props.itemValue];
+  } else {
+    return item;
+  }
+}
+
+function getItemFromValue(value: string | Record<string, any>) {
+  if (isArrayOfObjects(props.items)) {  
+    if (typeof value == "object") {
+      return isEmptyValue(value) ? null : value;
+    } else {
+      const item = props.items.find(item => {
+        return item[props.itemValue] == value;
+      })
+      return item;
+    }
+  } else if (isArrayOfStrings(props.items)) {
+    return value;
+  }
+}
+
+function isArrayOfStrings(arr: unknown[]): arr is string[] {
+  return arr.every(item => typeof item === 'string');
+}
+
+function isArrayOfObjects(arr: unknown[]): arr is Record<string, any>[] {
+  return arr.every(item => typeof item === 'object' && item !== null && !Array.isArray(item));
+}
 
 defineExpose({
   validate,

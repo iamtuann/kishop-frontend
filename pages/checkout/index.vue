@@ -30,6 +30,7 @@
             name="city"
             :items="provinces"
             item-title="name"
+            return-object
             :rules="[isRequired('tỉnh/ thành phố')]"
             label="Tỉnh/ Thành phố"
             required
@@ -42,6 +43,7 @@
             name="district"
             :items="districts"
             item-title="name"
+            return-object
             :rules="[isRequired('quận/ huyện')]"
             label="Quận/ Huyện"
             required
@@ -54,6 +56,7 @@
             name="ward"
             :items="wards"
             item-title="name"
+            return-object
             :rules="[isRequired('phường/ xã')]"
             label="Phường/ Xã"
             required
