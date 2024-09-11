@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { IResponse, AuthResponse } from '~/types';
+import { IResponse, AuthResponse, AuthUser } from '~/types';
 
 export type authStoreType = {
   user: AuthResponse,
@@ -48,13 +48,17 @@ export const useAuthStore = defineStore({
       }
       return response;
     },
+    async getProfile(): Promise<AuthUser> {
+      const response: IResponse<AuthUser> = await $fetch("auth/profile");
+      return response.output;
+    },
     clearData() {
       this.$reset();
     }
   },
   persist: {
     storage: persistedState.cookiesWithOptions({
-      maxAge: 86400000,
+      maxAge: 2592000000,
     }),
   },
 })

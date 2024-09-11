@@ -4,6 +4,7 @@
   --tw-color-white: theme('colors.white');
   --tw-color-black: theme('colors.black');
   --tw-color-primary: theme('colors.primary.DEFAULT');
+  --tw-color-primary-600: theme('colors.primary.600');
 }
 .checkbox {
   display: grid;

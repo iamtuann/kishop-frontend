@@ -13,7 +13,11 @@
         :placeholder="placeholder"
         :value="modelValue"
         :autocomplete="autocomplete"
+        :readonly="readonly"
+        :disabled="disabled"
         @input="onInput"  
+        @focus="e => emit('focus', e)"
+        @blur="e => emit('blur', e)"
       />
     </div>
     <div class="message">
@@ -24,7 +28,7 @@
 
 <script setup lang="ts">
 import { ref, watch, toRefs } from "vue";
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'focus', 'blur'])
 
 const props = defineProps({
   name: {type: String, required: false},
@@ -32,6 +36,7 @@ const props = defineProps({
   label: { type: String, required: false },
   // subLabel: { type: String, required: false },
   disabled: { type: Boolean, required: false },
+  readonly: {type: Boolean },
   autocomplete: { type: String, required: false },
   hideMessage: { type: Boolean, required: false },
   placeholder: { type: String, required: false },

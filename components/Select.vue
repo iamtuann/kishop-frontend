@@ -43,13 +43,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, toRef, toRefs } from "vue";
+import { ref, watch, toRef } from "vue";
 import { isEmptyValue } from "~/utils";
 const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps({
   name: {type: String, required: false},
-  modelValue: { type: [String, Object], required: true },
+  modelValue: { type: [String, Object], required: false },
   default: { type: [String, Object], required: false },
   returnObject: { type: Boolean, default: false },
   items: { type: Array as PropType<(string[] | object[])>, required: true },
@@ -66,10 +66,10 @@ const props = defineProps({
   },
 })
 const selectEl = ref<HTMLElement | null>(null);
-const { modelValue } = toRefs(props);
+const modelValue = toRef(props.modelValue || null);
 const message = ref("");
 const isValid = ref(true);
-const selected = ref(getItemFromValue(modelValue.value)) || (props.default ? toRef(props.default) : ref(null));
+const selected = ref(getItemFromValue(modelValue?.value)) || (props.default ? toRef(props.default) : ref(null));
 const open = ref(false);
 const dropdownOpenDirection = ref("below")
 
@@ -88,7 +88,7 @@ function validate() {
   message.value = "";
   if (props.rules && props.rules.length > 0) {
     for (let i = 0; i < props.rules.length; i++) {
-      const result = props.rules[i](getValue(modelValue.value));
+      const result = props.rules[i](getValue(modelValue.value || ""));
       if (result !== true) {
         message.value = result;
         isValid.value = false
@@ -126,7 +126,7 @@ function getTitle(item: Record<string, any> | string): string {
   }
 }
 
-function getValue(item: Record<string, any> | string): Record<string, any> | string {
+function getValue(item: Record<string, any> | string) {
   if (typeof item === "object" && !props.returnObject) {
     return item[props.itemValue];
   } else {
@@ -134,15 +134,17 @@ function getValue(item: Record<string, any> | string): Record<string, any> | str
   }
 }
 
-function getItemFromValue(value: string | Record<string, any>) {
+function getItemFromValue(value: string | Record<string, any> | null) {
+  if (!value) {
+    return null;
+  }
   if (isArrayOfObjects(props.items)) {  
     if (typeof value == "object") {
       return isEmptyValue(value) ? null : value;
     } else {
-      const item = props.items.find(item => {
+      return props.items.find(item => {
         return item[props.itemValue] == value;
       })
-      return item;
     }
   } else if (isArrayOfStrings(props.items)) {
     return value;
@@ -171,6 +173,7 @@ defineExpose({
   pointer-events: none
 }
 .selected {
+  min-height: 46px;
   outline: none;
   background-color: #fff;
   border-radius: 8px;
