@@ -3,7 +3,7 @@
     <LayoutHeader />
     <div class="bg-[#f4f4f4] pt-8 pb-5 flex-grow grid">
       <div class="container mx-auto grid grid-cols-12 gap-4 h-100">
-        <div class="col-span-12 md:col-span-4">
+        <div class="col-span-12 md:col-span-3">
           <nav class="bg-white py-5 pl-5 pr-4 rounded-lg h-full">
             <ul>
               <li v-for="nav in navigations" class="mb-3">

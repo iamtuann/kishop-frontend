@@ -52,6 +52,10 @@ export const useAuthStore = defineStore({
       const response: IResponse<AuthUser> = await $fetch("auth/profile");
       return response.output;
     },
+    logout() {
+      this.$reset();
+      this.isAuthenticated = false;
+    },
     clearData() {
       this.$reset();
     }

@@ -62,7 +62,7 @@
           <NuxtLink class="nav-item" :to="route.href">{{ route.title }}</NuxtLink>
         </li>
       </ul>
-      <ul class="flex items-center gap-4">
+      <div class="flex items-center gap-4">
         <Search v-if="props.type != 'simple'" />
         <NuxtLink :to="{name: 'cart'}" class="relative">
           <div>
@@ -74,16 +74,14 @@
           </div>
         </NuxtLink>
         
-        <NuxtLink to="/" v-if="isAuthenticated" class="p-1 cursor-pointer">
-          <i class="fa-light fa-circle-user fa-lg"></i>
-        </NuxtLink>
+        <UserPopper v-if="isAuthenticated" />
 
         <div class="md:hidden" @click="isOpenMenu = !isOpenMenu">
           <span class="p-[6px] cursor-pointer">
             <i class="fa-regular fa-bars fa-lg"></i>
           </span>
         </div>
-      </ul>
+      </div>
 
       <!-- Nav mobile -->
       <div

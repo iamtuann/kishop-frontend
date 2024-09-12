@@ -1,6 +1,7 @@
 <template>
   <h4 class="font-medium text-lg mb-4">Thông tin cá nhân</h4>
-  <div>
+  <SkeletonUserProfile v-if="pending" />
+  <div v-else>
     <div class="grid grid-cols-12 gap-x-4 gap-y-2">
       <InputText 
         ref="nameRef"
@@ -77,6 +78,7 @@ type genderType = {
   title: string,
   value: UserGender
 }
+const loading = true
 
 const genders: genderType[] = [
   {
@@ -100,7 +102,6 @@ const { data: profile, pending } = await useAsyncData<AuthUser>('profile', () =>
 if (profile.value) {
   newProfile.value = { ...profile.value };
 }
-
 </script>
 
 <style scoped>

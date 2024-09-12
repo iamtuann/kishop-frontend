@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto pt-10">
     <template v-if="pending">
-      <CartItemSkeleton v-for="number in 2" :key="number" />
+      <SkeletonCartItem v-for="number in 2" :key="number" />
     </template>
     <template v-if="!pending && cartStore.cartItemDetails.length == 0">
       <div class="flex flex-col items-center">

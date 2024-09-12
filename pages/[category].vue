@@ -107,7 +107,7 @@
         </div>
         <div class="col-span-12 md:col-span-8">
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <ProductCardSkeleton
+            <SkeletonProductCard
               v-if="pending"
               v-for="count in 12" :key="count"
             />
