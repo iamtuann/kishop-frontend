@@ -8,7 +8,7 @@
 defineProps({
   height: { type: String },
   width: { type: String, default: '100%' },
-  borderRadius: { type: String },
+  borderRadius: { type: String, default: '4px' },
   speedDuration: { type: String, default: '1s' },
   opacity: { type: String, default: '1'},
 })

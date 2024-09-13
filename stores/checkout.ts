@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import {
-  AdressResponse,
-  AdressData,
+  AddressResponse,
+  AddressData,
   IResponse,
   OrderPaymentInfo,
   OrderShippingInfo,
@@ -21,20 +21,20 @@ export const useCheckoutStore = defineStore({
     orderInfo: {}
   } as OrderType),
   actions: {
-    async getProvinces():Promise<AdressData[]> {
-      const response: AdressResponse = await externalFetch("https://esgoo.net/api-tinhthanh/1/0.htm");
+    async getProvinces():Promise<AddressData[]> {
+      const response: AddressResponse = await externalFetch("https://esgoo.net/api-tinhthanh/1/0.htm");
       return response.data;
     },
-    async getDistricts(provinceId: number | string | string | undefined):Promise<AdressData[]> {
+    async getDistricts(provinceId: number | string | string | undefined):Promise<AddressData[]> {
       if (!provinceId) return [];
 
-      const response: AdressResponse = await externalFetch(`https://esgoo.net/api-tinhthanh/2/${provinceId}.htm`);
+      const response: AddressResponse = await externalFetch(`https://esgoo.net/api-tinhthanh/2/${provinceId}.htm`);
       return response.data;
     },
-    async getWards(districtId: number | string | string | undefined):Promise<AdressData[]> {
+    async getWards(districtId: number | string | string | undefined):Promise<AddressData[]> {
       if (!districtId) return [];
 
-      const response: AdressResponse = await externalFetch(`https://esgoo.net/api-tinhthanh/3/${districtId}.htm`);
+      const response: AddressResponse = await externalFetch(`https://esgoo.net/api-tinhthanh/3/${districtId}.htm`);
       return response.data;
     },
     async getPaymentInfo():Promise<OrderPaymentInfo> {

@@ -111,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import { AdressData, OrderPaymentInfo, OrderShippingInfo } from "~/types";
+import { AddressData, OrderPaymentInfo, OrderShippingInfo } from "~/types";
 import { validateForm, isRequired } from "~/utils";
 import { useCustomFetchData } from "~/composables";
 
@@ -121,9 +121,9 @@ definePageMeta({
 
 const checkoutStore = useCheckoutStore();
 
-const selectedProvince = ref<AdressData>({} as AdressData);
-const selectedDistrict = ref<AdressData>({} as AdressData);
-const selectedWard = ref<AdressData>({} as AdressData);
+const selectedProvince = ref<AddressData>({} as AddressData);
+const selectedDistrict = ref<AddressData>({} as AddressData);
+const selectedWard = ref<AddressData>({} as AddressData);
 
 const nameRef = ref(null);
 const phoneRef = ref(null);
@@ -161,33 +161,33 @@ watch(paymentInfo, () => {
   }
 })
 
-const { data: provinces } = useAsyncData<AdressData[]>('provinces',
+const { data: provinces } = useAsyncData<AddressData[]>('provinces',
   () => checkoutStore.getProvinces(), {
   lazy: true,
-  default: () => [] as AdressData[],
+  default: () => [] as AddressData[],
 });
 
-const { data: districts } = useAsyncData<AdressData[]>('districts', 
+const { data: districts } = useAsyncData<AddressData[]>('districts', 
   () => checkoutStore.getDistricts(selectedProvince.value?.id), {
   watch: [selectedProvince],
   lazy: true,
-  default: () => [] as AdressData[],
+  default: () => [] as AddressData[],
 });
 
-const { data: wards } = useAsyncData<AdressData[]>('wards',
+const { data: wards } = useAsyncData<AddressData[]>('wards',
   () => checkoutStore.getWards(selectedDistrict.value?.id), {
   watch: [selectedDistrict],
   lazy: true,
-  default: () => [] as AdressData[],
+  default: () => [] as AddressData[],
 });
 
 watch(selectedProvince, (province) => {
-  selectedDistrict.value = {} as AdressData;
+  selectedDistrict.value = {} as AddressData;
   shippingInfo.province = province.full_name;
 })
 
 watch(selectedDistrict, (district) => {
-  selectedWard.value = {} as AdressData;
+  selectedWard.value = {} as AddressData;
   shippingInfo.district = district.full_name;
 })
 

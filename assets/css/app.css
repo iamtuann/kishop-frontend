@@ -6,6 +6,9 @@
   --tw-color-primary: theme('colors.primary.DEFAULT');
   --tw-color-primary-600: theme('colors.primary.600');
 }
+body.no-scroll {
+  overflow: hidden;
+}
 .checkbox {
   display: grid;
   grid-template-columns: 20px auto;

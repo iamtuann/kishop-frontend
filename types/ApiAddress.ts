@@ -1,11 +1,11 @@
-export interface AdressResponse {
+export interface AddressResponse {
   error: string,
   error_text: string,
   data_name: string,
-  data: AdressData[]
+  data: AddressData[]
 }
 
-export interface AdressData {
+export interface AddressData {
   id: string,
   name: string,
   name_en: string,
