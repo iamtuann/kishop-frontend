@@ -22,4 +22,16 @@ export interface AuthUser {
 
 export type UserGender = "MALE" | "FEMALE" | "OTHER";
 
-export type UserStatus = "NOT_VERIFY" | "VERIFIED"
+export type UserStatus = "NOT_VERIFY" | "VERIFIED";
+
+export interface Address {
+  id: number | string,
+  userId: number | string,
+  name: string,
+  receiverName: string,
+  phoneNumber: string,
+  province: string,
+  district: string,
+  ward: string,
+  detailAddress: string,
+}

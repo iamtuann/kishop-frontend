@@ -78,7 +78,6 @@ type genderType = {
   title: string,
   value: UserGender
 }
-const loading = true
 
 const genders: genderType[] = [
   {

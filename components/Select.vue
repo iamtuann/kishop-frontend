@@ -66,10 +66,10 @@ const props = defineProps({
   },
 })
 const selectEl = ref<HTMLElement | null>(null);
-const modelValue = toRef(props.modelValue || null);
+// const modelValue = toRef(props.modelValue || null);
 const message = ref("");
 const isValid = ref(true);
-const selected = ref(getItemFromValue(modelValue?.value)) || (props.default ? toRef(props.default) : ref(null));
+const selected = ref(getItemFromValue(props.modelValue)) || (props.default ? toRef(props.default) : ref(null));
 const open = ref(false);
 const dropdownOpenDirection = ref("below")
 
@@ -79,16 +79,18 @@ watch(open, (isDropdownOpened) => {
   }
 })
 
-watch(modelValue, (newVal) => {
+watch(() => props.modelValue, (newVal) => {
   selected.value = getItemFromValue(newVal);
   validate();
+}, {
+  deep: true
 })
 
 function validate() {
   message.value = "";
   if (props.rules && props.rules.length > 0) {
     for (let i = 0; i < props.rules.length; i++) {
-      const result = props.rules[i](getValue(modelValue.value || ""));
+      const result = props.rules[i](getValue(props.modelValue || ""));
       if (result !== true) {
         message.value = result;
         isValid.value = false
@@ -134,8 +136,8 @@ function getValue(item: Record<string, any> | string) {
   }
 }
 
-function getItemFromValue(value: string | Record<string, any> | null) {
-  if (!value) {
+function getItemFromValue(value: string | Record<string, any> | null | undefined) {
+  if (isEmptyValue(value)) {
     return null;
   }
   if (isArrayOfObjects(props.items)) {  
@@ -182,7 +184,7 @@ defineExpose({
   font-size: 16px;
   cursor: pointer;
   user-select: none;
-  padding: 10px 24px 10px 12px;
+  padding: 10px 30px 10px 12px;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
@@ -212,7 +214,7 @@ defineExpose({
 }
 
 .items-wrap.below {
-  top: calc(100% + 4px);
+  top: calc(100% - 8px);
 }
 
 .items-wrap.above {
@@ -234,7 +236,7 @@ defineExpose({
   width: 15px;
   display:block;
   position: absolute;
-  right: 12px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;

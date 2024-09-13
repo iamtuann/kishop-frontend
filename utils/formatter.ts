@@ -4,8 +4,12 @@ export function formatPrice(price: number, currency: string = '₫') {
   return formatter.format(price) + currency;
 }
 
-export function formatAddress(city: string, district: string, ward: string, detail: string) {
-  return city + ", " + district + ", " + ward + ", " + detail + ".";
+export function formatAddress(city: string, district: string, ward: string, detail?: string) {
+  if (detail) {
+    return city + ", " + district + ", " + ward + ", " + detail + ".";
+  } else {
+    return city + ", " + district + ", " + ward + ".";
+  }
 }
 
 export function formatDate(date: Date | null): string {
@@ -18,4 +22,18 @@ export function formatDate(date: Date | null): string {
   } else {
     return "--/--/----"
   }
+}
+
+export function formatPhoneNumber(phoneNumber: string): string {
+  const cleaned = phoneNumber.replace(/\D/g, '');
+  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/) || cleaned.match(/^(\d{4})(\d{3})(\d{3})$/);
+
+  if (match) {
+    if (match[1].length === 3) {
+      return `${match[1]} ${match[2]} ${match[3]}`; // Định dạng 0XX XXX XXXX
+    } else if (match[1].length === 4) {
+      return `${match[1]} ${match[2]} ${match[3]}`; // Định dạng 0XXX XXX XXX
+    }
+  }
+  return phoneNumber;
 }

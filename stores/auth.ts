@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { IResponse, AuthResponse, AuthUser } from '~/types';
+import { IResponse, AuthResponse, AuthUser, Address } from '~/types';
 
 export type authStoreType = {
   user: AuthResponse,
@@ -55,6 +55,30 @@ export const useAuthStore = defineStore({
     logout() {
       this.$reset();
       this.isAuthenticated = false;
+    },
+    async getAddresses(): Promise<Address[]> {
+      const response: IResponse<Address[]> = await $fetch("addresses");
+      return response.output;
+    },
+    async createAddresses(address: Address): Promise<Address> {
+      const response: IResponse<Address> = await $fetch("addresses/", {
+        method: "POST",
+        body: address
+      });
+      return response.output;
+    },
+    async updateAddresses(address: Address): Promise<Address> {
+      const response: IResponse<Address> = await $fetch("addresses/update", {
+        method: "POST",
+        body: address
+      });
+      return response.output;
+    },
+    async deleteAddresses(id: string | number): Promise<IResponse<null>> {
+      const response: IResponse<null> = await $fetch("addresses/" + id, {
+        method: "DELETE"
+      });
+      return response;
     },
     clearData() {
       this.$reset();
