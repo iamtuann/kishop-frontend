@@ -24,6 +24,16 @@ export function formatDate(date: Date | null): string {
   }
 }
 
+export function formatDateFull(date: Date) {
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+  const year = date.getFullYear();
+
+  return `${hours}:${minutes} ${day}-${month}-${year}`;
+}
+
 export function formatPhoneNumber(phoneNumber: string): string {
   const cleaned = phoneNumber.replace(/\D/g, '');
   const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/) || cleaned.match(/^(\d{4})(\d{3})(\d{3})$/);

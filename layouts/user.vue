@@ -16,7 +16,7 @@
           </nav>
         </div>
         <div class="col-span-12 md:col-span-8">
-          <div class="bg-white py-5 pl-5 pr-4 rounded-lg h-full">
+          <div class="bg-white py-3 px-2 md:px-4 md:py-5 rounded-lg h-full">
             <slot />
           </div>
         </div>
@@ -52,7 +52,7 @@ const navigations = [
 
 </script>
 <style scoped>
-nav .router-link-exact-active {
+nav .router-link-active {
   color: var(--tw-color-primary-600);
 }
 </style>
