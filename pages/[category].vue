@@ -1,13 +1,14 @@
 <template>
   <div class="container mx-auto mt-6">
-    <div class="flex justify-between items-center pb-4">
+    <div class="flex flex-col sm:flex-row items-start justify-between sm:items-center gap-4 pb-4">
       <h2 class="text-2xl font-semibold italic">
-        {{ title }} ({{ pageProduct?.totalElements }})
+        {{ title }}
+        {{ route.params.category == "search" ? keyword : '' }}
+        ({{ pageProduct?.totalElements }})
       </h2>
-      <div>
         <Select 
           v-model="sortingSelected"
-          class="hidden lg:block min-w-[200px]"
+          class="hidden lg:block w-[200px]"
           name="filter"
           :items="listSorting"
           item-title="name"
@@ -17,7 +18,6 @@
           Bộ lọc
           <i class="ml-1 fa-regular fa-bars-filter"></i>
         </button>
-      </div>
     </div>
     <div class="grid grid-cols-12 gap-4 mt-4">
       <div class="hidden lg:block lg:col-span-3 2xl:col-span-2 pr-4">
@@ -130,7 +130,7 @@
         <div class="flex flex-col h-full">
           <div class="flex-grow flex-shrink h-full bg-white overflow-y-auto">
             <p class="py-2 px-3 md:py-4 md:px-6 font-medium">Bộ lọc</p>
-            <button class="fixed top-5 right-6 text-2xl px-1 cursor-pointer" @click="pageStates.isOpenFilter = !pageStates.isOpenFilter">
+            <button class="fixed top-5 right-6 z-50 text-2xl px-1 cursor-pointer" @click="pageStates.isOpenFilter = !pageStates.isOpenFilter">
               <i class="fa-regular fa-xmark"></i>
             </button>
             <div class="py-4 px-3 md:px-6">
@@ -244,6 +244,14 @@
 import { useCommonStore } from '~/stores';
 import { Brand, Category, Color, ProductBasic, IPage } from '~/types';
 
+definePageMeta({
+  validate({ params }) {
+    const validCategories = ['men', 'women', 'kids', 'flash-sale', 'search'];
+    const category = Array.isArray(params.category) ? params.category[0] : params.category;
+    return validCategories.includes(category);
+  }
+});
+
 const router = useRouter()
 const route = useRoute()
 const productStore = useProductStore();
@@ -335,6 +343,7 @@ switch (route.params.category) {
     title.value = "Giảm Giá"
     break;
   case "search":
+    title.value = "Tìm kiếm: "
     break;
   default:
     break;
