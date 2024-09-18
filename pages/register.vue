@@ -1,9 +1,9 @@
 <template>
-  <div class="grid grid-cols-12">
+  <div class="grid grid-cols-12 min-h-screen">
     <div class="col-span-12 md:col-span-6 bg-white">
-      <div class="mx-auto px-10 py-8 max-w-[520px]">
+      <div class="mx-auto px-3 py-3 md:px-10 md:py-7 max-w-[520px]">
         <NuxtLink to="/" class="font-bold text-xl text-primary-600">KiShop</NuxtLink>
-        <form class="mt-5" @submit.prevent="handleRegister">
+        <form class="mt-7" @submit.prevent="handleRegister">
           <h3 class="text-center text-3xl font-medium mb-5">
             Tạo tài khoản
           </h3>

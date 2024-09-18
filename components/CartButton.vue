@@ -1,5 +1,5 @@
 <template>
-  <button class="btn-wrap btn-primary hover:bg-primary-600 transition-all duration-200"
+  <button class="btn-wrap min-h-[58px] btn-primary hover:bg-primary-600 transition-all duration-200"
     :class="{ 'is-adding': isAdding, 'is-added': isAdded && !isEnded }">
     <div class="add-animation">
       <span></span>

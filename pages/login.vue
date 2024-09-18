@@ -1,13 +1,13 @@
 <template>
   <div class="flex justify-center min-h-screen wrapper">
-    <div class="login-wrap">
+    <div class="login-wrap px-4 py-6 md:px-7 md:py-10">
       <div class="text-center">
         <NuxtLink to="/" class="font-bold text-xl text-primary-600">KiShop</NuxtLink>
         <p class="mt-3 font-medium font-sans text-xl uppercase">
           Đăng nhập
         </p>
       </div>
-      <form class="mt-3" @submit.prevent="handleLogin">
+      <form class="mt-4" @submit.prevent="handleLogin">
         <InputText
           ref="emailRef"
           class="mb-1"
@@ -54,12 +54,12 @@
       </div>
       
       <div>
-        <button class="btn-primary rounded-lg py-3 bg-white border-gray-600 text-gray-700 hover:border-gray-800">
+        <!-- <button class="btn-primary rounded-lg py-3 bg-white border-gray-600 text-gray-700 hover:border-gray-800">
           <div class="flex items-center gap-4">
             <img src="../assets/images/logo-fb-small.png" width="25" height="25" alt="facebook">
             <span>Đăng nhập bằng Facebook</span>
           </div>
-        </button>
+        </button> -->
         <button class="btn-primary rounded-lg py-3 mt-3 bg-white border-gray-600 text-gray-800 hover:border-gray-800 transition-all">
           <div class="flex items-center gap-4">
             <img src="../assets/images/logo-gg-small.png" width="25" height="25" alt="google">
@@ -129,6 +129,7 @@ watch(login, () => {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  padding: 0 12px;
 }
 
 .login-wrap {
@@ -136,8 +137,7 @@ watch(login, () => {
   max-width: 100%;
   background-color: #fff;
   border-radius: 24px;
-  margin-top: 40px;
-  padding: 28px 80px;
+  margin-top: 80px;
   border: 1px solid rgba(102, 102, 102, 0.5);
   height: 100%;
 }

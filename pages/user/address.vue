@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-between items-center mb-4">
+  <div class="flex justify-between items-center md:mb-4">
     <h4 class="font-medium text-lg">Địa chỉ của tôi</h4>
     <button class="btn-small px-4" @click="createDialog = true">
       <i class="fa-regular fa-plus mr-1"></i>
@@ -9,24 +9,25 @@
   <SkeletonUserAddress v-if="pending" />
   <div v-else>
     <div v-for="add in addresses" :key="add.id"
-      class="flex justify-between items-center gap-2 py-5 border-b border-gray-300"
+      class="flex flex-col sm:flex-row justify-between items-start gap-2 py-5 border-b border-gray-300"
     >
       <div>
         <p class="font-medium mb-1">{{ add.name }}</p>
         <div class="text-gray-500">
-          <p class="text-black mb-1 font-base">
-            {{ add.receiverName }} 
-            <span>|</span>
-            {{ formatPhoneNumber(add.phoneNumber) }}</p> 
-          <p class="leading-[20px]">
+          <div class="text-black mb-1 font-base flex flex-col sm:flex-row gap-x-2">
+            <span>{{ add.receiverName }} </span>
+            <span class="hidden sm:block">|</span>
+            <span>{{ formatPhoneNumber(add.phoneNumber) }}</span>
+          </div> 
+          <p class="leading-[20px] text-sm sm:text-base">
             {{ formatAddress(add.province, add.district, add.ward) }} <br>
             {{ add.detailAddress }}
           </p>
         </div>
       </div>
-      <div class="text-right flex-shrink-0 min-w-max text-blue-500">
-        <p class="cursor-pointer mb-1">Cập nhật</p>
-        <button @click="deleteAddress(add.id)" class="cursor-pointer">Xóa</button>
+      <div class="flex-shrink-0 flex sm:flex-col gap-x-4 gap-y-1 text-blue-500">
+        <p class="cursor-pointer">Cập nhật</p>
+        <button @click="deleteAddress(add.id)" class="cursor-pointer text-right">Xóa</button>
       </div>
     </div>
 

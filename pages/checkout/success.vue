@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-grow">
+  <div class="flex flex-grow flex-col md:flex-row">
     <div class="flex-grow p-5 bg-[#31c07e]">
       <div class="mt-14 flex flex-col items-center relative">
         <video ref="video" class="congrat-video" width="200" autoplay preload="metadata" muted src="~/assets/images/congratulation.webm" >
@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-    <div class="w-[400px] bg-[#f4f5f7] text-sm font-medium">
+    <div class="w-full md:w-[400px] bg-[#f4f5f7] text-sm font-medium">
       <div class="px-5 py-4">
         <p>MÃ ĐƠN HÀNG <span class="text-xl">{{ orderInfo.orderCode }}</span></p>
         <p v-if="orderInfo.paymentType === 'COD'">Thanh toán khi nhận hàng</p>

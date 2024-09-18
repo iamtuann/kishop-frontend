@@ -1,7 +1,7 @@
 <template>
   <button 
     :disabled="loading" :type="props.type" 
-    class="btn-primary"
+    class="btn-primary min-h-[58px]"
     :class="{'bg-primary-200 hover:bg-primary-200' : loading}"
   >
     <slot name="prepend-icon">

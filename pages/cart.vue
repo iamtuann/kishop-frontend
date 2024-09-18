@@ -27,7 +27,7 @@
           <p class="ml-2">{{ formatPrice(cartStore.totalPriceCartItems) }}</p>
         </div>
         <div class="pt-5 pb-3">
-          <button type="button" class="btn-primary" @click="hanldeSubmitOrder">Đặt hàng</button>
+          <button type="button" class="btn-primary min-h-[58px]" @click="hanldeSubmitOrder">Đặt hàng</button>
         </div>
       </div>
     </div>

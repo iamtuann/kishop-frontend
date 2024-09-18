@@ -2,7 +2,7 @@
   <div class="container mx-auto">
     <h3 class="font-sans mb-4 mt-6 text-3xl font-medium">Đặt hàng</h3>
     <form class="grid grid-cols-12 gap-5">
-      <div class="col-span-7 pr-10">
+      <div class="col-span-12 md:col-span-6 lg:col-span-7 lg:pr-10">
         <p class="text-lg">Thông tin nhận hàng</p>
         <div class="mt-3">
           <InputText 
@@ -78,7 +78,7 @@
           />
         </div>
       </div>
-      <div class="col-span-5">
+      <div class="col-span-12 md:col-span-6 lg:col-span-5">
         <p class="text-lg">Danh sách sản phẩm</p>
         <div class="mt-3" v-if="paymentInfo">
           <CartItem
@@ -102,7 +102,7 @@
             <p class="ml-2">{{ formatPrice(paymentInfo.totalPrice) }}</p>
           </div>
           <div class="pt-5 pb-3">
-            <button type="button" class="btn-primary" @click="hanldeSubmitOrder">Đặt hàng</button>
+            <Button :loading="loading" @click="hanldeSubmitOrder">Đặt hàng</Button>
           </div>
         </div>
       </div>
@@ -143,10 +143,12 @@ const shippingInfo = reactive<OrderShippingInfo>({
   paymentType: "COD"
 })
 
+const loading = ref(false);
 async function hanldeSubmitOrder() {
   const valid = validateForm([nameRef, phoneRef, provinceRef, districtRef, wardRef, detailAddressRef]);
   if (valid) {
-    const { data } = await useAsyncData("create-order", () => checkoutStore.createOrder(shippingInfo));
+    const { data, pending } = await useAsyncData("create-order", () => checkoutStore.createOrder(shippingInfo));
+    loading.value = pending.value;
     if (data.value?.statusCode === 200) {
       navigateTo('/checkout/success');
     }

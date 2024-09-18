@@ -3,18 +3,18 @@
   <div class="container mx-auto">
     <div class="grid grid-cols-12 gap-5">
       <div class="col-span-12 md:col-span-7 gap-4">
-        <div class="flex gap-4 lg:mt-10 max-h-[600px] min-h-[455px] sticky top-8">
-          <div class="flex flex-shrink-0 relative flex-col grow gap-2 max-w-[60px] h-full overflow-y-auto">
+        <div class="flex flex-col-reverse sm:flex-row gap-4 max-h-[600px] sticky top-8">
+          <div class="flex flex-row sm:flex-col flex-shrink-0 gap-2 overflow-auto">
             <div 
               v-for="(url, idx) in productVariantShowing?.imageUrls" 
               :key="idx"
-              class="relative w-full h-[60px] rounded cursor-pointer"
+              class="relative aspect-square h-20 md:max-lg:h-16 rounded cursor-pointer"
               @mouseover="imageShowIndex = idx"
             >
-              <img class="w-full h-full rounded bg-gray-100 object-cover object-center" :src="url" :alt="product?.name">
+              <img class="h-full rounded bg-gray-100 object-cover object-center" :src="url" :alt="product?.name">
             </div>
           </div>
-          <div class="rounded-lg overflow-hidden relative grow w-auto h-auto lg:w-[535px] lg:h-[600px] max-w-[535px]">
+          <div class="rounded-lg overflow-hidden relative grow w-auto h-auto lg:max-w-[535px] lg:h-[600px]">
             <img :src="imageShowing" :alt="product?.name" class="w-full h-full bg-gray-100 object-cover object-center">
             <div class="absolute flex bottom-3 right-4 gap-2">
               <div class="arrow" @click="prevImage">
@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="col-span-12 md:col-span-5">
-        <div class="pt-1 pr-0 pl-0 lg:mt-10 lg:mr-2">
+        <div class="pt-1 pr-0 pl-0 lg:mt-5 lg:mr-2">
           <span class="font-semibold text-red-600 uppercase">{{ product?.brand.name }}</span>
           <h1 class="text-2xl font-medium mt-2">{{ product?.name }}</h1>
           <div class="mb-2 mt-2 ">
@@ -93,10 +93,10 @@
               @click="handleAddToCart"
               @ended="isAddedToCart = false"
             />
-            <button class="btn-primary mt-3 bg-white border-gray-400 text-gray-800 hover:border-gray-800 transition-all">
+            <!-- <button class="btn-primary mt-3 bg-white border-gray-400 text-gray-800 hover:border-gray-800 transition-all">
               <span>Yêu thích</span>
               <i class="ml-2 fa-light fa-heart"></i>
-            </button>
+            </button> -->
           </div>
           <div class="pt-6">
             <h4 class="font-medium mb-1">Mô tả sản phẩm</h4>

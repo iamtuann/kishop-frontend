@@ -1,131 +1,248 @@
 <template>
   <div class="container mx-auto mt-6">
-    <!-- <div class="banner h-[320px] rounded-3xl overflow-hidden">
-      <img class="object-cover object-center h-full w-full" src="../assets/images/banner_men.png" alt="banner men fashion">
-    </div> -->
-    <div class="mt-5">
-      <div class="flex justify-between pb-4">
-        <h2 class="text-4xl font-semibold italic">Men's shoes</h2>
-        <div class="min-w-[200px]">
-          <CommonCustomSelect
-            v-model="sortingSelected"
-            :items="listSorting"
-            :default="listSorting[0]"
-            itemTitle="name"
+    <div class="flex justify-between items-center pb-4">
+      <h2 class="text-2xl font-semibold italic">
+        {{ title }} ({{ pageProduct?.totalElements }})
+      </h2>
+      <div>
+        <Select 
+          v-model="sortingSelected"
+          class="hidden lg:block min-w-[200px]"
+          name="filter"
+          :items="listSorting"
+          item-title="name"
+          return-object
+        />
+        <button @click="pageStates.isOpenFilter = true" class="block lg:hidden btn-small px-5 text-base">
+          Bộ lọc
+          <i class="ml-1 fa-regular fa-bars-filter"></i>
+        </button>
+      </div>
+    </div>
+    <div class="grid grid-cols-12 gap-4 mt-4">
+      <div class="hidden lg:block lg:col-span-3 2xl:col-span-2 pr-4">
+        <div class="cate-item !border-t-0">
+          <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
+            @click="pageStates.isOpenCate = !pageStates.isOpenCate"
+          >
+            <div class="text-base font-semibold">Loại sản phẩm</div>
+            <div class="arrow-icon" :class="{open: pageStates.isOpenCate}">
+              <span class="left"></span>
+              <span class="right"></span>
+            </div>
+          </div>
+          <div :class="{open: pageStates.isOpenCate}" class="cate-body">
+            <label v-for="cate in listCate" :key="cate.id" class="checkbox mb-2 font-medium">
+              <input type="checkbox" v-model="listCateSelected" :value="cate.slug">
+              {{ cate.name }}
+            </label>
+          </div>
+        </div>
+        <div class="cate-item" v-if="!pageStates.isPageGender">
+          <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
+            @click="pageStates.isOpenGender = !pageStates.isOpenGender"
+          >
+            <div class="text-base font-semibold">Giới tính</div>
+            <div class="arrow-icon" :class="{open: pageStates.isOpenGender}">
+              <span class="left"></span>
+              <span class="right"></span>
+            </div>
+          </div>
+          <div :class="{open: pageStates.isOpenGender}" class="cate-body">
+            <label v-for="gender in listGender" :key="gender" class="checkbox mb-2 font-medium">
+              <input type="checkbox" v-model="listGenderSelected" :value="gender">
+              {{ gender }}
+            </label>
+          </div>
+        </div>
+        <div class="cate-item" v-if="!pageStates.isPageSale" >
+          <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
+            @click="pageStates.isOpenSale = !pageStates.isOpenSale"
+          >
+            <div class="text-base font-semibold">Giảm giá</div>
+            <div class="arrow-icon" :class="{open: pageStates.isOpenSale}">
+              <span class="left"></span>
+              <span class="right"></span>
+            </div>
+          </div>
+          <div :class="{open: pageStates.isOpenSale}" class="cate-body">
+            <label class="checkbox mb-2 font-medium">
+              <input type="checkbox" v-model="isSale">Giảm giá
+            </label>
+          </div>
+        </div>
+        <div class="cate-item">
+          <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
+            @click="pageStates.isOpenColor = !pageStates.isOpenColor"
+          >
+            <div class="text-base font-semibold">Màu sắc</div>
+            <div class="arrow-icon" :class="{open: pageStates.isOpenColor}">
+              <span class="left"></span>
+              <span class="right"></span>
+            </div>
+          </div>
+          <div :class="{open: pageStates.isOpenColor}" class="cate-body grid grid-cols-3 gap-y-3">
+            <label class="cursor-pointer flex flex-col items-center select-none" v-for="color in listColor" :key="color.id">
+              <input type="checkbox" v-model="listColorSelected" :value="color.engName" class="hide checkbox-color">
+              <div class="w-7 h-7 rounded-full mb-1 color-wrap grid place-content-center"
+                :class="color.engName == 'White' ? 'color-white' : ''"
+                :style="{backgroundColor: color.code}"></div>
+                <div class="text-xs font-medium text-center">{{ color.name }}</div>
+            </label>
+          </div>
+        </div>
+        <div class="cate-item">
+          <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
+            @click="pageStates.isOpenBrand = !pageStates.isOpenBrand"
+          >
+            <div class="text-base font-semibold">Hãng</div>
+            <div class="arrow-icon" :class="{open: pageStates.isOpenBrand}">
+              <span class="left"></span>
+              <span class="right"></span>
+            </div>
+          </div>
+          <div :class="{open: pageStates.isOpenBrand}" class="cate-body">
+            <label v-for="brand in listBrand" :key="brand.id" class="checkbox mb-2 font-medium">
+              <input type="checkbox" v-model="listBrandSelected" :value="brand.name">
+              {{ brand.name }}
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="col-span-12 lg:col-span-9 2xl:col-span-10">
+        <div class="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-4">
+          <SkeletonProductCard
+            v-if="pending"
+            v-for="count in 12" :key="count"
+          />
+          <ProductCard 
+            v-else
+            v-for="product in pageProduct?.content" :key="product.variantId" 
+            :product="product"
           />
         </div>
       </div>
-      <div class="grid grid-cols-10 gap-4 mt-4">
-        <div class="col-span-12 md:col-span-2 pr-4">
-          <div class="cate-item border-t border-gray-300 pb-2">
-            <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
-              @click="pageStates.isOpenCate = !pageStates.isOpenCate"
-            >
-              <div class="text-base font-semibold">Loại sản phẩm</div>
-              <div class="arrow-icon" :class="{open: pageStates.isOpenCate}">
-                <span class="left"></span>
-                <span class="right"></span>
+    </div>
+
+    <!-- filter mobile -->
+    <Transition>
+      <div v-show="pageStates.isOpenFilter" class="fixed bg-white lg:hidden pt-3 filter-mobile">
+        <div class="flex flex-col h-full">
+          <div class="flex-grow flex-shrink h-full bg-white overflow-y-auto">
+            <p class="py-2 px-3 md:py-4 md:px-6 font-medium">Bộ lọc</p>
+            <button class="fixed top-5 right-6 text-2xl px-1 cursor-pointer" @click="pageStates.isOpenFilter = !pageStates.isOpenFilter">
+              <i class="fa-regular fa-xmark"></i>
+            </button>
+            <div class="py-4 px-3 md:px-6">
+              <div class="text-base font-semibold">Sắp xếp</div>
+              <Select 
+                v-model="sortingSelected"
+                class="!font-medium"
+                :items="listSorting"
+                item-title="name"
+                return-object
+              />
+              <div class="cate-item">
+                <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
+                  @click="pageStates.isOpenCate = !pageStates.isOpenCate"
+                >
+                  <div class="text-base font-semibold">Loại sản phẩm</div>
+                  <div class="arrow-icon" :class="{open: pageStates.isOpenCate}">
+                    <span class="left"></span>
+                    <span class="right"></span>
+                  </div>
+                </div>
+                <div :class="{open: pageStates.isOpenCate}" class="cate-body">
+                  <label v-for="cate in listCate" :key="cate.id" class="checkbox mb-2 font-medium">
+                    <input type="checkbox" v-model="listCateSelected" :value="cate.slug">
+                    {{ cate.name }}
+                  </label>
+                </div>
+              </div>
+              <div class="cate-item" v-if="!pageStates.isPageGender">
+                <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
+                  @click="pageStates.isOpenGender = !pageStates.isOpenGender"
+                >
+                  <div class="text-base font-semibold">Giới tính</div>
+                  <div class="arrow-icon" :class="{open: pageStates.isOpenGender}">
+                    <span class="left"></span>
+                    <span class="right"></span>
+                  </div>
+                </div>
+                <div :class="{open: pageStates.isOpenGender}" class="cate-body">
+                  <label v-for="gender in listGender" :key="gender" class="checkbox mb-2 font-medium">
+                    <input type="checkbox" v-model="listGenderSelected" :value="gender">
+                    {{ gender }}
+                  </label>
+                </div>
+              </div>
+              <div class="cate-item" v-if="!pageStates.isPageSale" >
+                <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
+                  @click="pageStates.isOpenSale = !pageStates.isOpenSale"
+                >
+                  <div class="text-base font-semibold">Giảm giá</div>
+                  <div class="arrow-icon" :class="{open: pageStates.isOpenSale}">
+                    <span class="left"></span>
+                    <span class="right"></span>
+                  </div>
+                </div>
+                <div :class="{open: pageStates.isOpenSale}" class="cate-body">
+                  <label class="checkbox mb-2 font-medium">
+                    <input type="checkbox" v-model="isSale">Giảm giá
+                  </label>
+                </div>
+              </div>
+              <div class="cate-item">
+                <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
+                  @click="pageStates.isOpenColor = !pageStates.isOpenColor"
+                >
+                  <div class="text-base font-semibold">Màu sắc</div>
+                  <div class="arrow-icon" :class="{open: pageStates.isOpenColor}">
+                    <span class="left"></span>
+                    <span class="right"></span>
+                  </div>
+                </div>
+                <div :class="{open: pageStates.isOpenColor}" class="cate-body grid grid-cols-3 gap-y-3">
+                  <label class="cursor-pointer flex flex-col items-center select-none" v-for="color in listColor" :key="color.id">
+                    <input type="checkbox" v-model="listColorSelected" :value="color.engName" class="hide checkbox-color">
+                    <div class="w-7 h-7 rounded-full mb-1 color-wrap grid place-content-center"
+                      :class="color.engName == 'White' ? 'color-white' : ''"
+                      :style="{backgroundColor: color.code}"></div>
+                      <div class="text-xs font-medium text-center">{{ color.name }}</div>
+                  </label>
+                </div>
+              </div>
+              <div class="cate-item">
+                <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
+                  @click="pageStates.isOpenBrand = !pageStates.isOpenBrand"
+                >
+                  <div class="text-base font-semibold">Hãng</div>
+                  <div class="arrow-icon" :class="{open: pageStates.isOpenBrand}">
+                    <span class="left"></span>
+                    <span class="right"></span>
+                  </div>
+                </div>
+                <div :class="{open: pageStates.isOpenBrand}" class="cate-body">
+                  <label v-for="brand in listBrand" :key="brand.id" class="checkbox mb-2 font-medium">
+                    <input type="checkbox" v-model="listBrandSelected" :value="brand.name">
+                    {{ brand.name }}
+                  </label>
+                </div>
               </div>
             </div>
-            <div :class="{open: pageStates.isOpenCate}" class="cate-body">
-              <label v-for="cate in listCate" :key="cate.id" class="checkbox mb-2 font-medium">
-                <input type="checkbox" v-model="listCateSelected" :value="cate.slug">
-                {{ cate.name }}
-              </label>
-            </div>
           </div>
-          <div class="cate-item border-t border-gray-300 pb-2" v-if="!pageStates.isPageGender">
-            <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
-              @click="pageStates.isOpenGender = !pageStates.isOpenGender"
-            >
-              <div class="text-base font-semibold">Giới tính</div>
-              <div class="arrow-icon" :class="{open: pageStates.isOpenGender}">
-                <span class="left"></span>
-                <span class="right"></span>
-              </div>
-            </div>
-            <div :class="{open: pageStates.isOpenGender}" class="cate-body">
-              <label v-for="gender in listGender" :key="gender" class="checkbox mb-2 font-medium">
-                <input type="checkbox" v-model="listGenderSelected" :value="gender">
-                {{ gender }}
-              </label>
-            </div>
-          </div>
-          <div class="cate-item border-t border-gray-300 pb-2" v-if="!pageStates.isPageSale" >
-            <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
-              @click="pageStates.isOpenSale = !pageStates.isOpenSale"
-            >
-              <div class="text-base font-semibold">Giảm giá</div>
-              <div class="arrow-icon" :class="{open: pageStates.isOpenSale}">
-                <span class="left"></span>
-                <span class="right"></span>
-              </div>
-            </div>
-            <div :class="{open: pageStates.isOpenSale}" class="cate-body">
-              <label class="checkbox mb-2 font-medium">
-                <input type="checkbox" v-model="isSale">Giảm giá
-              </label>
-            </div>
-          </div>
-          <div class="cate-item border-t border-gray-300 pb-2">
-            <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
-              @click="pageStates.isOpenColor = !pageStates.isOpenColor"
-            >
-              <div class="text-base font-semibold">Màu sắc</div>
-              <div class="arrow-icon" :class="{open: pageStates.isOpenColor}">
-                <span class="left"></span>
-                <span class="right"></span>
-              </div>
-            </div>
-            <div :class="{open: pageStates.isOpenColor}" class="cate-body grid grid-cols-3 gap-y-3">
-              <label class="cursor-pointer flex flex-col items-center select-none" v-for="color in listColor" :key="color.id">
-                <input type="checkbox" v-model="listColorSelected" :value="color.engName" class="hide checkbox-color">
-                <div class="w-7 h-7 rounded-full mb-1 color-wrap grid place-content-center"
-                  :class="color.engName == 'White' ? 'color-white' : ''"
-                  :style="{backgroundColor: color.code}"></div>
-                  <div class="text-xs font-medium text-center">{{ color.name }}</div>
-              </label>
-            </div>
-          </div>
-          <div class="cate-item border-t border-gray-300 pb-2">
-            <div class="flex justify-between items-center cursor-pointer py-3 pr-2"
-              @click="pageStates.isOpenBrand = !pageStates.isOpenBrand"
-            >
-              <div class="text-base font-semibold">Hãng</div>
-              <div class="arrow-icon" :class="{open: pageStates.isOpenBrand}">
-                <span class="left"></span>
-                <span class="right"></span>
-              </div>
-            </div>
-            <div :class="{open: pageStates.isOpenBrand}" class="cate-body">
-              <label v-for="brand in listBrand" :key="brand.id" class="checkbox mb-2 font-medium">
-                <input type="checkbox" v-model="listBrandSelected" :value="brand.name">
-                {{ brand.name }}
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="col-span-12 md:col-span-8">
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <SkeletonProductCard
-              v-if="pending"
-              v-for="count in 12" :key="count"
-            />
-            <ProductCard 
-              v-else
-              v-for="product in listProduct" :key="product.variantId" 
-              :product="product"
-            />
+          <div class="h-auto py-4 px-3 md:px-6 border-t border-gray-300">
+            <button @click="pageStates.isOpenFilter = !pageStates.isOpenFilter" class="py-3 btn-primary">Áp dụng</button>
           </div>
         </div>
       </div>
-    </div>
+    </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useCommonStore } from '~/stores';
-import { Brand, Category, Color, ProductBasic } from '~/types';
+import { Brand, Category, Color, ProductBasic, IPage } from '~/types';
 
 const router = useRouter()
 const route = useRoute()
@@ -141,13 +258,11 @@ const pageStates = reactive({
   isResetFilter: false,
   isPageGender: false,
   isPageSale: false,
+  isOpenFilter: false
 })
 const currentPage = ref(1);
 const pageSize = ref(20);
-const orderBy = ref("");
-const sortingKey = ref("");
 const isSale = ref(false);
-const sortingSelected: object = ref({})
 const listSorting = [
   {
     name: "Mặc định",
@@ -175,6 +290,9 @@ const listSorting = [
     orderBy: "desc"
   },
 ]
+const listGender = ["Nam", "Nữ", "Unisex", "Trẻ em"]
+
+const sortingSelected = ref(listSorting[0])
 const keyword = computed(() => {
   if (route.query.q) {
     return route.query.q.toString();
@@ -190,28 +308,31 @@ const listGenderSelected: Ref<string[]> = ref([]);
 const { data: listBrand } = useAsyncData<Brand[]>('brands', () => commonStore.getAllBrands());
 const { data: listColor } = useAsyncData<Color[]>('colors', () => commonStore.getAllColors());
 const { data: listCate } = useAsyncData<Category[]>('categories', () => commonStore.getAllCategories());
-const listGender = ["Nam", "Nữ", "Unisex", "Trẻ em"]
 
 if (pageStates.isResetFilter) {
   resetFilter();
 }
-
+const title = ref("");
 switch (route.params.category) {
   case "men":
     listGenderSelected.value.push("Nam");
     pageStates.isPageGender = true;
+    title.value = "Giày Nam"
     break;
   case "women":
     listGenderSelected.value.push("Nữ");
     pageStates.isPageGender = true;
+    title.value = "Giày Nữ"
     break;
   case "kids":
     listGenderSelected.value.push("Trẻ em");
     pageStates.isPageGender = true;
+    title.value = "Giày Trẻ Em"
     break;
   case "flash-sale":
     isSale.value = true;
     pageStates.isPageSale = true;
+    title.value = "Giảm Giá"
     break;
   case "search":
     break;
@@ -220,22 +341,21 @@ switch (route.params.category) {
 }
 getQueryRouter();
 
-const { data: listProduct, pending } = await useAsyncData<ProductBasic[]>(
-  `listProduct`, 
+const { data: pageProduct, pending } = await useAsyncData<IPage<ProductBasic[]>>(
+  `pageProduct`, 
   () => productStore.filterProduct(
     keyword.value,
     listCateSelected.value, listBrandSelected.value,
     listColorSelected.value, listGenderSelected.value, isSale.value,
     currentPage.value, pageSize.value,
-    sortingKey.value, orderBy.value
+    sortingSelected.value.sortingKey, sortingSelected.value.orderBy
   ), {
     watch: [
       listCateSelected, listBrandSelected,
       listColorSelected, listGenderSelected, isSale, 
-      currentPage, pageSize, sortingKey, orderBy, keyword
+      currentPage, pageSize, sortingSelected, keyword
     ],
     lazy: true,
-    default: () => [] as ProductBasic[],
   },
 );
 
@@ -316,6 +436,29 @@ function resetFilter() {
 }
 .hide {
   display: none !important;
+}
+.filter-mobile {
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 999;
+}
+.cate-item {
+  @apply border-t border-gray-300 pb-2
+}
+.v-enter-active {
+  transition: all 0.5s cubic-bezier(.4,0,.2,1);
+}
+
+.v-leave-active {
+  transition: all 0.5s cubic-bezier(.4,0,.2,1);
+}
+
+.v-enter-from,
+.v-leave-to {
+  transform: translateX(100%);
 }
 .arrow-icon {
   position: relative;

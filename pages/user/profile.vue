@@ -2,10 +2,10 @@
   <h4 class="font-medium text-lg mb-4">Thông tin cá nhân</h4>
   <SkeletonUserProfile v-if="pending" />
   <div v-else>
-    <div class="grid grid-cols-12 gap-x-4 gap-y-2">
+    <div class="grid grid-cols-12 gap-x-4">
       <InputText 
         ref="nameRef"
-        class="col-span-6"
+        class="col-span-12 md:col-span-6"
         v-model="newProfile.firstName"
         label="Họ"
         name="fullName"
@@ -14,7 +14,7 @@
       />
       <InputText 
         ref="nameRef"
-        class="col-span-6"
+        class="col-span-12 md:col-span-6"
         v-model="newProfile.lastName"
         label="Tên"
         name="fullName"
@@ -31,7 +31,7 @@
         :rules="[isRequired('email')]"
       />
       <Select 
-        class="col-span-6"
+        class="col-span-12 md:col-span-6"
         v-model="newProfile.gender"
         name="gender"
         :items="genders"
@@ -45,7 +45,7 @@
       >
         <template #default="{ togglePopover }">
           <InputText 
-            class="col-span-6"
+            class="col-span-12 md:col-span-6"
             :model-value="formatDate(newProfile.dateOfBirth)"
             readonly
             label="Ngày sinh"

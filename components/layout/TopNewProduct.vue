@@ -12,13 +12,13 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { ProductBasic, IResponse } from '~/types';
+import { ProductBasic, IResponse, IPage } from '~/types';
 
 const listTopProducts: Ref<ProductBasic[]> = ref([])
   
 const productStore = useProductStore();
-const { data } = await useAsyncData<IResponse<any>>('topProduct', () => productStore.getTopNewProduct());
-listTopProducts.value = data.value?.output;
+const { data } = await useAsyncData<IPage<ProductBasic[]>>('topProduct', () => productStore.getTopNewProduct());
+listTopProducts.value = data.value?.content || [];
 
 </script>
 
