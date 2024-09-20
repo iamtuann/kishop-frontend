@@ -1,8 +1,8 @@
 <template>
-  <div class="py-5 flex gap-3 pr-3 border-b border-b-gray-300">
+  <div class="py-3 md:py-5 flex gap-3 pr-3 border-b border-b-gray-300">
     <div 
       class="shrink-0"
-      :class="size=='small' ? 'w-24': 'w-[160px]'"
+      :class="size=='small' ? 'w-24': 'w-32  md:w-40'"
     >
       <NuxtLink :to="`/products/${product.slug}/${product.variantId}`">
         <img :src="product.thumbnail" :alt="product.name + ' ' + product.variantName"
@@ -10,62 +10,60 @@
       </NuxtLink>
     </div>
 
-    <div class="grow mt-[2px]">
-      <NuxtLink :to="`/products/${product.slug}/${product.variantId}`">
-        <h4 class="font-semibold text-lg hover:underline mb-1" :class="{'leading-5': size=='small'}">
-          {{ product.name }}
-        </h4>
-      </NuxtLink>
-      <p :class="classText()">
-        {{ product.variantName }}
-      </p>
-      <p :class="classText()">
-        Size: {{ product.size }}
-      </p>
-
-      <p v-if="!hideQuantity" :class="classText()">
-        Số lượng: {{ product.quantity }}
-      </p>
-      <div v-if="!hideActions" class="mt-2">
-        <div class="mb-2 flex">
-          <button type="button" :disabled="product.quantity == 1" class="act-btn minus-btn disabled:text-gray-300" 
-            @click="handleMinusQuantity">-</button>
-          <span class="quantity">{{ product.quantity }}</span>
-          <button type="button" class="act-btn plus-btn"
-            @click="handlePlusQuantity">+</button>
+    <div class="grow flex flex-col-reverse sm:flex-row">
+      <div class="grow mt-[2px]">
+        <NuxtLink :to="`/products/${product.slug}/${product.variantId}`">
+          <h4 class="font-semibold sm:text-lg sm:leading-6 hover:underline md:mb-1" :class="{'leading-5': size=='small'}">
+            {{ product.name }}
+          </h4>
+        </NuxtLink>
+        <div class="flex md:flex-col gap-x-4">
+          <p :class="classText()">
+            {{ product.variantName }}
+          </p>
+          <p :class="classText()">
+            Size: {{ product.size }}
+          </p>
         </div>
-        <div class="flex items-center py-1">
-          <div class="inline-flex mx-2 relative">
-            <button type="button" class="favorite-btn">
-              <i class="fa-regular fa-heart fa-lg"></i>
-            </button>
-            <div class="tooltip favorite">Thêm vào yêu thích</div>
+  
+        <p v-if="!hideQuantity" :class="classText()">
+          Số lượng: {{ product.quantity }}
+        </p>
+        <div v-if="!hideActions" class="mt-2 flex sm:flex-col gap-y-2 justify-between sm:items-start items-center ">
+          <div class="flex">
+            <button type="button" :disabled="product.quantity == 1" class="act-btn minus-btn disabled:text-gray-300" 
+              @click="handleMinusQuantity">-</button>
+            <span class="quantity">{{ product.quantity }}</span>
+            <button type="button" class="act-btn plus-btn"
+              @click="handlePlusQuantity">+</button>
           </div>
-          <div class="inline-flex mx-2 cursor-pointer relative">
-            <button type="button" class="delete-btn"
-              @click="cartStore.removeProductInCart(product.detailId)">
-              <i class="fa-regular fa-trash fa-lg"></i>
-            </button>
-            <div class="tooltip delete">Xóa khỏi giỏ hàng</div>
+          <div class="flex items-center py-1">
+            <div class="inline-flex mx-2 cursor-pointer relative">
+              <button type="button" class="delete-btn"
+                @click="cartStore.removeProductInCart(product.detailId)">
+                <i class="fa-regular fa-trash fa-lg"></i>
+              </button>
+              <div class="tooltip delete">Xóa khỏi giỏ hàng</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div>
-      <h4 class="font-semibold text-lg">{{ strPrice }}</h4>
-      <p v-if="isSale" class="font-medium text-sm line-through text-gray-400 float-right">{{ strOldPrice }}</p>
+      <div class="font-semibold">
+        <h4 class="sm:text-lg leading-5">{{ strPrice }}</h4>
+        <p v-if="isSale" class="hidden sm:block float-right text-sm line-through text-gray-400">{{ strOldPrice }}</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { CartItemDetail } from "~/types";
+import { ItemDetail } from "~/types";
 import { formatPrice } from "@/utils"
 
 type Size = "default" | "small";
 
 const props = defineProps({
-  product: { type: Object as PropType<CartItemDetail>  , required: true },
+  product: { type: Object as PropType<ItemDetail>  , required: true },
   hideActions: { type: Boolean },
   hideQuantity: { type: Boolean },
   size: { type: String as PropType<Size> }
@@ -151,23 +149,20 @@ async function handlePlusQuantity() {
   font-size: 14px;
   border-radius: 4px;
   border: 1px solid;
-  opacity: 0;
+  display: none;
   transition: all linear 0.1s;
   transform-origin: center;
   @apply border-gray-400 bg-gray-100
-}
-.tooltip.favorite {
-  left: -55px;
 }
 .tooltip.delete {
   left: -50px;
 }
 .favorite-btn:hover + .tooltip.favorite {
-  opacity: 1;
+  display: block;
   z-index: 2;
 }
 .delete-btn:hover + .tooltip.delete {
-  opacity: 1;
+  display: block;
   z-index: 2;
 }
 </style>

@@ -27,14 +27,15 @@ export default defineNuxtPlugin((nuxtApp) => {
     onResponse({request, options, response}) {
       if (response._data?.statusCode === 401) {
         authStore.clearData();
-        navigateTo("/login");
+        navigateTo("/login", {replace: true});
       }
     },
     onResponseError({ request, response, options }) {
       const status = response.status;
+      console.log(status);
       if (status === 401) {
         authStore.clearData();
-        navigateTo("/login");
+        navigateTo("/login", {replace: true});
       } else if (status == 500) {
         // router.push("/error/500");;
       }

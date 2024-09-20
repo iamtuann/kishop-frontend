@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ProductBasic, IResponse, Product, Category } from "~/types/index";
+import { ProductBasic, IResponse, Product, Category, IPage } from "~/types/index";
 
 export const useProductStore = defineStore({
   id: "productStore",
@@ -7,15 +7,15 @@ export const useProductStore = defineStore({
 
   }),
   actions: {
-    async getTopNewProduct(pageSize: number = 4): Promise<IResponse<any>> {
-      const response:IResponse<any> = await $fetch("products/list", {
+    async getTopNewProduct(pageSize: number = 4): Promise<IPage<ProductBasic[]>> {
+      const response:IResponse<IPage<ProductBasic[]>> = await $fetch("products", {
         params: {
           pageSize: pageSize,
           key: "createdDate",
           orderBy: "desc"
         }
       });
-      return response;
+      return response.output;
     },
     async getProductBySlug(slug: string) {
       const response:IResponse<Product> = await $fetch("products/"+slug);
@@ -29,9 +29,9 @@ export const useProductStore = defineStore({
       genders: string[],
       sale: boolean,
       page?: number, pageSize?: number,
-      key?: string, orderBy?: string
-    ): Promise<ProductBasic[]> {
-      const response:IResponse<ProductBasic[]> = await $fetch("products/list", {
+      key?: string | null, orderBy?: string
+    ): Promise<IPage<ProductBasic[]>> {
+      const response:IResponse<IPage<ProductBasic[]>> = await $fetch("products", {
         params: {
           name,
           categories,

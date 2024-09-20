@@ -43,14 +43,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, toRef, toRefs } from "vue";
+import { ref, watch, toRef } from "vue";
 import { isEmptyValue } from "~/utils";
 const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps({
   name: {type: String, required: false},
-  modelValue: { type: [String, Object], required: true },
+  modelValue: { type: [String, Object], required: false },
   default: { type: [String, Object], required: false },
+  returnObject: { type: Boolean, default: false },
   items: { type: Array as PropType<(string[] | object[])>, required: true },
   label: { type: String, required: false },
   disabled: { type: Boolean, required: false },
@@ -65,26 +66,31 @@ const props = defineProps({
   },
 })
 const selectEl = ref<HTMLElement | null>(null);
-const {modelValue} = toRefs(props);
+// const modelValue = toRef(props.modelValue || null);
 const message = ref("");
 const isValid = ref(true);
-const selected = props.default ? toRef(props.default) : ref(null);
+const selected = ref(getItemFromValue(props.modelValue)) || (props.default ? toRef(props.default) : ref(null));
 const open = ref(false);
 const dropdownOpenDirection = ref("below")
 
-function getTitle(item: Record<string, any> | string): string {
-  if(typeof item === "object" && item != null) {
-    return item[props.itemTitle];
-  } else {
-    return item;
+watch(open, (isDropdownOpened) => {
+  if (isDropdownOpened) {
+    setDropdownPosition();
   }
-}
+})
+
+watch(() => props.modelValue, (newVal) => {
+  selected.value = getItemFromValue(newVal);
+  validate();
+}, {
+  deep: true
+})
 
 function validate() {
   message.value = "";
   if (props.rules && props.rules.length > 0) {
     for (let i = 0; i < props.rules.length; i++) {
-      const result = props.rules[i](modelValue.value);
+      const result = props.rules[i](getValue(props.modelValue || ""));
       if (result !== true) {
         message.value = result;
         isValid.value = false
@@ -99,7 +105,7 @@ function validate() {
 function handleSelect(item: string | object) {
   selected.value = item;
   open.value = false;
-  emit('update:modelValue', item);
+  emit('update:modelValue', getValue(item));
 }
 
 function setDropdownPosition() {
@@ -114,16 +120,46 @@ function setDropdownPosition() {
   }
 }
 
-watch(open, (isDropdownOpened) => {
-  if (isDropdownOpened) {
-    setDropdownPosition();
+function getTitle(item: Record<string, any> | string): string {
+  if(typeof item === "object" && item != null) {
+    return item[props.itemTitle];
+  } else {
+    return item;
   }
-})
+}
 
-watch(modelValue, (newVal) => {
-  selected.value = newVal;
-  validate();
-})
+function getValue(item: Record<string, any> | string) {
+  if (typeof item === "object" && !props.returnObject) {
+    return item[props.itemValue];
+  } else {
+    return item;
+  }
+}
+
+function getItemFromValue(value: string | Record<string, any> | null | undefined) {
+  if (isEmptyValue(value)) {
+    return null;
+  }
+  if (isArrayOfObjects(props.items)) {  
+    if (typeof value == "object") {
+      return isEmptyValue(value) ? null : value;
+    } else {
+      return props.items.find(item => {
+        return item[props.itemValue] == value;
+      })
+    }
+  } else if (isArrayOfStrings(props.items)) {
+    return value;
+  }
+}
+
+function isArrayOfStrings(arr: unknown[]): arr is string[] {
+  return arr.every(item => typeof item === 'string');
+}
+
+function isArrayOfObjects(arr: unknown[]): arr is Record<string, any>[] {
+  return arr.every(item => typeof item === 'object' && item !== null && !Array.isArray(item));
+}
 
 defineExpose({
   validate,
@@ -139,6 +175,7 @@ defineExpose({
   pointer-events: none
 }
 .selected {
+  min-height: 46px;
   outline: none;
   background-color: #fff;
   border-radius: 8px;
@@ -147,7 +184,7 @@ defineExpose({
   font-size: 16px;
   cursor: pointer;
   user-select: none;
-  padding: 10px 24px 10px 12px;
+  padding: 10px 30px 10px 12px;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
@@ -177,7 +214,7 @@ defineExpose({
 }
 
 .items-wrap.below {
-  top: calc(100% + 4px);
+  top: calc(100% - 8px);
 }
 
 .items-wrap.above {
@@ -199,7 +236,7 @@ defineExpose({
   width: 15px;
   display:block;
   position: absolute;
-  right: 12px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;

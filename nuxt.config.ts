@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
+    '@samk-dev/nuxt-vcalendar',
   ],
   runtimeConfig: {
     public: {

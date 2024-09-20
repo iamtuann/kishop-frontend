@@ -13,14 +13,17 @@
           Đăng nhập
         </NuxtLink>
         <div class="border-white h-3 mx-3 border-r"></div>
-        <NuxtLink :to="{name: 'login'}"  class="hover:underline">
+        <NuxtLink :to="{name: 'register'}"  class="hover:underline">
           Đăng ký
         </NuxtLink>
       </div>
     </div>
   </div>
-  <header class="shadow-sm bg-white">
-    <nav class="container mx-auto py-2 flex justify-between items-center h-16">
+  <div :class="{'h-16': isFixed}"></div>
+  <header class="shadow-md bg-white h-16"
+    :class="{'fixed top-0 left-0 w-full z-[99]': isFixed, '-translate-y-16': isHidden && isFixed}"
+  >
+    <nav class="container mx-auto py-2 flex justify-between items-center">
       <NuxtLink to="/" class="font-bold text-xl text-primary-600">KiShop</NuxtLink>
       <ul v-if="props.type != 'simple'" class="hidden md:flex gap-2 md:gap-1">
         <!-- <li class="relative nav-item-parent">
@@ -62,7 +65,7 @@
           <NuxtLink class="nav-item" :to="route.href">{{ route.title }}</NuxtLink>
         </li>
       </ul>
-      <ul class="flex items-center gap-4">
+      <div class="flex items-center gap-4">
         <Search v-if="props.type != 'simple'" />
         <NuxtLink :to="{name: 'cart'}" class="relative">
           <div>
@@ -74,53 +77,51 @@
           </div>
         </NuxtLink>
         
-        <NuxtLink to="/" v-if="isAuthenticated" class="p-1 cursor-pointer">
-          <i class="fa-light fa-circle-user fa-lg"></i>
-        </NuxtLink>
+        <UserPopper v-if="isAuthenticated" />
 
         <div class="md:hidden" @click="isOpenMenu = !isOpenMenu">
           <span class="p-[6px] cursor-pointer">
             <i class="fa-regular fa-bars fa-lg"></i>
           </span>
         </div>
-      </ul>
-
-      <!-- Nav mobile -->
-      <div
-        class="md:hidden mobile-menu-wrap" :class="{'menu-open': isOpenMenu}" 
-        tabindex="0" @keydown.esc="handleExit" ref="mobileMenuRef"
-      >
-        <div class="flex px-6 py-3 justify-end">
-          <button class="flex text-2xl leading-none cursor-pointer" @click="isOpenMenu = !isOpenMenu">
-            <i class="fa-regular fa-xmark"></i>
-          </button>
-        </div>
-        <div class="py-6">
-          <NuxtLink 
-            v-for="route in routes" 
-            :key="route.href"
-            :to="route.href"
-            @click="isOpenMenu = false"
-            class="flex justify-between items-center nav-item-mobile"
-          >
-            <span>{{ route.title }}</span>
-            <span class="text-lg leading-none">
-              <i class="fa-regular fa-chevron-right"></i>
-            </span>
-          </NuxtLink>
-        </div>
-        <div v-if="!isAuthenticated" class="flex gap-x-4 mt-4 justify-center font-medium">
-          <NuxtLink :to="{name: 'login'}" class="button-mobile">
-            Đăng nhập
-          </NuxtLink>
-          <NuxtLink :to="{name: 'login'}"  class="button-mobile">
-            Đăng ký
-          </NuxtLink>
-        </div>
       </div>
-      <div class="overlay md:hidden" :class="{'menu-open': isOpenMenu}" @click="isOpenMenu = !isOpenMenu"></div>
     </nav>
   </header>
+
+  <!-- Nav mobile -->
+  <div class="overlay md:hidden" :class="{'menu-open': isOpenMenu}" @click="isOpenMenu = !isOpenMenu"></div>
+  <div
+    class="md:hidden mobile-menu-wrap" :class="{'menu-open': isOpenMenu}" 
+    tabindex="0" @keydown.esc="handleExit" ref="mobileMenuRef"
+  >
+    <div class="flex px-6 py-3 justify-end">
+      <button class="flex text-2xl leading-none cursor-pointer" @click="isOpenMenu = !isOpenMenu">
+        <i class="fa-regular fa-xmark"></i>
+      </button>
+    </div>
+    <div class="py-6">
+      <NuxtLink 
+        v-for="route in routes" 
+        :key="route.href"
+        :to="route.href"
+        @click="isOpenMenu = false"
+        class="flex justify-between items-center nav-item-mobile"
+      >
+        <span>{{ route.title }}</span>
+        <span class="text-lg leading-none">
+          <i class="fa-regular fa-chevron-right"></i>
+        </span>
+      </NuxtLink>
+    </div>
+    <div v-if="!isAuthenticated" class="flex gap-x-4 mt-4 justify-center font-medium">
+      <NuxtLink :to="{name: 'login'}" class="button-mobile">
+        Đăng nhập
+      </NuxtLink>
+      <NuxtLink :to="{name: 'register'}"  class="button-mobile">
+        Đăng ký
+      </NuxtLink>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -139,14 +140,6 @@ const cartStore = useCartStore();
 const authStore = useAuthStore();
 const {isAuthenticated} = storeToRefs(authStore);
 
-if (isAuthenticated.value) {
-  await useAsyncData("count-items", () => cartStore.countCartItemsAuth());
-}
-onMounted(async () => {
-  if (!isAuthenticated.value) {
-    await cartStore.getCartItemsFromLocal();
-  }
-})
 watch(isOpenMenu, (newVal) => {
   if (newVal) {
     mobileMenuRef.value?.focus();
@@ -166,6 +159,32 @@ function handleExit() {
     isOpenMenu.value = false;
   }
 }
+const isFixed = ref(false);
+const isHidden = ref(true);
+let lastScrollPosition = 0;
+const handleScroll = () => {
+  const currentScrollPosition = window.scrollY;
+  if (currentScrollPosition > 96) {
+    isFixed.value = true;
+    if (currentScrollPosition > lastScrollPosition) {
+      isHidden.value = true;
+    } else {
+      isHidden.value = false;
+    }
+  } else {
+    isFixed.value = false;
+    isHidden.value = false;
+  }
+  lastScrollPosition = currentScrollPosition;
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <style scoped>

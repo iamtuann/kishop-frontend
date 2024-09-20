@@ -40,13 +40,11 @@ export const useCartStore = defineStore({
     }
   },
   actions: {
-    getCartItemsLocals() {
+    getCartItemsFromLocals() {
       this.cartItemLocals = useLocalStorage<CartItemRequest[]>("cart_order", []).value;
     },
-    async getCartItemsFromLocal() {
-      if (this.cartItemLocals.length == 0) {
-        this.getCartItemsLocals();
-      }
+    async getCartItemDetailsLocal() {
+      this.getCartItemsFromLocals();
       if (this.cartItemLocals.length > 0) {
         const response:IResponse<ItemDetail[]> = await $fetch("carts/items", {
           method: 'POST',
@@ -54,18 +52,13 @@ export const useCartStore = defineStore({
         });
         this.cartItemDetails = response.output
       }
-      // return this.listProductDetail;
     },
     async countCartItemsAuth() {
       const response: IResponse<number> = await $fetch("carts/count-items");
       this.totalCartItemsAuth = response.output;
       return response.output;
     },
-    async getAuthCartItemBasics() {
-      const response: IResponse<ItemBasic[]> = await $fetch("carts/items-basic");
-      this.cartItemBasicsAuth = response.output;
-    },
-    async getAuthCartItems() {
+    async getCartItemDetailsAuth() {
       const response: IResponse<ItemDetail[]> = await $fetch("carts/items");
       this.cartItemDetails = response.output;
     },
@@ -139,5 +132,10 @@ export const useCartStore = defineStore({
     saveToLocalStorage() {
       localStorage.setItem("cart_order", JSON.stringify(this.cartItemLocals))
     },
+    removeAllCartItemLocal() {
+      localStorage.removeItem("cart_order");
+      this.cartItemDetails = [];
+      this.cartItemLocals = [];
+    }
   }
 })

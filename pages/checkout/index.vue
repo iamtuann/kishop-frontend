@@ -2,7 +2,7 @@
   <div class="container mx-auto">
     <h3 class="font-sans mb-4 mt-6 text-3xl font-medium">Đặt hàng</h3>
     <form class="grid grid-cols-12 gap-5">
-      <div class="col-span-7 pr-10">
+      <div class="col-span-12 md:col-span-6 lg:col-span-7 lg:pr-10">
         <p class="text-lg">Thông tin nhận hàng</p>
         <div class="mt-3">
           <InputText 
@@ -30,6 +30,7 @@
             name="city"
             :items="provinces"
             item-title="name"
+            return-object
             :rules="[isRequired('tỉnh/ thành phố')]"
             label="Tỉnh/ Thành phố"
             required
@@ -42,6 +43,7 @@
             name="district"
             :items="districts"
             item-title="name"
+            return-object
             :rules="[isRequired('quận/ huyện')]"
             label="Quận/ Huyện"
             required
@@ -54,6 +56,7 @@
             name="ward"
             :items="wards"
             item-title="name"
+            return-object
             :rules="[isRequired('phường/ xã')]"
             label="Phường/ Xã"
             required
@@ -75,11 +78,16 @@
           />
         </div>
       </div>
-      <div class="col-span-5">
+      <div class="col-span-12 md:col-span-6 lg:col-span-5">
         <p class="text-lg">Danh sách sản phẩm</p>
         <div class="mt-3" v-if="paymentInfo">
-          <CartList item-size="small" :cart-items="paymentInfo.itemDetails" />
-
+          <CartItem
+            v-for="product in paymentInfo.itemDetails"
+            :key="product.detailId"
+            :product="product"
+            hide-actions
+            size="small"
+          />
           <div class="flex justify-between my-3">
             <p>Tạm tính</p>
             <p class="ml-2">{{ formatPrice(paymentInfo.subTotalPrice) }}</p>
@@ -94,7 +102,7 @@
             <p class="ml-2">{{ formatPrice(paymentInfo.totalPrice) }}</p>
           </div>
           <div class="pt-5 pb-3">
-            <button type="button" class="btn-primary" @click="hanldeSubmitOrder">Đặt hàng</button>
+            <Button :loading="loading" @click="hanldeSubmitOrder">Đặt hàng</Button>
           </div>
         </div>
       </div>
@@ -103,19 +111,19 @@
 </template>
 
 <script setup lang="ts">
-import { AdressData, OrderPaymentInfo, OrderShippingInfo } from "~/types";
+import { AddressData, OrderPaymentInfo, OrderShippingInfo } from "~/types";
 import { validateForm, isRequired } from "~/utils";
+import { useCustomFetchData } from "~/composables";
 
 definePageMeta({
   layout: "simple",
 });
 
 const checkoutStore = useCheckoutStore();
-const authStore = useAuthStore();
 
-const selectedProvince = ref<AdressData>({} as AdressData);
-const selectedDistrict = ref<AdressData>({} as AdressData);
-const selectedWard = ref<AdressData>({} as AdressData);
+const selectedProvince = ref<AddressData>({} as AddressData);
+const selectedDistrict = ref<AddressData>({} as AddressData);
+const selectedWard = ref<AddressData>({} as AddressData);
 
 const nameRef = ref(null);
 const phoneRef = ref(null);
@@ -135,54 +143,53 @@ const shippingInfo = reactive<OrderShippingInfo>({
   paymentType: "COD"
 })
 
-const paymentInfo = ref<OrderPaymentInfo | null>(null);
-
+const loading = ref(false);
 async function hanldeSubmitOrder() {
   const valid = validateForm([nameRef, phoneRef, provinceRef, districtRef, wardRef, detailAddressRef]);
   if (valid) {
-    const { data } = await useAsyncData("create-order", () => checkoutStore.createOrder(shippingInfo));
+    const { data, pending } = await useAsyncData("create-order", () => checkoutStore.createOrder(shippingInfo));
+    loading.value = pending.value;
     if (data.value?.statusCode === 200) {
       navigateTo('/checkout/success');
     }
   }
 }
 
-if (authStore.isAuthenticated) {
-  const { data } = await useAsyncData("payment-info", () => checkoutStore.getPaymentInfo());
-  if (data.value?.itemDetails.length == 0) {
+const { data: paymentInfo, pending } = await useCustomFetchData<OrderPaymentInfo>(checkoutStore.getPaymentInfo, checkoutStore.getPaymentInfoFromCartItem);
+
+watch(paymentInfo, () => {
+  if (!paymentInfo.value?.itemDetails || paymentInfo.value?.itemDetails.length == 0) {
     navigateTo("/cart", { replace: true });
   }
-  paymentInfo.value = data.value;
-}
+})
 
-
-const { data: provinces } = useAsyncData<AdressData[]>('provinces',
+const { data: provinces } = useAsyncData<AddressData[]>('provinces',
   () => checkoutStore.getProvinces(), {
   lazy: true,
-  default: () => [] as AdressData[],
+  default: () => [] as AddressData[],
 });
 
-const { data: districts } = useAsyncData<AdressData[]>('districts', 
+const { data: districts } = useAsyncData<AddressData[]>('districts', 
   () => checkoutStore.getDistricts(selectedProvince.value?.id), {
   watch: [selectedProvince],
   lazy: true,
-  default: () => [] as AdressData[],
+  default: () => [] as AddressData[],
 });
 
-const { data: wards } = useAsyncData<AdressData[]>('wards',
+const { data: wards } = useAsyncData<AddressData[]>('wards',
   () => checkoutStore.getWards(selectedDistrict.value?.id), {
   watch: [selectedDistrict],
   lazy: true,
-  default: () => [] as AdressData[],
+  default: () => [] as AddressData[],
 });
 
 watch(selectedProvince, (province) => {
-  selectedDistrict.value = {} as AdressData;
+  selectedDistrict.value = {} as AddressData;
   shippingInfo.province = province.full_name;
 })
 
 watch(selectedDistrict, (district) => {
-  selectedWard.value = {} as AdressData;
+  selectedWard.value = {} as AddressData;
   shippingInfo.district = district.full_name;
 })
 

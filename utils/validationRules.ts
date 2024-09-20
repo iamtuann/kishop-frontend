@@ -2,7 +2,7 @@ export function isRequired(name: string) {
   return (v: string | object) => !isEmptyValue(v) || `Vui lòng nhập ${name}`;
 }
 
-export function isEmptyValue(value: string | object) {
+export function isEmptyValue(value: string | object | null | undefined) {
   if (typeof value === 'object') {
     for (const prop in value) {
       if (Object.hasOwn(value, prop)) {
