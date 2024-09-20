@@ -6,14 +6,16 @@
         {{ route.params.category == "search" ? keyword : '' }}
         ({{ pageProduct?.totalElements }})
       </h2>
-        <Select 
-          v-model="sortingSelected"
-          class="hidden lg:block w-[200px]"
-          name="filter"
-          :items="listSorting"
-          item-title="name"
-          return-object
-        />
+        <div class="w-[200px]">
+          <Select 
+            v-model="sortingSelected"
+            class="hidden lg:block"
+            name="filter"
+            :items="listSorting"
+            item-title="name"
+            return-object
+          />
+        </div>
         <button @click="pageStates.isOpenFilter = true" class="block lg:hidden btn-small px-5 text-base">
           Bộ lọc
           <i class="ml-1 fa-regular fa-bars-filter"></i>

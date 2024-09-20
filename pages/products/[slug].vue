@@ -3,18 +3,18 @@
   <div class="container mx-auto">
     <div class="grid grid-cols-12 gap-5">
       <div class="col-span-12 md:col-span-7 gap-4">
-        <div class="flex flex-col-reverse sm:flex-row gap-4 max-h-[600px] sticky top-8">
-          <div class="flex flex-row sm:flex-col flex-shrink-0 gap-2 overflow-auto">
+        <div class="flex flex-col-reverse sm:flex-row gap-4 max-h-[600px sticky top-8">
+          <div class="custom-scroll flex flex-row sm:flex-col flex-shrink-0 gap-2 overflow-auto">
             <div 
               v-for="(url, idx) in productVariantShowing?.imageUrls" 
               :key="idx"
               class="relative aspect-square h-20 md:max-lg:h-16 rounded cursor-pointer"
               @mouseover="imageShowIndex = idx"
             >
-              <img class="h-full rounded bg-gray-100 object-cover object-center" :src="url" :alt="product?.name">
+              <img class="h-full w-full rounded bg-gray-100 object-cover object-center" :src="url" :alt="product?.name">
             </div>
           </div>
-          <div class="rounded-lg overflow-hidden relative grow w-auto h-auto lg:max-w-[535px] lg:h-[600px]">
+          <div class="rounded-lg overflow-hidden relative grow w-auto h-auto lg:h-[600px]">
             <img :src="imageShowing" :alt="product?.name" class="w-full h-full bg-gray-100 object-cover object-center">
             <div class="absolute flex bottom-3 right-4 gap-2">
               <div class="arrow" @click="prevImage">
@@ -247,5 +247,20 @@ import { formatPrice } from "@/utils"
   box-shadow: rgb(212, 63, 33) 0px 0px 0px 1px;
   padding: 1px;
   border-radius: 4px;
+}
+.custom-scroll::-webkit-scrollbar-track
+{
+	background-color: transparent
+}
+
+.custom-scroll::-webkit-scrollbar
+{
+	width: 4px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb
+{
+  background-color: transparent;
+  border-radius: 99px;
 }
 </style>
