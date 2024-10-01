@@ -14,7 +14,7 @@
               <img class="h-full w-full rounded bg-gray-100 object-cover object-center" :src="url" :alt="product?.name">
             </div>
           </div>
-          <div class="rounded-lg overflow-hidden relative grow w-auto h-auto lg:h-[600px]">
+          <div class="rounded-lg overflow-hidden relative grow w-auto h-auto lg:max-w-xl lg:h-[650px]">
             <img :src="imageShowing" :alt="product?.name" class="w-full h-full bg-gray-100 object-cover object-center">
             <div class="absolute flex bottom-3 right-4 gap-2">
               <div class="arrow" @click="prevImage">
