@@ -17,7 +17,7 @@ export interface ProductVariant {
   id: number,
   productName: string,
   name: string,
-  color: string,
+  colors: string[],
   price: number,
   oldPrice: number,
   status: number,
@@ -45,5 +45,5 @@ export interface ProductBasic {
   oldPrice: number,
   thumbnail: string,
   slug: string,
-  color: string | null
+  color: string[]
 }
